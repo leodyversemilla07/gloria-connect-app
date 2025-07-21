@@ -1,92 +1,147 @@
 "use client";
 
-import { useState } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "../../../components/ui/label";
-import { useUser } from "@/app/user-context";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { IconBrandGoogle, IconMail } from "@tabler/icons-react";
 
-export function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
-    const [formError, setFormError] = useState<string | null>(null);
-    const [formLoading, setFormLoading] = useState(false);
-    const { register, error, loading, user } = useUser();
-    const router = useRouter();
+export interface RegisterFormUIProps extends Omit<React.ComponentProps<"form">, "onChange"> {
+    name: string;
+    email: string;
+    password: string;
+    error?: string | null;
+    loading?: boolean;
+    onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}
+export function RegisterForm(props: RegisterFormUIProps) {
+    const {
+        className,
+        name,
+        email,
+        password,
+        error,
+        loading,
+        onInputChange,
+        onSubmit,
+        ...rest
+    } = props;
+    const { signIn } = useAuthActions();
+    const [magicLinkOpen, setMagicLinkOpen] = React.useState(false);
+    const [magicEmail, setMagicEmail] = React.useState("");
+    const [magicLinkError, setMagicLinkError] = React.useState<string | null>(null);
+    const [magicLinkSent, setMagicLinkSent] = React.useState(false);
 
-    useEffect(() => {
-        if (user) {
-            router.replace("/dashboard");
-        }
-    }, [user, router]);
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setFormError(null);
-        setFormLoading(true);
-        const formData = new FormData(e.currentTarget);
-        const name = formData.get("name") as string;
-        const email = formData.get("email") as string;
-        const password = formData.get("password") as string;
-        try {
-            await register(email, password, name);
-        } catch (err: unknown) {
-            if (err instanceof Error) setFormError(err.message);
-            else setFormError("Registration failed");
-        } finally {
-            setFormLoading(false);
-        }
-    };
+    function isValidEmail(email: string) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
 
     return (
-        <form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>
-            <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Create your account</h1>
-                <p className="text-muted-foreground text-sm text-balance">
-                    Enter your details below to create your account
-                </p>
-            </div>
-            <div className="grid gap-6">
-                <div className="grid gap-3">
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" name="name" type="text" placeholder="Your name" required autoComplete="name" />
+        <>
+            <form onSubmit={onSubmit} className={cn("flex flex-col gap-6", className)} {...rest}>
+                <div className="flex flex-col items-center gap-2 text-center">
+                    <h1 className="text-2xl font-bold">Create your account</h1>
+                    <p className="text-muted-foreground text-sm text-balance">
+                        Enter your details below to create your account
+                    </p>
                 </div>
-                <div className="grid gap-3">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" name="email" type="email" placeholder="m@example.com" required autoComplete="email" />
+                <div className="grid gap-6">
+                    <div className="grid gap-3">
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" name="name" type="text" placeholder="Your name" required autoComplete="name" value={name} onChange={onInputChange} />
+                    </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" name="email" type="email" placeholder="m@example.com" required autoComplete="email" value={email} onChange={onInputChange} />
+                    </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="password">Password</Label>
+                        <Input id="password" name="password" type="password" required autoComplete="new-password" value={password} onChange={onInputChange} />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={!!loading}>
+                        {loading ? "Please wait..." : "Register"}
+                    </Button>
+                    <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                        <span className="bg-background text-muted-foreground relative z-10 px-2">
+                            Or continue with
+                        </span>
+                    </div>
+                    <Button variant="outline" className="w-full" type="button" onClick={() => signIn("google")}>
+                        <IconBrandGoogle className="size-4 mr-2" />
+                        Sign up with Google
+                    </Button>
+                    <Button variant="outline" className="w-full" type="button" onClick={() => setMagicLinkOpen(true)}>
+                        <IconMail className="size-4 mr-2" />
+                        Sign up with Email (Magic Link)
+                    </Button>
+                    {error && (
+                        <div className="text-red-600 text-center text-sm mt-2">{error}</div>
+                    )}
                 </div>
-                <div className="grid gap-3">
-                    <Label htmlFor="password">Password</Label>
-                    <Input id="password" name="password" type="password" required autoComplete="new-password" />
+                <div className="text-center text-sm">
+                    Already have an account?{" "}
+                    <a href="/login" className="underline underline-offset-4">
+                        Login
+                    </a>
                 </div>
-                <Button type="submit" className="w-full" disabled={formLoading || loading}>
-                    {(formLoading || loading) ? "Please wait..." : "Register"}
-                </Button>
-                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                    <span className="bg-background text-muted-foreground relative z-10 px-2">
-                        Or continue with
-                    </span>
-                </div>
-                <Button variant="outline" className="w-full" type="button" disabled>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-4 mr-2">
-                        <path
-                            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-                            fill="currentColor"
-                        />
-                    </svg>
-                    Sign up with GitHub
-                </Button>
-                {(formError || error) && (
-                    <div className="text-red-600 text-center text-sm mt-2">{formError || error}</div>
-                )}
-            </div>
-            <div className="text-center text-sm">
-                Already have an account?{" "}
-                <a href="/login" className="underline underline-offset-4">
-                    Login
-                </a>
-            </div>
-        </form>
+            </form>
+            <Dialog open={magicLinkOpen} onOpenChange={setMagicLinkOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Sign up with Email (Magic Link)</DialogTitle>
+                    </DialogHeader>
+                    {magicLinkSent ? (
+                        <div className="text-green-600 text-center my-4">Magic link sent! Check your email.</div>
+                    ) : (
+                        <form
+                            onSubmit={async e => {
+                                e.preventDefault();
+                                if (!isValidEmail(magicEmail)) {
+                                    setMagicLinkError("Please enter a valid email address.");
+                                    return;
+                                }
+                                setMagicLinkError(null);
+                                try {
+                                    await signIn("resend", { email: magicEmail });
+                                    setMagicLinkSent(true);
+                                } catch (err: unknown) {
+                                    if (err instanceof Error) {
+                                        setMagicLinkError(err.message);
+                                    } else {
+                                        setMagicLinkError("Failed to send magic link.");
+                                    }
+                                }
+                            }}
+                            className="flex flex-col gap-4"
+                        >
+                            <Label htmlFor="magic-email">Email</Label>
+                            <Input
+                                id="magic-email"
+                                name="magic-email"
+                                type="email"
+                                placeholder="m@example.com"
+                                required
+                                autoComplete="email"
+                                value={magicEmail}
+                                onChange={e => setMagicEmail(e.target.value)}
+                            />
+                            {magicLinkError && (
+                                <div className="text-red-600 text-center text-sm mt-2">{magicLinkError}</div>
+                            )}
+                            <DialogFooter className="flex gap-2 justify-end">
+                                <Button type="submit">Send Magic Link</Button>
+                                <DialogClose asChild>
+                                    <Button type="button" variant="ghost">Cancel</Button>
+                                </DialogClose>
+                            </DialogFooter>
+                        </form>
+                    )}
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }

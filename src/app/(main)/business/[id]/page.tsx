@@ -1,0 +1,390 @@
+"use client"
+
+import { useState } from "react"
+import { useParams } from "next/navigation"
+import { useQuery } from "convex/react"
+import { api } from "../../../../../convex/_generated/api"
+import type { Doc, Id } from "../../../../../convex/_generated/dataModel"
+import { ArrowLeft, MapPin, Phone, Clock, Globe, Share2, Navigation, Mail, Tag, CheckCircle, Calendar } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
+import Image from "next/image"
+
+export default function BusinessDetailPage() {
+  const params = useParams();
+  const [language, setLanguage] = useState<"en" | "tl">("en");
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  const businessId = params.id as Id<"businesses">;
+  const business = useQuery(api.businesses.getById, { id: businessId });
+
+  if (business === undefined) {
+    // Still loading
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <span className="text-muted-foreground text-lg">Loading...</span>
+      </div>
+    );
+  }
+
+  if (!business) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-foreground mb-4">Business Not Found</h1>
+          <Link href="/">
+            <Button>Return Home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const text = {
+    en: {
+      backToHome: "Back to Home",
+      callNow: "Call Now",
+      getDirections: "Get Directions",
+      share: "Share",
+      gallery: "Photo Gallery",
+      about: "About",
+      contact: "Contact Information",
+      hours: "Operating Hours",
+      specialties: "Specialties",
+      location: "Location",
+      rating: "Rating",
+    },
+    tl: {
+      backToHome: "Bumalik sa Tahanan",
+      callNow: "Tumawag Ngayon",
+      getDirections: "Kumuha ng Direksyon",
+      share: "Ibahagi",
+      gallery: "Gallery ng mga Larawan",
+      about: "Tungkol",
+      contact: "Impormasyon sa Pakikipag-ugnayan",
+      hours: "Oras ng Operasyon",
+      specialties: "Mga Specialty",
+      location: "Lokasyon",
+      rating: "Rating",
+    },
+  };
+
+  // Helpers for translated fields
+  const getName = (b: Doc<"businesses">) =>
+    language === "en" ? b.name?.english || "" : b.name?.tagalog || b.name?.english || "";
+  const getDescription = (b: Doc<"businesses">) =>
+    language === "en" ? b.description?.english || "" : b.description?.tagalog || b.description?.english || "";
+  const getCategory = (b: Doc<"businesses">) =>
+    language === "en" ? b.category?.primary || "" : b.category?.primary || ""; // TODO: Add category translation if available
+  const getPhotos = (b: Doc<"businesses">) => b.photos || [];
+  // Use secondary categories as specialties if present
+  const getSpecialties = (b: Doc<"businesses">) => b.category?.secondary || [];
+
+  const handleGetDirections = () => {
+    const lat = business.address?.coordinates?.latitude;
+    const lng = business.address?.coordinates?.longitude;
+    if (!lat || !lng) return;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    window.open(url, "_blank");
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: getName(business),
+          text: getDescription(business),
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.log("Error sharing:", error);
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      alert(language === "en" ? "Link copied to clipboard!" : "Link na-copy sa clipboard!");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="bg-card shadow-sm border-b sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
+            <Link href="/" className="flex items-center space-x-2 text-primary hover:text-primary/80 w-full md:w-auto justify-center md:justify-start">
+              <ArrowLeft className="h-5 w-5" />
+              <span className="font-medium">{text[language].backToHome}</span>
+            </Link>
+
+            <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-end">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setLanguage(language === "en" ? "tl" : "en")}
+                className="flex items-center space-x-1"
+              >
+                <Globe className="h-4 w-4" />
+                <span>{language === "en" ? "TL" : "EN"}</span>
+              </Button>
+
+              <Button variant="ghost" size="sm" onClick={handleShare}>
+                <Share2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Business Header */}
+        <div className="bg-card rounded-lg shadow-sm overflow-hidden mb-8">
+          <div className="aspect-video relative">
+            <Image
+              src={getPhotos(business)[selectedImage]?.url || "/placeholder.svg"}
+              alt={getName(business)}
+              width={800}
+              height={450}
+              className="w-full h-full object-cover"
+              style={{ width: '100%', height: 'auto' }}
+              priority={true}
+            />
+            {/* No featured field in schema */}
+          </div>
+
+          <div className="p-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2 md:gap-0">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                  {getName(business)}
+                </h1>
+                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                  {/* No rating in schema, so omit or use a placeholder if needed */}
+                  <Badge variant="secondary">
+                    {getCategory(business)}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button className="flex-1" asChild>
+                <a href={`tel:${business.contact?.phone ?? ""}`}>
+                  <Phone className="h-4 w-4 mr-2" />
+                  {text[language].callNow}
+                </a>
+              </Button>
+              <Button variant="outline" className="flex-1 bg-transparent" onClick={handleGetDirections}>
+                <Navigation className="h-4 w-4 mr-2" />
+                {text[language].getDirections}
+              </Button>
+            </div>
+            {/* Website and Email */}
+            <div className="flex flex-col sm:flex-row gap-3 mt-3">
+              {business.contact?.website && (
+                <Button className="flex-1" asChild variant="outline">
+                  <a href={business.contact.website} target="_blank" rel="noopener noreferrer">
+                    <Globe className="h-4 w-4 mr-2" />
+                    {business.contact.website.replace(/^https?:\/\//, "")}
+                  </a>
+                </Button>
+              )}
+              {business.contact?.email && (
+                <Button className="flex-1" asChild variant="outline">
+                  <a href={`mailto:${business.contact.email}`}>
+                    <Mail className="h-4 w-4 mr-2" />
+                    {business.contact.email}
+                  </a>
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6 md:space-y-8">
+            {/* Photo Gallery */}
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{text[language].gallery}</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
+                  {getPhotos(business).map((photo, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${selectedImage === index ? "border-primary" : "border-muted"}`}
+                    >
+                      <Image
+                        src={
+                          photo.url ||
+                          `https://placehold.co/300x170.png?text=${encodeURIComponent(getName(business) || 'Business')}`
+                        }
+                        alt={`${getName(business)} ${index + 1}`}
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-cover"
+                        style={{ width: '100%', height: 'auto' }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* About */}
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{text[language].about}</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  {getDescription(business)}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Specialties */}
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{text[language].specialties}</h2>
+                <div className="flex flex-wrap gap-2">
+                  {getSpecialties(business).map((specialty: string, index: number) => (
+                    <Badge key={index} variant="outline">
+                      {specialty}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Contact Information */}
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold text-foreground mb-4">{text[language].contact}</h2>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Address</p>
+                      <p className="text-sm text-muted-foreground">{`${business.address?.street || ""}, ${business.address?.barangay || ""}`}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Phone</p>
+                      <a href={`tel:${business.contact?.phone ?? ""}`} className="text-sm text-primary hover:text-primary/80">
+                        {business.contact?.phone ?? ""}
+                      </a>
+                    </div>
+                  </div>
+
+                  {business.contact?.email && (
+                    <div className="flex items-start space-x-3">
+                      <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Email</p>
+                        <a href={`mailto:${business.contact.email}`} className="text-sm text-primary hover:text-primary/80">
+                          {business.contact.email}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
+                  {business.contact?.website && (
+                    <div className="flex items-start space-x-3">
+                      <Globe className="h-5 w-5 text-muted-foreground mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Website</p>
+                        <a href={business.contact.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary/80">
+                          {business.contact.website.replace(/^https?:\/\//, "")}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-start space-x-3">
+                    <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{text[language].hours}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {(() => {
+                          // Show today's hours if available
+                          const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
+                          const today = days[new Date().getDay()];
+                          const hours = business.operatingHours?.[today];
+                          if (!hours) return "";
+                          if (hours.closed) return language === "en" ? "Closed" : "Sarado";
+                          return `${hours.open} - ${hours.close}`;
+                        })()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Business Info */}
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold text-foreground mb-4">Business Info</h2>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <Tag className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Status</p>
+                      <p className="text-sm text-muted-foreground capitalize">{business.metadata?.status || "unknown"}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <CheckCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Verified</p>
+                      <p className="text-sm text-muted-foreground">{business.metadata?.isVerified ? "Yes" : "No"}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Date Added</p>
+                      <p className="text-sm text-muted-foreground">{business.metadata?.dateAdded ? new Date(business.metadata.dateAdded).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Last Updated</p>
+                      <p className="text-sm text-muted-foreground">{business.metadata?.lastUpdated ? new Date(business.metadata.lastUpdated).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"}</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Map */}
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold text-foreground mb-4">{text[language].location}</h2>
+                <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground mb-3">Interactive Map</p>
+                    <Button size="sm" onClick={handleGetDirections}>
+                      <Navigation className="h-4 w-4 mr-2" />
+                      {text[language].getDirections}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

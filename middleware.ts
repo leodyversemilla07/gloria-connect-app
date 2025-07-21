@@ -1,23 +1,24 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { convexAuthNextjsMiddleware, createRouteMatcher, nextjsMiddlewareRedirect } from "@convex-dev/auth/nextjs/server";
 
-export async function middleware(request: NextRequest) {
-  // Only protect /protected routes
-  if (!request.nextUrl.pathname.startsWith('/protected')) {
-    return NextResponse.next();
+const isProtectedRoute = createRouteMatcher([
+  "/admin/:path*",
+  "/dashboard/:path*",
+  "/app/(admin)/:path*",
+  "/app/(admin)/dashboard/:path*",
+]);
+
+export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
+  if (isProtectedRoute(request) && !(await convexAuth.isAuthenticated())) {
+    return nextjsMiddlewareRedirect(request, "/login");
   }
-
-  // Check for Appwrite session cookie
-  const session = request.cookies.get('a_session');
-  if (!session) {
-    // Not authenticated, redirect to home/login
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
-  // Authenticated, allow access
-  return NextResponse.next();
-}
+  return undefined; // Continue as normal
+});
 
 export const config = {
-  matcher: ['/protected/:path*'],
+  matcher: [
+    '/admin/:path*',
+    '/dashboard/:path*',
+    '/app/(admin)/:path*',
+    '/app/(admin)/dashboard/:path*',
+  ],
 };

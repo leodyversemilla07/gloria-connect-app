@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { ConvexClientProvider } from "../ConvexClientProvider";
+import { I18nProvider } from "./i18n-provider";
+import enMessages from "../../../messages/en.json";
+import filMessages from "../../../messages/fil.json";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,13 +26,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Detect language from URL (server-side)
+  let language = "en";
+  if (typeof window !== "undefined") {
+    const pathLang = window.location.pathname.split("/")[1];
+    if (["en", "fil"].includes(pathLang)) {
+      language = pathLang;
+    }
+  }
+  const messages = language === "fil" ? filMessages : enMessages;
+
   return (
-    <html lang="en">
+    <html lang={language}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ConvexClientProvider>
-          {children}
+          <I18nProvider language={language} messages={messages}>
+            {children}
+          </I18nProvider>
         </ConvexClientProvider>
       </body>
     </html>

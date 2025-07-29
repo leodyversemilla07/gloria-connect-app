@@ -1,21 +1,36 @@
 "use client"
 
-import { useState } from "react"
-import { useParams } from "next/navigation"
-import { useQuery } from "convex/react"
-import { api } from "../../../../../convex/_generated/api"
-import type { Doc, Id } from "../../../../../convex/_generated/dataModel"
-import { ArrowLeft, MapPin, Phone, Clock, Globe, Share2, Navigation, Mail, Tag, CheckCircle, Calendar } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import Image from "next/image"
+import { useState } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import type { Doc, Id } from "../../../../../convex/_generated/dataModel";
+import { useI18n } from "../../i18n-provider";
+import LanguageToggle from "@/components/language-toggle";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import {
+  ArrowLeft,
+  MapPin,
+  Phone,
+  Clock,
+  Globe,
+  Share2,
+  Navigation,
+  Mail,
+  Tag,
+  CheckCircle,
+  Calendar,
+} from "lucide-react";
 
 export default function BusinessDetailPage() {
   const params = useParams();
-  const [language, setLanguage] = useState<"en" | "tl">("en");
   const [selectedImage, setSelectedImage] = useState(0);
+  const { language, messages, setLanguage } = useI18n();
 
   const businessId = params.id as Id<"businesses">;
   const business = useQuery(api.businesses.getById, { id: businessId });
@@ -42,44 +57,10 @@ export default function BusinessDetailPage() {
     );
   }
 
-  const text = {
-    en: {
-      backToHome: "Back to Home",
-      callNow: "Call Now",
-      getDirections: "Get Directions",
-      share: "Share",
-      gallery: "Photo Gallery",
-      about: "About",
-      contact: "Contact Information",
-      hours: "Operating Hours",
-      specialties: "Specialties",
-      location: "Location",
-      rating: "Rating",
-    },
-    tl: {
-      backToHome: "Bumalik sa Tahanan",
-      callNow: "Tumawag Ngayon",
-      getDirections: "Kumuha ng Direksyon",
-      share: "Ibahagi",
-      gallery: "Gallery ng mga Larawan",
-      about: "Tungkol",
-      contact: "Impormasyon sa Pakikipag-ugnayan",
-      hours: "Oras ng Operasyon",
-      specialties: "Mga Specialty",
-      location: "Lokasyon",
-      rating: "Rating",
-    },
-  };
-
-  // Helpers for translated fields
-  const getName = (b: Doc<"businesses">) =>
-    language === "en" ? b.name?.english || "" : b.name?.tagalog || b.name?.english || "";
-  const getDescription = (b: Doc<"businesses">) =>
-    language === "en" ? b.description?.english || "" : b.description?.tagalog || b.description?.english || "";
-  const getCategory = (b: Doc<"businesses">) =>
-    language === "en" ? b.category?.primary || "" : b.category?.primary || ""; // TODO: Add category translation if available
+  const getName = (b: Doc<"businesses">) => b.name || "";
+  const getDescription = (b: Doc<"businesses">) => b.description || "";
+  const getCategory = (b: Doc<"businesses">) => b.category?.primary || "";
   const getPhotos = (b: Doc<"businesses">) => b.photos || [];
-  // Use secondary categories as specialties if present
   const getSpecialties = (b: Doc<"businesses">) => b.category?.secondary || [];
 
   const handleGetDirections = () => {
@@ -98,8 +79,9 @@ export default function BusinessDetailPage() {
           text: getDescription(business),
           url: window.location.href,
         });
-      } catch (error) {
-        console.log("Error sharing:", error);
+        toast.success(language === "en" ? "Link shared successfully!" : "Matagumpay na na-share ang link!");
+      } catch {
+        toast.error(language === "en" ? "Failed to share link." : "Hindi na-share ang link.");
       }
     } else {
       // Fallback: copy to clipboard
@@ -114,22 +96,15 @@ export default function BusinessDetailPage() {
       <header className="bg-card shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
-            <Link href="/" className="flex items-center space-x-2 text-primary hover:text-primary/80 w-full md:w-auto justify-center md:justify-start">
-              <ArrowLeft className="h-5 w-5" />
-              <span className="font-medium">{text[language].backToHome}</span>
-            </Link>
+            <Button asChild variant="link" className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start">
+              <Link href="/">
+                <ArrowLeft className="h-5 w-5" />
+                <span className="font-medium">{messages["backToHome"] || "Back to Home"}</span>
+              </Link>
+            </Button>
 
             <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-end">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setLanguage(language === "en" ? "tl" : "en")}
-                className="flex items-center space-x-1"
-              >
-                <Globe className="h-4 w-4" />
-                <span>{language === "en" ? "TL" : "EN"}</span>
-              </Button>
-
+              <LanguageToggle language={language} setLanguage={setLanguage} />
               <Button variant="ghost" size="sm" onClick={handleShare}>
                 <Share2 className="h-4 w-4" />
               </Button>
@@ -151,7 +126,6 @@ export default function BusinessDetailPage() {
               style={{ width: '100%', height: 'auto' }}
               priority={true}
             />
-            {/* No featured field in schema */}
           </div>
 
           <div className="p-6">
@@ -173,12 +147,12 @@ export default function BusinessDetailPage() {
               <Button className="flex-1" asChild>
                 <a href={`tel:${business.contact?.phone ?? ""}`}>
                   <Phone className="h-4 w-4 mr-2" />
-                  {text[language].callNow}
+                  {messages["callNow"] || "Call Now"}
                 </a>
               </Button>
               <Button variant="outline" className="flex-1 bg-transparent" onClick={handleGetDirections}>
                 <Navigation className="h-4 w-4 mr-2" />
-                {text[language].getDirections}
+                {messages["getDirections"] || "Get Directions"}
               </Button>
             </div>
             {/* Website and Email */}
@@ -209,7 +183,7 @@ export default function BusinessDetailPage() {
             {/* Photo Gallery */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{text[language].gallery}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{messages["gallery"] || "Photo Gallery"}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
                   {getPhotos(business).map((photo, index) => (
                     <button
@@ -237,7 +211,7 @@ export default function BusinessDetailPage() {
             {/* About */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{text[language].about}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{messages["about"] || "About"}</h2>
                 <p className="text-muted-foreground leading-relaxed">
                   {getDescription(business)}
                 </p>
@@ -247,13 +221,17 @@ export default function BusinessDetailPage() {
             {/* Specialties */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{text[language].specialties}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{messages["specialties"] || "Specialties"}</h2>
                 <div className="flex flex-wrap gap-2">
-                  {getSpecialties(business).map((specialty: string, index: number) => (
-                    <Badge key={index} variant="outline">
-                      {specialty}
-                    </Badge>
-                  ))}
+                  {getSpecialties(business).length > 0 ? (
+                    getSpecialties(business).map((specialty: string, index: number) => (
+                      <Badge key={index} variant="outline">
+                        {specialty}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className="text-muted-foreground text-sm">{language === "en" ? "No specialties listed." : "Walang nakalistang specialty."}</span>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -264,7 +242,7 @@ export default function BusinessDetailPage() {
             {/* Contact Information */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-xl font-semibold text-foreground mb-4">{text[language].contact}</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">{messages["contact"] || "Contact Information"}</h2>
                 <div className="space-y-4">
                   <div className="flex items-start space-x-3">
                     <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
@@ -311,7 +289,7 @@ export default function BusinessDetailPage() {
                   <div className="flex items-start space-x-3">
                     <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-foreground">{text[language].hours}</p>
+                      <p className="text-sm font-medium text-foreground">{messages["hours"] || "Operating Hours"}</p>
                       <p className="text-sm text-muted-foreground">
                         {(() => {
                           // Show today's hours if available
@@ -319,7 +297,7 @@ export default function BusinessDetailPage() {
                           const today = days[new Date().getDay()];
                           const hours = business.operatingHours?.[today];
                           if (!hours) return "";
-                          if (hours.closed) return language === "en" ? "Closed" : "Sarado";
+                          if (hours.closed) return messages["closed"] || (language === "en" ? "Closed" : "Sarado");
                           return `${hours.open} - ${hours.close}`;
                         })()}
                       </p>
@@ -369,14 +347,14 @@ export default function BusinessDetailPage() {
             {/* Map */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-xl font-semibold text-foreground mb-4">{text[language].location}</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">{messages["location"] || "Location"}</h2>
                 <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
                   <div className="text-center">
                     <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
                     <p className="text-sm text-muted-foreground mb-3">Interactive Map</p>
                     <Button size="sm" onClick={handleGetDirections}>
                       <Navigation className="h-4 w-4 mr-2" />
-                      {text[language].getDirections}
+                      {messages["getDirections"] || "Get Directions"}
                     </Button>
                   </div>
                 </div>

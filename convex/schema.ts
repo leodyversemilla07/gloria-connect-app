@@ -15,6 +15,7 @@ export default defineSchema({
         sessionState: v.optional(v.string()),
         emailVerified: v.optional(v.string()),
     }).index("providerAndAccountId", ["provider", "providerAccountId"]),
+
     users: defineTable({
         name: v.optional(v.string()),
         image: v.optional(v.string()),
@@ -25,6 +26,7 @@ export default defineSchema({
         isAnonymous: v.optional(v.boolean()),
         isAdmin: v.optional(v.boolean()),
     }).index("email", ["email"]),
+
     authVerificationCodes: defineTable({
         accountId: v.id("authAccounts"),
         code: v.string(),
@@ -39,6 +41,7 @@ export default defineSchema({
     })
         .index("accountId", ["accountId"])
         .index("code", ["code"]),
+
     authRefreshTokens: defineTable({
         sessionId: v.id("authSessions"),
         parentRefreshTokenId: v.optional(v.id("authRefreshTokens")),
@@ -52,10 +55,7 @@ export default defineSchema({
 
     businesses: defineTable({
         businessId: v.optional(v.string()),
-        name: v.object({
-            english: v.string(),
-            tagalog: v.optional(v.string()),
-        }),
+        name: v.string(),
         category: v.object({
             primary: v.string(),
             secondary: v.optional(v.array(v.string())),
@@ -73,10 +73,7 @@ export default defineSchema({
                 longitude: v.number(),
             }),
         }),
-        description: v.object({
-            english: v.optional(v.string()),
-            tagalog: v.optional(v.string()),
-        }),
+        description: v.string(),
         operatingHours: v.object({
             monday: v.object({ open: v.string(), close: v.string(), closed: v.boolean() }),
             tuesday: v.object({ open: v.string(), close: v.string(), closed: v.boolean() }),

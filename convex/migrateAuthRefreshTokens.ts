@@ -1,5 +1,4 @@
-import { mutation } from "convex/server";
-import { v } from "convex/values";
+import { mutation } from "./_generated/server";
 
 export const migrateAuthRefreshTokens = mutation({
   args: {},
@@ -9,7 +8,7 @@ export const migrateAuthRefreshTokens = mutation({
     let removed = 0;
     for (const token of tokens) {
       let needsUpdate = false;
-      const update: any = {};
+      const update: Record<string, unknown> = {};
       // Migrate expirationTime -> expiresAt
       if (token.expirationTime && !token.expiresAt) {
         update.expiresAt = token.expirationTime;

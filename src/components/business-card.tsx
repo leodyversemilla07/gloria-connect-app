@@ -9,22 +9,17 @@ import type { Doc } from "../../convex/_generated/dataModel";
 export interface BusinessCardProps {
     business: Doc<"businesses">;
     idx?: number;
-    language: "en" | "tl";
+    language: "en" | "fil";
     getName: (business: Doc<"businesses">) => string;
     getDescription: (business: Doc<"businesses">) => string;
     getCategory: (business: Doc<"businesses">) => string | undefined;
     getTodayHours: (business: Doc<"businesses">) => string;
-    text: {
-        [lang in "en" | "tl"]: {
-            viewDetails: string;
-        } & Record<string, unknown>;
-    };
+    text: Record<string, string>;
 }
 
 export function BusinessCard({
     business,
     idx = 0,
-    language,
     getName,
     getDescription,
     getCategory,
@@ -50,7 +45,7 @@ export function BusinessCard({
                     />
                     {idx < 3 && (
                         <Badge className="absolute top-2 right-2 bg-yellow-500 text-yellow-900">
-                            {language === "en" ? "Featured" : "Tampok"}
+                            {text["featured"]}
                         </Badge>
                     )}
                 </div>
@@ -75,11 +70,11 @@ export function BusinessCard({
             </CardContent>
             <CardFooter className="pt-2 mt-auto">
                 <div className="flex space-x-2 w-full">
-                    <Link href={`/business/${business._id}`} className="flex-1">
-                        <Button size="sm" className="w-full">
-                            {text[language].viewDetails}
-                        </Button>
-                    </Link>
+                    <Button size="sm" className="flex-1 w-full" asChild>
+                        <Link href={`/business/${business._id}`}>
+                            {text["viewDetails"]}
+                        </Link>
+                    </Button>
                     <Button size="sm" variant="outline" asChild>
                         <a href={`tel:${business.contact.phone ?? ""}`}>
                             <Phone className="h-4 w-4" />

@@ -12,9 +12,11 @@ interface HeaderProps {
   language: string;
   messages: Record<string, string>;
   setLanguage: (lang: string) => void;
+  user?: { name?: string; avatarUrl?: string } | null;
+  currentPath?: string;
 }
 
-export default function Header({ language, messages, setLanguage }: HeaderProps) {
+export default function Header({ language, messages, setLanguage, user, currentPath }: HeaderProps) {
   return (
     <header className="bg-card shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,20 +31,41 @@ export default function Header({ language, messages, setLanguage }: HeaderProps)
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/">{messages["home"] || (language === "en" ? "Home" : "Tahanan")}</Link>
+                    <Link href="/" className={currentPath === "/" ? "text-primary font-bold" : ""}>{messages["home"] || (language === "en" ? "Home" : "Tahanan")}</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/business">{messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo")}</Link>
+                    <Link href="/business" className={currentPath === "/business" ? "text-primary font-bold" : ""}>{messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo")}</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/about">{messages["about"] || (language === "en" ? "About" : "Tungkol")}</Link>
+                    <Link href="/about" className={currentPath === "/about" ? "text-primary font-bold" : ""}>{messages["about"] || (language === "en" ? "About" : "Tungkol")}</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
-                {/* TODO: Add authentication navigation (Login/Register/Dashboard) when user and loading state are available */}
+                <div className="mx-2 border-l h-6 self-center" />
+                {/* Auth links visually separated */}
+                {user ? (
+                  <NavigationMenuItem>
+                    <NavigationMenuLink asChild>
+                      <Link href="/dashboard" className={currentPath === "/dashboard" ? "text-primary font-bold" : "font-semibold text-primary"}>{messages["dashboard"] || (language === "en" ? "Dashboard" : "Dashboard")}</Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                ) : (
+                  <>
+                    <NavigationMenuItem>
+                      <NavigationMenuLink asChild>
+                        <Link href="/login" className={currentPath === "/login" ? "text-primary font-bold" : "font-semibold text-primary"}>{messages["login"] || (language === "en" ? "Login" : "Mag-login")}</Link>
+                      </NavigationMenuLink>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                      <NavigationMenuLink asChild>
+                        <Link href="/register" className={currentPath === "/register" ? "text-primary font-bold" : "font-semibold text-primary"}>{messages["register"] || (language === "en" ? "Register" : "Magrehistro")}</Link>
+                      </NavigationMenuLink>
+                    </NavigationMenuItem>
+                  </>
+                )}
               </NavigationMenuList>
             </NavigationMenu>
           </div>

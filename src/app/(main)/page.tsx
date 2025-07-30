@@ -79,7 +79,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header language={language} messages={messages} setLanguage={setLanguage} />
+      <Header language={language} messages={messages} setLanguage={setLanguage} currentPath="/" />
       <main>
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-8 md:py-12">

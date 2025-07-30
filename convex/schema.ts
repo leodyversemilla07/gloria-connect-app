@@ -2,9 +2,16 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+    authRateLimits: defineTable({
+        identifier: v.string(),
+        count: v.number(),
+        windowStart: v.number(),
+    }).index("identifier", ["identifier"]),
+    
     authAccounts: defineTable({
         provider: v.string(),
         providerAccountId: v.string(),
+        secret: v.optional(v.string()),
         userId: v.id("users"),
         accessToken: v.optional(v.string()),
         refreshToken: v.optional(v.string()),
@@ -19,7 +26,7 @@ export default defineSchema({
     users: defineTable({
         name: v.optional(v.string()),
         image: v.optional(v.string()),
-        email: v.optional(v.string()),
+        email: v.string(),
         emailVerificationTime: v.optional(v.number()),
         phone: v.optional(v.string()),
         phoneVerificationTime: v.optional(v.number()),

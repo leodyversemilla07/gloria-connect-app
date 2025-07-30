@@ -24,7 +24,7 @@ export default function AboutPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-background text-foreground antialiased font-sans">
-            <Header language={language} messages={messages} setLanguage={setLanguage} />
+            <Header language={language} messages={messages} setLanguage={setLanguage} currentPath="/about" />
             <main className="flex-1 py-12 md:py-20">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">{messages.aboutTitle}</h1>

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ConvexClientProvider } from "../ConvexClientProvider";
 import Link from "next/link";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -23,18 +24,20 @@ export const metadata: Metadata = {
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <ConvexClientProvider>
-                    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-                        <div className="flex w-full max-w-sm flex-col gap-6">
-                            <Link href="/" className="flex flex-col items-center gap-2 self-center font-medium">
-                                <Logo className="size-16 mb-2" />
-                                <span className="text-xl font-bold text-foreground">Gloria Local Connect</span>
-                            </Link>
-                            {children}
+                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                        <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+                            <div className="flex w-full max-w-sm flex-col gap-6">
+                                <Link href="/" className="flex flex-col items-center gap-2 self-center font-medium">
+                                    <Logo className="size-16 mb-2" />
+                                    <span className="text-xl font-bold text-foreground">Gloria Local Connect</span>
+                                </Link>
+                                {children}
+                            </div>
                         </div>
-                    </div>
+                    </ThemeProvider>
                 </ConvexClientProvider>
             </body >
         </html >

@@ -1,5 +1,6 @@
 import Logo from "@/components/logo";
 import LanguageToggle from "@/components/language-toggle";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import Link from "next/link";
 import {
   NavigationMenu,
@@ -22,11 +23,14 @@ export default function Header({ language, messages, setLanguage, user, currentP
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
           <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start">
-            <Logo size={40} link="/" className="hidden lg:inline-block" />
-            <h1 className="text-xl font-bold text-foreground">Gloria Local Connect</h1>
+            <Link href="/" className="flex items-center space-x-2 group">
+              <Logo size={40} className="hidden lg:inline-block group-hover:scale-105 transition-transform" />
+              <span className="text-xl font-bold text-foreground group-hover:text-primary">Gloria Local Connect</span>
+            </Link>
           </div>
           <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-end">
             <LanguageToggle language={language} setLanguage={setLanguage} />
+            <ThemeToggle />
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>

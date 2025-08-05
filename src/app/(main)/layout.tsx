@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { ConvexClientProvider } from "../ConvexClientProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { I18nProvider } from "./i18n-provider";
 import enMessages from "../../../messages/en.json";
 import filMessages from "../../../messages/fil.json";
@@ -37,13 +38,13 @@ export default function RootLayout({
   const messages = language === "fil" ? filMessages : enMessages;
 
   return (
-    <html lang={language}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang={language} suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ConvexClientProvider>
           <I18nProvider language={language} messages={messages}>
-            {children}
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+              {children}
+            </ThemeProvider>
           </I18nProvider>
         </ConvexClientProvider>
       </body>

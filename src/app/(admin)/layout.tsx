@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -28,21 +29,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     };
 
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <ConvexClientProvider>
-                    <SidebarProvider
-                        style={customStyle as React.CSSProperties}>
-                        <AppSidebar variant="inset" collapsible="icon" />
-                        <SidebarInset>
-                            <SiteHeader />
-                            <div className="flex flex-1 flex-col">
-                                <div className="@container/main flex flex-1 flex-col gap-2">
-                                    {children}
+                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                        <SidebarProvider style={customStyle as React.CSSProperties}>
+                            <AppSidebar variant="inset" collapsible="icon" />
+                            <SidebarInset>
+                                <SiteHeader />
+                                <div className="flex flex-1 flex-col">
+                                    <div className="@container/main flex flex-1 flex-col gap-2">
+                                        {children}
+                                    </div>
                                 </div>
-                            </div>
-                        </SidebarInset>
-                    </SidebarProvider>
+                            </SidebarInset>
+                        </SidebarProvider>
+                    </ThemeProvider>
                 </ConvexClientProvider>
             </body>
         </html>

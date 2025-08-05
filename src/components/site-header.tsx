@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
 import { Globe } from "lucide-react"
+import { ThemeToggle } from "@/components/ui/ThemeToggle"
 import { useState } from "react"
 
 export function SiteHeader() {
@@ -27,16 +28,7 @@ export function SiteHeader() {
             <Globe className="h-4 w-4" />
             <span>{language === "en" ? "TL" : "EN"}</span>
           </Button>
-          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-            <a
-              href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
-              rel="noopener noreferrer"
-              target="_blank"
-              className="dark:text-foreground"
-            >
-              GitHub
-            </a>
-          </Button>
+          <ThemeToggle />
         </div>
       </div>
     </header>

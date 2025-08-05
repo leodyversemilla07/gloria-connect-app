@@ -28,9 +28,9 @@ export function BusinessCard({
 }: BusinessCardProps) {
     type Photo = NonNullable<Doc<"businesses">["photos"]>[number];
     return (
-        <Card className="overflow-hidden hover:shadow-lg transition-shadow bg-card flex flex-col h-full">
+        <Card className="overflow-hidden hover:shadow-lg transition-shadow bg-background text-foreground flex flex-col h-full">
             <CardHeader className="p-0 relative">
-                <div className="aspect-video relative w-full">
+                <div className="aspect-video relative w-full bg-card">
                     <Image
                         src={
                             business.photos?.find((p: Photo) => p.isPrimary)?.url ||

@@ -62,7 +62,10 @@ export default defineSchema({
 
     businesses: defineTable({
         businessId: v.optional(v.string()),
-        name: v.string(),
+        name: v.object({
+            english: v.string(),
+            tagalog: v.string(),
+        }),
         category: v.object({
             primary: v.string(),
             secondary: v.optional(v.array(v.string())),
@@ -80,7 +83,10 @@ export default defineSchema({
                 longitude: v.number(),
             }),
         }),
-        description: v.string(),
+        description: v.object({
+            english: v.string(),
+            tagalog: v.string(),
+        }),
         operatingHours: v.object({
             monday: v.object({ open: v.string(), close: v.string(), closed: v.boolean() }),
             tuesday: v.object({ open: v.string(), close: v.string(), closed: v.boolean() }),

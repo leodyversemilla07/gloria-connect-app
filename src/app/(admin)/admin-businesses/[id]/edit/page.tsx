@@ -54,11 +54,13 @@ export default function EditBusinessPage() {
     descriptionEnglish: string;
     descriptionTagalog: string;
     operatingHours: {
-      [day: string]: {
-        open: string;
-        close: string;
-        closed: boolean;
-      };
+      monday: { open: string; close: string; closed: boolean };
+      tuesday: { open: string; close: string; closed: boolean };
+      wednesday: { open: string; close: string; closed: boolean };
+      thursday: { open: string; close: string; closed: boolean };
+      friday: { open: string; close: string; closed: boolean };
+      saturday: { open: string; close: string; closed: boolean };
+      sunday: { open: string; close: string; closed: boolean };
     };
     photos: Array<{
       url: string;
@@ -458,15 +460,15 @@ export default function EditBusinessPage() {
                                 id={`${day}-from`}
                                 step="1"
                                 value={value.open}
-                                onChange={e =>
-                                  setForm({
-                                    ...form,
-                                    operatingHours: {
-                                      ...form.operatingHours,
-                                      [day]: { ...form.operatingHours[day], open: e.target.value }
-                                    }
-                                  })
-                                }
+                              onChange={e =>
+                                setForm({
+                                  ...form,
+                                  operatingHours: {
+                                    ...form.operatingHours,
+                                    [day as keyof typeof form.operatingHours]: { ...form.operatingHours[day as keyof typeof form.operatingHours], open: e.target.value }
+                                  }
+                                })
+                              }
                                 disabled={value.closed}
                                 className="bg-background appearance-none text-xs [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                               />
@@ -485,7 +487,7 @@ export default function EditBusinessPage() {
                                     ...form,
                                     operatingHours: {
                                       ...form.operatingHours,
-                                      [day]: { ...form.operatingHours[day], close: e.target.value }
+                                      [day as keyof typeof form.operatingHours]: { ...form.operatingHours[day as keyof typeof form.operatingHours], close: e.target.value }
                                     }
                                   })
                                 }
@@ -502,7 +504,7 @@ export default function EditBusinessPage() {
                                   ...form,
                                   operatingHours: {
                                     ...form.operatingHours,
-                                    [day]: { ...form.operatingHours[day], closed: !!checked }
+                                    [day as keyof typeof form.operatingHours]: { ...form.operatingHours[day as keyof typeof form.operatingHours], closed: !!checked }
                                   }
                                 })
                               }

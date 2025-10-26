@@ -57,8 +57,8 @@ export default function BusinessDetailPage() {
     );
   }
 
-  const getName = (b: Doc<"businesses">) => b.name || "";
-  const getDescription = (b: Doc<"businesses">) => b.description || "";
+  const getName = (b: Doc<"businesses">) => typeof b.name === 'string' ? b.name : b.name?.english || "";
+  const getDescription = (b: Doc<"businesses">) => typeof b.description === 'string' ? b.description : b.description?.english || "";
   const getCategory = (b: Doc<"businesses">) => b.category?.primary || "";
   const getPhotos = (b: Doc<"businesses">) => b.photos || [];
   const getSpecialties = (b: Doc<"businesses">) => b.category?.secondary || [];

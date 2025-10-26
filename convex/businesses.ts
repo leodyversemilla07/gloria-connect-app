@@ -23,7 +23,10 @@ export const update = mutation({
     args: {
         id: v.id("businesses"),
         businessId: v.optional(v.string()),
-        name: v.string(),
+        name: v.object({
+            english: v.string(),
+            tagalog: v.string(),
+        }),
         category: v.object({
             primary: v.string(),
             secondary: v.optional(v.array(v.string())),
@@ -41,7 +44,10 @@ export const update = mutation({
                 longitude: v.number(),
             }),
         }),
-        description: v.string(),
+        description: v.object({
+            english: v.string(),
+            tagalog: v.string(),
+        }),
         operatingHours: v.object({
             monday: v.object({ open: v.string(), close: v.string(), closed: v.boolean() }),
             tuesday: v.object({ open: v.string(), close: v.string(), closed: v.boolean() }),
@@ -58,7 +64,7 @@ export const update = mutation({
         }))),
         metadata: v.object({
             dateAdded: v.string(),
-            lastUpdated: v.string(),
+            lastUpdated: v.optional(v.string()),
             isVerified: v.boolean(),
             status: v.union(v.literal("active"), v.literal("inactive"), v.literal("pending")),
             target: v.optional(v.string()),

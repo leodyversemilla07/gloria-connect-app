@@ -51,8 +51,8 @@ export default function HomePage() {
 
   type Business = Doc<"businesses">;
   const categories = getCategoriesFromBusinesses(businesses, messages);
-  const getName = (business: Business) => business.name || "";
-  const getDescription = (business: Business) => business.description || "";
+  const getName = (business: Business) => typeof business.name === 'string' ? business.name : business.name?.english || "";
+  const getDescription = (business: Business) => typeof business.description === 'string' ? business.description : business.description?.english || "";
   const getCategory = (business: Business) => {
     const cat = categories.find((c) => c.id === business.category?.primary);
     return language === "en" ? cat?.name : cat?.nameTagalog;

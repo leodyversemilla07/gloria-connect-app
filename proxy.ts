@@ -8,7 +8,7 @@ const isProtectedRoute = createRouteMatcher([
   "/app/(admin)/dashboard/:path*",
 ]);
 
-export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
+export const proxy = convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
   // Language detection from URL
   const { nextUrl } = request;
   const pathname = nextUrl?.pathname || request.url;

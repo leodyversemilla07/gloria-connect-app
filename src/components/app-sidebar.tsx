@@ -9,7 +9,6 @@ import {
   IconFileAi,
   IconFileDescription,
   IconHelp,
-  IconInnerShadowTop,
   IconListDetails,
   IconReport,
   IconSearch,
@@ -17,7 +16,6 @@ import {
   IconUsers,
 } from "@tabler/icons-react"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -32,6 +30,8 @@ import {
 } from "@/components/ui/sidebar"
 import Logo from "./logo"
 import Link from "next/link"
+import { useQuery } from "convex/react"
+import { api } from "../../convex/_generated/api"
 
 const data = {
   user: {
@@ -39,107 +39,64 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: IconDashboard,
-    },
-    {
-      title: "Businesses",
-      url: "/admin-businesses",
-      icon: IconDatabase,
-    },
-    {
-      title: "Categories",
-      url: "/categories",
-      icon: IconListDetails,
-    },
-    {
-      title: "Analytics",
-      url: "/analytics",
-      icon: IconChartBar,
-    },
-    {
-      title: "Users",
-      url: "/users",
-      icon: IconUsers,
-    },
-    {
-      title: "Reports",
-      url: "/reports",
-      icon: IconReport,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { isAdmin } = useQuery(api.users.getIsAdmin, {}) ?? { isAdmin: false };
+
+  const navMain = [
+    ...(isAdmin ? [
+      {
+        title: "Dashboard",
+        url: "/admin/dashboard",
+        icon: IconDashboard,
+      },
+      {
+        title: "Businesses",
+        url: "/admin/businesses",
+        icon: IconDatabase,
+      },
+      {
+        title: "Categories",
+        url: "/admin/categories",
+        icon: IconListDetails,
+      },
+      {
+        title: "Analytics",
+        url: "/admin/analytics",
+        icon: IconChartBar,
+      },
+      {
+        title: "Users",
+        url: "/admin/users",
+        icon: IconUsers,
+      },
+      {
+        title: "Reports",
+        url: "/admin/reports",
+        icon: IconReport,
+      },
+    ] : []),
+  ];
+
+  const navSecondary = [
     {
       title: "Settings",
-      url: "/admin/settings",
+      url: "/dashboard", // Redirect to dashboard since settings page doesn't exist
       icon: IconSettings,
     },
     {
       title: "Help",
-      url: "/admin/help",
+      url: "/about", // Redirect to about page
       icon: IconHelp,
     },
     {
       title: "Search",
-      url: "/admin/search",
+      url: "/business", // Redirect to business search
       icon: IconSearch,
     },
-  ],
-  documents: [],
-}
+  ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -158,9 +115,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavMain items={navMain} />
+        <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

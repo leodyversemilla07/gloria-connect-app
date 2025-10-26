@@ -25,6 +25,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Convex auth requires server external packages
+  serverExternalPackages: ['@convex-dev/auth'],
 };
 
 export default nextConfig;

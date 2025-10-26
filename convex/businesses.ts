@@ -1,6 +1,7 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { requireAdmin } from "./auth-helpers";
 
 // Query to fetch all businesses
 export const get = query({
@@ -73,6 +74,9 @@ export const update = mutation({
         }),
     },
     handler: async (ctx, args) => {
+        // Require admin access for business updates
+        await requireAdmin(ctx);
+
         // Always update lastUpdated to now
         const now = new Date().toISOString();
         await ctx.db.patch(args.id, {

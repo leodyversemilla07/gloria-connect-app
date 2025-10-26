@@ -58,14 +58,18 @@ export default defineSchema({
         firstUsedTime: v.optional(v.float64()),
         consumed: v.optional(v.boolean()),
     })
-        .index("sessionIdAndParentRefreshTokenId", ["sessionId", "parentRefreshTokenId"]),
+        .index("sessionIdAndParentRefreshTokenId", ["sessionId", "parentRefreshTokenId"])
+        .index("sessionId", ["sessionId"]),
 
     businesses: defineTable({
         businessId: v.optional(v.string()),
-        name: v.object({
-            english: v.string(),
-            tagalog: v.string(),
-        }),
+        name: v.union(
+            v.string(),
+            v.object({
+                english: v.string(),
+                tagalog: v.string(),
+            })
+        ),
         category: v.object({
             primary: v.string(),
             secondary: v.optional(v.array(v.string())),
@@ -83,10 +87,13 @@ export default defineSchema({
                 longitude: v.number(),
             }),
         }),
-        description: v.object({
-            english: v.string(),
-            tagalog: v.string(),
-        }),
+        description: v.union(
+            v.string(),
+            v.object({
+                english: v.string(),
+                tagalog: v.string(),
+            })
+        ),
         operatingHours: v.object({
             monday: v.object({ open: v.string(), close: v.string(), closed: v.boolean() }),
             tuesday: v.object({ open: v.string(), close: v.string(), closed: v.boolean() }),

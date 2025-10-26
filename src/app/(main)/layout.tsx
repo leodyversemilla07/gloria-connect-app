@@ -38,16 +38,12 @@ export default function RootLayout({
   const messages = language === "fil" ? filMessages : enMessages;
 
   return (
-    <html lang={language} suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ConvexClientProvider>
-          <I18nProvider language={language} messages={messages}>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-              {children}
-            </ThemeProvider>
-          </I18nProvider>
-        </ConvexClientProvider>
-      </body>
-    </html>
+    <ConvexClientProvider>
+      <I18nProvider language={language} messages={messages}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
+      </I18nProvider>
+    </ConvexClientProvider>
   );
 }

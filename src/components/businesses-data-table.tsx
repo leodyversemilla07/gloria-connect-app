@@ -108,7 +108,7 @@ const columns: ColumnDef<Business>[] = [
                         <Eye className="w-4 h-4 mr-2" /> View
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href={`/admin-businesses/${row.original.id}/edit`}>
+                      <Link href={`/admin/businesses/${row.original.id}/edit`}>
                         <Pencil className="w-4 h-4 mr-2" /> Edit
                       </Link>
                     </DropdownMenuItem>

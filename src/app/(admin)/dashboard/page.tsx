@@ -30,9 +30,10 @@ export default function AdminDashboard() {
   } : { active: 0, pending: 0, inactive: 0 };
 
   // Calculate additional metrics
-  const activePercentage = totalBusinesses > 0 ? ((statusCounts.active / totalBusinesses) * 100).toFixed(1) : "0";
-  const pendingPercentage = totalBusinesses > 0 ? ((statusCounts.pending / totalBusinesses) * 100).toFixed(1) : "0";
-  const inactivePercentage = totalBusinesses > 0 ? ((statusCounts.inactive / totalBusinesses) * 100).toFixed(1) : "0";
+  const percentOfTotal = (value: number) => (totalBusinesses > 0 ? ((value / totalBusinesses) * 100).toFixed(1) : "0.0");
+  const activePercentage = percentOfTotal(statusCounts.active);
+  const pendingPercentage = percentOfTotal(statusCounts.pending);
+  const inactivePercentage = percentOfTotal(statusCounts.inactive);
 
   // Chart data for business status distribution
   const statusChartData = [
@@ -248,7 +249,7 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">{verifiedBusinesses}</div>
                 <p className="text-xs text-muted-foreground">
-                  {((verifiedBusinesses / totalBusinesses) * 100).toFixed(1)}% of total
+                  {percentOfTotal(verifiedBusinesses)}% of total
                 </p>
               </CardContent>
             </Card>

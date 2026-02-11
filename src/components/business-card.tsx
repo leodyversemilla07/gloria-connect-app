@@ -32,15 +32,12 @@ export function BusinessCard({
             <CardHeader className="p-0 relative">
                 <div className="aspect-video relative w-full bg-card">
                     <Image
-                        src={
-                            business.photos?.find((p: Photo) => p.isPrimary)?.url ||
-                            `https://placehold.co/300x170.png?text=${encodeURIComponent(getName(business) || 'Business')}`
-                        }
+                        src="/placeholder.svg"
                         alt={getName(business)}
                         width={300}
                         height={170}
                         className="w-full h-full object-cover"
-                        style={{ width: '100%', height: 'auto' }}
+                        style={{ width: "100%", height: "auto" }}
                         priority={idx < 3}
                     />
                     {idx < 3 && (

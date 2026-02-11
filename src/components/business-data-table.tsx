@@ -39,7 +39,6 @@ import {
   Building2,
   MapPin,
   Phone,
-  Star,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -49,15 +48,17 @@ import {
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious,   
+  PaginationPrevious,
 } from "@/components/ui/pagination";
 
 interface Business {
   _id: string;
-  name?: string | {
-    english?: string;
-    tagalog?: string;
-  };
+  name?:
+    | string
+    | {
+        english?: string;
+        tagalog?: string;
+      };
   category?: {
     primary?: string;
   };
@@ -70,9 +71,11 @@ interface Business {
   };
   contact?: {
     phone?: string;
-    address?: string;
   };
-  rating?: number;
+  address?: {
+    street?: string;
+    barangay?: string;
+  };
 }
 
 interface BusinessDataTableProps {
@@ -88,13 +91,19 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
 
   // Filter data based on search and filters
   const filteredData = data.filter((business) => {
-    const businessName = typeof business.name === 'string'
-      ? business.name
-      : business.name?.english || business.name?.tagalog || "";
-    const matchesSearch = businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         business.category?.primary?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || business.metadata?.status === statusFilter;
-    const matchesCategory = categoryFilter === "all" || business.category?.primary === categoryFilter;
+    const businessName =
+      typeof business.name === "string"
+        ? business.name
+        : business.name?.english || business.name?.tagalog || "";
+    const matchesSearch =
+      businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (business.category?.primary ?? "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || business.metadata?.status === statusFilter;
+    const matchesCategory =
+      categoryFilter === "all" || business.category?.primary === categoryFilter;
 
     return matchesSearch && matchesStatus && matchesCategory;
   });
@@ -105,14 +114,24 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
   const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
 
   // Get unique categories for filter
-  const categories = Array.from(new Set(data.map(b => b.category?.primary).filter(Boolean)));
+  const categories = Array.from(
+    new Set(data.map((b) => b.category?.primary).filter(Boolean))
+  );
 
   const getStatusBadge = (status?: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>;
+        return (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+            Active
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>;
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+            Pending
+          </Badge>
+        );
       case "inactive":
         return <Badge variant="secondary">Inactive</Badge>;
       default:
@@ -191,105 +210,106 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                 <TableHead className="font-semibold">Category</TableHead>
                 <TableHead className="font-semibold">Status</TableHead>
                 <TableHead className="font-semibold">Contact</TableHead>
-                <TableHead className="font-semibold">Rating</TableHead>
                 <TableHead className="font-semibold text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {paginatedData.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                     No businesses found matching your criteria.
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedData.map((business) => (
-                  <TableRow key={business._id} className="hover:bg-muted/30 transition-colors">
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="font-medium text-foreground">
-                          {typeof business.name === 'string'
-                            ? business.name
-                            : business.name?.english || business.name?.tagalog || "Unnamed Business"}
-                        </span>
-                        {business.metadata?.isVerified && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            <span className="text-xs text-green-600 font-medium">Verified</span>
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
+                paginatedData.map((business) => {
+                  const addressText = [
+                    business.address?.street,
+                    business.address?.barangay,
+                  ]
+                    .filter(Boolean)
+                    .join(", ");
 
-                    <TableCell>
-                      <Badge variant="outline" className="text-xs">
-                        {business.category?.primary || "Uncategorized"}
-                      </Badge>
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(business.metadata?.status)}
-                        {getStatusBadge(business.metadata?.status)}
-                      </div>
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="flex flex-col text-sm text-muted-foreground">
-                        {business.contact?.phone && (
-                          <div className="flex items-center gap-1">
-                            <Phone className="h-3 w-3" />
-                            <span>{business.contact.phone}</span>
-                          </div>
-                        )}
-                        {business.contact?.address && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <MapPin className="h-3 w-3" />
-                            <span className="truncate max-w-32" title={business.contact.address}>
-                              {business.contact.address}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-
-                    <TableCell>
-                      {business.rating ? (
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium">{business.rating.toFixed(1)}</span>
+                  return (
+                    <TableRow key={business._id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-medium text-foreground">
+                            {typeof business.name === "string"
+                              ? business.name
+                              : business.name?.english ||
+                                business.name?.tagalog ||
+                                "Unnamed Business"}
+                          </span>
+                          {business.metadata?.isVerified && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <CheckCircle className="h-3 w-3 text-green-600" />
+                              <span className="text-xs text-green-600 font-medium">
+                                Verified
+                              </span>
+                            </div>
+                          )}
                         </div>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">No rating</span>
-                      )}
-                    </TableCell>
+                      </TableCell>
 
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Business
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
+                      <TableCell>
+                        <Badge variant="outline" className="text-xs">
+                          {business.category?.primary || "Uncategorized"}
+                        </Badge>
+                      </TableCell>
+
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(business.metadata?.status)}
+                          {getStatusBadge(business.metadata?.status)}
+                        </div>
+                      </TableCell>
+
+                      <TableCell>
+                        <div className="flex flex-col text-sm text-muted-foreground">
+                          {business.contact?.phone && (
+                            <div className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              <span>{business.contact.phone}</span>
+                            </div>
+                          )}
+                          {addressText && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <MapPin className="h-3 w-3" />
+                              <span className="truncate max-w-32" title={addressText}>
+                                {addressText}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                              <Eye className="h-4 w-4 mr-2" />
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit Business
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-red-600">
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>
@@ -303,7 +323,9 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                 <PaginationItem>
                   <PaginationPrevious
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    className={
+                      currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
+                    }
                   />
                 </PaginationItem>
 
@@ -342,7 +364,9 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                 <PaginationItem>
                   <PaginationNext
                     onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    className={
+                      currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"
+                    }
                   />
                 </PaginationItem>
               </PaginationContent>

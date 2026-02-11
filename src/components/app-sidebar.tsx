@@ -82,7 +82,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navSecondary = [
     {
       title: "Settings",
-      url: "/dashboard", // Redirect to dashboard since settings page doesn't exist
+      url: "/admin/dashboard", // Redirect to admin dashboard since settings page doesn't exist
       icon: IconSettings,
     },
     {

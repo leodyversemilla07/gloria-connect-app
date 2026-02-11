@@ -33,7 +33,7 @@ export default function Footer({ language, messages }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/businesses" className="hover:text-foreground">
+                <Link href="/business" className="hover:text-foreground">
                   {messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo")}
                 </Link>
               </li>

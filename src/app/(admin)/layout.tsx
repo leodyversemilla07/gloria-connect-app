@@ -1,12 +1,12 @@
 import "../globals.css";
-import { ConvexClientProvider } from "../ConvexClientProvider";
+import { ConvexClientProvider } from "../convex-client-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { AdminGuard } from "@/components/AdminGuard";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AdminGuard } from "@/components/admin-guard";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",

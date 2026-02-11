@@ -1,6 +1,6 @@
 import Logo from "@/components/logo";
 import LanguageToggle from "@/components/language-toggle";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
@@ -54,7 +54,7 @@ export default function Header({ language, messages, setLanguage, user, currentP
                 {user ? (
                   <NavigationMenuItem>
                     <Button asChild variant="default" size="sm">
-                      <Link href="/dashboard">
+                      <Link href="/admin/dashboard">
                         {messages["dashboard"] || (language === "en" ? "Dashboard" : "Dashboard")}
                       </Link>
                     </Button>

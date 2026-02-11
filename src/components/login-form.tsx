@@ -17,7 +17,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useForm } from "@tanstack/react-form"
-import { z } from "zod";
+import { loginSchema, emailSchema, loginPasswordSchema, formatZodErrors } from "@/lib/schemas";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
@@ -33,27 +33,22 @@ export function LoginForm({
   React.useEffect(() => {
     // If currentUser is not null, user is authenticated
     if (currentUser) {
-      router.push("/dashboard");
+      router.push("/admin/dashboard");
     }
   }, [currentUser, router]);
-  const formSchema = z.object({
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  });
-
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
     validators: {
-      onSubmit: formSchema,
+      onSubmit: loginSchema,
     },
     onSubmit: async ({ value }) => {
       setError(null);
       try {
         await signIn("password", { ...value, flow: "signIn" });
-        router.push("/dashboard");
+        router.push("/admin/dashboard");
       } catch (err: unknown) {
         if (isErrorWithMessage(err)) {
           setError(err.message);
@@ -87,7 +82,7 @@ export function LoginForm({
               <form.Field
                 name="email"
                 validators={{
-                  onChange: z.string().email("Invalid email address"),
+                  onChange: emailSchema,
                 }}
                 children={(field) => (
                   <Field>
@@ -100,7 +95,7 @@ export function LoginForm({
                       onChange={(e) => field.handleChange(e.target.value)}
                       required
                     />
-                    <FieldError>{field.state.meta.errors?.length ? field.state.meta.errors.map(err => typeof err === 'string' ? err : err?.message || 'Invalid input').join(', ') : ''}</FieldError>
+                    <FieldError>{formatZodErrors(field.state.meta.errors)}</FieldError>
                   </Field>
                 )}
               />
@@ -108,7 +103,7 @@ export function LoginForm({
               <form.Field
                 name="password"
                 validators={{
-                  onChange: z.string().min(6, "Password must be at least 6 characters"),
+                  onChange: loginPasswordSchema,
                 }}
                 children={(field) => (
                   <Field>
@@ -138,9 +133,9 @@ export function LoginForm({
                         aria-label={showPassword ? "Hide password" : "Show password"}
                       >
                         {showPassword ? <IconEyeOff className="size-5" /> : <IconEye className="size-5" />}
-                        </button>
+                      </button>
                     </div>
-                    <FieldError>{field.state.meta.errors?.length ? field.state.meta.errors.map(err => typeof err === 'string' ? err : err?.message || 'Invalid input').join(', ') : ''}</FieldError>
+                    <FieldError>{formatZodErrors(field.state.meta.errors)}</FieldError>
                   </Field>
                 )}
               />

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { ConvexClientProvider } from "../ConvexClientProvider";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { ConvexClientProvider } from "../convex-client-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "./i18n-provider";
 import enMessages from "../../../messages/en.json";
 import filMessages from "../../../messages/fil.json";
@@ -27,14 +27,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Detect language from URL (server-side)
-  let language = "en";
-  if (typeof window !== "undefined") {
-    const pathLang = window.location.pathname.split("/")[1];
-    if (["en", "fil"].includes(pathLang)) {
-      language = pathLang;
-    }
-  }
+  const language = "en";
   const messages = language === "fil" ? filMessages : enMessages;
 
   return (

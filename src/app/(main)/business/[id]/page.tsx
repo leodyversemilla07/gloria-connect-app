@@ -118,12 +118,12 @@ export default function BusinessDetailPage() {
         <div className="bg-card rounded-lg shadow-sm overflow-hidden mb-8">
           <div className="aspect-video relative">
             <Image
-              src={getPhotos(business)[selectedImage]?.url || "/placeholder.svg"}
+              src="/placeholder.svg"
               alt={getName(business)}
               width={800}
               height={450}
               className="w-full h-full object-cover"
-              style={{ width: '100%', height: 'auto' }}
+              style={{ width: "100%", height: "auto" }}
               priority={true}
             />
           </div>
@@ -192,15 +192,12 @@ export default function BusinessDetailPage() {
                       className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${selectedImage === index ? "border-primary" : "border-muted"}`}
                     >
                       <Image
-                        src={
-                          photo.url ||
-                          `https://placehold.co/300x170.png?text=${encodeURIComponent(getName(business) || 'Business')}`
-                        }
+                        src="/placeholder.svg"
                         alt={`${getName(business)} ${index + 1}`}
                         width={200}
                         height={200}
                         className="w-full h-full object-cover"
-                        style={{ width: '100%', height: 'auto' }}
+                        style={{ width: "100%", height: "auto" }}
                       />
                     </button>
                   ))}

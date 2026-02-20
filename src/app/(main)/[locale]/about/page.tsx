@@ -1,8 +1,4 @@
-"use client";
-
-import Header from "@/components/header";
-import Footer from "@/components/footer";
-import { useI18n } from "../i18n-provider";
+export { default } from "@/app/(main)/about/page";
 
 export default function AboutPage() {
     const { language, messages, setLanguage } = useI18n();

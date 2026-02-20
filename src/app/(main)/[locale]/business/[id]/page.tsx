@@ -1,32 +1,4 @@
-"use client"
-
-import { useState } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import type { Doc, Id } from "@/convex/_generated/dataModel";
-import { useI18n } from "../../i18n-provider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
-import {
-  ArrowLeft,
-  MapPin,
-  Phone,
-  Clock,
-  Globe,
-  Share2,
-  Navigation,
-  Mail,
-  Tag,
-  CheckCircle,
-  Calendar,
-} from "lucide-react";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
+export { default } from "@/app/(main)/business/[id]/page";
 
 export default function BusinessDetailPage() {
   const params = useParams();

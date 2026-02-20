@@ -1,18 +1,4 @@
-"use client"
-
-import { useState } from "react";
-import Link from "next/link";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import type { Doc } from "@/convex/_generated/dataModel";
-import { Search, ArrowLeft } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import BusinessCard from "@/components/business-card";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
-import { useI18n } from "../i18n-provider";
+export { default } from "@/app/(main)/business/page";
 
 function getCategoriesFromBusinesses(businesses: Doc<"businesses">[], messages: Record<string, string>) {
   const set = new Set<string>();

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
+import { saveLanguagePreference, getLanguagePreference } from "@/utils/i18n-storage";
 
 export type Messages = Record<string, string>;
 
@@ -30,7 +31,18 @@ async function loadMessages(lang: string): Promise<Messages> {
 export function I18nProvider({ language: initialLanguage, messages: initialMessages, children }: { language: string; messages: Messages; children: React.ReactNode }) {
     const [language, setLanguage] = useState(initialLanguage);
     const [messages, setMessages] = useState(initialMessages);
+    const [isHydrated, setIsHydrated] = useState(false);
 
+    // Load saved language preference and messages on client-side mount
+    useEffect(() => {
+        const savedLanguage = getLanguagePreference();
+        if (savedLanguage && savedLanguage !== language) {
+            setLanguage(savedLanguage);
+        }
+        setIsHydrated(true);
+    }, []);
+
+    // Load messages when language changes
     useEffect(() => {
         let mounted = true;
         loadMessages(language).then((msgs) => {
@@ -38,6 +50,13 @@ export function I18nProvider({ language: initialLanguage, messages: initialMessa
         });
         return () => { mounted = false; };
     }, [language]);
+
+    // Save language preference whenever it changes (only after hydration)
+    useEffect(() => {
+        if (isHydrated) {
+            saveLanguagePreference(language);
+        }
+    }, [language, isHydrated]);
 
     return (
         <I18nContext.Provider value={{ language, messages, setLanguage }}>

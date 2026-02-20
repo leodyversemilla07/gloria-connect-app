@@ -24,7 +24,7 @@ export default function Header({ language, messages, setLanguage, user, currentP
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
           <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start">
-            <Link href="/" className="flex items-center space-x-2 group">
+            <Link href={`/${language}`} className="flex items-center space-x-2 group">
               <Logo size={40} className="hidden lg:inline-block group-hover:scale-105 transition-transform" />
               <span className="text-xl font-bold text-foreground group-hover:text-primary">Gloria Local Connect</span>
             </Link>
@@ -36,17 +36,17 @@ export default function Header({ language, messages, setLanguage, user, currentP
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/" className={currentPath === "/" ? "text-primary font-bold" : ""}>{messages["home"] || (language === "en" ? "Home" : "Tahanan")}</Link>
+                    <Link href={`/${language}`} className={currentPath === "/" ? "text-primary font-bold" : ""}>{messages["home"] || (language === "en" ? "Home" : "Tahanan")}</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/business" className={currentPath === "/business" ? "text-primary font-bold" : ""}>{messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo")}</Link>
+                    <Link href={`/${language}/business`} className={currentPath === "/business" ? "text-primary font-bold" : ""}>{messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo")}</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/about" className={currentPath === "/about" ? "text-primary font-bold" : ""}>{messages["about"] || (language === "en" ? "About" : "Tungkol")}</Link>
+                    <Link href={`/${language}/about`} className={currentPath === "/about" ? "text-primary font-bold" : ""}>{messages["about"] || (language === "en" ? "About" : "Tungkol")}</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <div className="mx-2 border-l h-6 self-center" />
@@ -54,7 +54,7 @@ export default function Header({ language, messages, setLanguage, user, currentP
                 {user ? (
                   <NavigationMenuItem>
                     <Button asChild variant="default" size="sm">
-                      <Link href="/admin/dashboard">
+                      <Link href={`/${language}/admin/dashboard`}>
                         {messages["dashboard"] || (language === "en" ? "Dashboard" : "Dashboard")}
                       </Link>
                     </Button>
@@ -63,12 +63,12 @@ export default function Header({ language, messages, setLanguage, user, currentP
                   <>
                     <NavigationMenuItem>
                       <NavigationMenuLink asChild>
-                        <Link href="/login" className={currentPath === "/login" ? "text-primary font-bold" : "font-semibold text-primary"}>{messages["login"] || (language === "en" ? "Login" : "Mag-login")}</Link>
+                        <Link href={`/${language}/login`} className={currentPath === "/login" ? "text-primary font-bold" : "font-semibold text-primary"}>{messages["login"] || (language === "en" ? "Login" : "Mag-login")}</Link>
                       </NavigationMenuLink>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
                       <NavigationMenuLink asChild>
-                        <Link href="/register" className={currentPath === "/register" ? "text-primary font-bold" : "font-semibold text-primary"}>{messages["register"] || (language === "en" ? "Register" : "Magrehistro")}</Link>
+                        <Link href={`/${language}/register`} className={currentPath === "/register" ? "text-primary font-bold" : "font-semibold text-primary"}>{messages["register"] || (language === "en" ? "Register" : "Magrehistro")}</Link>
                       </NavigationMenuLink>
                     </NavigationMenuItem>
                   </>

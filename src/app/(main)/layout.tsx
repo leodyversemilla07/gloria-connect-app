@@ -5,7 +5,6 @@ import { ConvexClientProvider } from "../convex-client-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "./i18n-provider";
 import enMessages from "../../../messages/en.json";
-import filMessages from "../../../messages/fil.json";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +33,9 @@ export default function RootLayout({
     <ConvexClientProvider>
       <I18nProvider language={language} messages={messages}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
+          <div className={`${geistSans.variable} ${geistMono.variable}`}>
+            {children}
+          </div>
         </ThemeProvider>
       </I18nProvider>
     </ConvexClientProvider>

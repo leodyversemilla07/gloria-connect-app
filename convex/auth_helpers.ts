@@ -25,13 +25,14 @@ export async function requireAdmin(ctx: Ctx) {
     throw new ConvexError("Authentication required");
   }
 
-  if (!identity.email) {
+  const email = identity.email;
+  if (!email) {
     throw new ConvexError("Email required for authorization");
   }
 
   const user = await ctx.db
     .query("users")
-    .withIndex("email", (q) => q.eq("email", identity.email))
+    .withIndex("email", (q) => q.eq("email", email))
     .first();
 
   if (!user) {
@@ -67,13 +68,14 @@ export async function requireAuth(ctx: Ctx) {
 export async function getCurrentUserRole(ctx: Ctx): Promise<UserRole | null> {
   try {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity?.email) {
+    const email = identity?.email;
+    if (!email) {
       return null;
     }
 
     const user = await ctx.db
       .query("users")
-      .withIndex("email", (q) => q.eq("email", identity.email))
+      .withIndex("email", (q) => q.eq("email", email))
       .first();
 
     return user?.isAdmin ? UserRole.ADMIN : UserRole.USER;

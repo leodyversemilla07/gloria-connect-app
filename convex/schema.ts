@@ -34,6 +34,11 @@ export default defineSchema({
         isAdmin: v.optional(v.boolean()),
     }).index("email", ["email"]),
 
+    authSessions: defineTable({
+        userId: v.id("users"),
+        expirationTime: v.number(),
+    }).index("userId", ["userId"]),
+
     authVerificationCodes: defineTable({
         accountId: v.optional(v.id("authAccounts")),
         userId: v.optional(v.id("users")),

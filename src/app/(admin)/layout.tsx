@@ -35,9 +35,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <SidebarProvider style={customStyle as React.CSSProperties}>
                     <AppSidebar variant="inset" collapsible="icon" />
                     <SidebarInset>
-                        <SiteHeader />
+                        <div className={`${geistSans.variable} ${geistMono.variable}`}>
+                            <SiteHeader />
+                        </div>
                         <div className="flex flex-1 flex-col">
-                            <div className="@container/main flex flex-1 flex-col gap-2">
+                            <div className={`@container/main flex flex-1 flex-col gap-2 ${geistSans.variable} ${geistMono.variable}`}>
                                 <AdminGuard>
                                     {children}
                                 </AdminGuard>

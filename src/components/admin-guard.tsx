@@ -21,7 +21,7 @@ interface AdminGuardProps {
 export function AdminGuard({
   children,
   fallback,
-  redirectTo = "/login",
+  redirectTo = "/",
 }: AdminGuardProps) {
   const router = useRouter();
 

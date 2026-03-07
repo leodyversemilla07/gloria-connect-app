@@ -26,7 +26,6 @@ export function BusinessCard({
     getTodayHours,
     text,
 }: BusinessCardProps) {
-    type Photo = NonNullable<Doc<"businesses">["photos"]>[number];
     return (
         <Card className="overflow-hidden hover:shadow-lg transition-shadow bg-background text-foreground flex flex-col h-full">
             <CardHeader className="p-0 relative">

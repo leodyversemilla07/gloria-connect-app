@@ -15,7 +15,7 @@ export default function AdminBusinessesPage() {
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">All Businesses</h1>
             <Button asChild size="lg" className="bg-primary text-primary-foreground">
-              <Link href="/admin/businesses/add">+ Add New Business</Link>
+              <Link href="/businesses/add">+ Add New Business</Link>
             </Button>
           </div>
           <BusinessDataTable data={businesses ?? []} />

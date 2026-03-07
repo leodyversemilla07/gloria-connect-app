@@ -175,6 +175,7 @@ export function BusinessesDataTable({ data, onView, onEdit, onDelete }: Business
     return col;
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: data || [],
     columns: actionColumns,

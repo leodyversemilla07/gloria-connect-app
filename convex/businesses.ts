@@ -178,3 +178,18 @@ export const create = mutation({
         return { success: true };
     },
 });
+
+export const remove = mutation({
+    args: { id: v.id("businesses") },
+    handler: async (ctx, args) => {
+        await requireAdmin(ctx);
+
+        const business = await ctx.db.get(args.id);
+        if (!business) {
+            throw new Error("Business not found");
+        }
+
+        await ctx.db.delete(args.id);
+        return { success: true };
+    },
+});

@@ -209,7 +209,7 @@ export default function AdminDashboard() {
             </div>
             <div className="ml-auto flex items-center space-x-4">
               <Button asChild size="sm" className="bg-primary text-primary-foreground">
-                <Link href="/admin/businesses/add">
+                <Link href="/businesses/add">
                   <Plus className="h-4 w-4 mr-2" />
                   {text[language].addBusiness}
                 </Link>
@@ -408,19 +408,19 @@ export default function AdminDashboard() {
             <CardContent>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="outline">
-                <Link href="/admin/businesses">
+                <Link href="/businesses">
                   <Eye className="h-4 w-4 mr-2" />
                   View All Businesses
                 </Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href="/admin/analytics">
+                <Link href="/analytics">
                   <TrendingUp className="h-4 w-4 mr-2" />
                   View Analytics
                 </Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href="/admin/users">
+                <Link href="/users">
                   <Users className="h-4 w-4 mr-2" />
                   Manage Users
                 </Link>

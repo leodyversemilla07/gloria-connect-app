@@ -21,40 +21,7 @@ export default function AddBusinessPage() {
 
   const createBusiness = useMutation(api.businesses.create);
 
-  type FormState = {
-    nameEnglish: string;
-    nameTagalog: string;
-    categoryPrimary: string;
-    categorySecondary: string[];
-    phone: string;
-    email: string;
-    website: string;
-    addressStreet: string;
-    addressBarangay: string;
-    addressLatitude: string;
-    addressLongitude: string;
-    descriptionEnglish: string;
-    descriptionTagalog: string;
-    operatingHours: {
-      monday: { open: string; close: string; closed: boolean };
-      tuesday: { open: string; close: string; closed: boolean };
-      wednesday: { open: string; close: string; closed: boolean };
-      thursday: { open: string; close: string; closed: boolean };
-      friday: { open: string; close: string; closed: boolean };
-      saturday: { open: string; close: string; closed: boolean };
-      sunday: { open: string; close: string; closed: boolean };
-    };
-    photos: Array<{
-      url: string;
-      alt: string;
-      isPrimary: boolean;
-    }>;
-    isVerified: boolean;
-    status: string;
-  };
-
   const [form, setForm] = React.useState<BusinessFormData | null>(null);
-  const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
     setForm({
@@ -125,15 +92,10 @@ export default function AddBusinessPage() {
     // Validate with Zod before submit
     const result = businessFormSchema.safeParse(form);
     if (!result.success) {
-      const errors: Record<string, string> = {};
-      result.error.issues.forEach((issue) => {
-        const path = issue.path.join(".");
-        errors[path] = issue.message;
-      });
-      setValidationErrors(errors);
+      const firstIssue = result.error.issues[0];
+      handleConvexError(firstIssue?.message ?? "Invalid business form data", "Validation failed");
       return;
     }
-    setValidationErrors({});
 
     const newBusiness = {
       name: {
@@ -170,7 +132,7 @@ export default function AddBusinessPage() {
     };
     try {
       await createBusiness(newBusiness);
-      router.push("/admin/businesses");
+      router.push("/businesses");
     } catch (err) {
       handleConvexError(err, "Failed to create business");
     }

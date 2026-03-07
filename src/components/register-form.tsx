@@ -30,12 +30,16 @@ export function RegisterForm({
   const { signIn } = useAuthActions();
   const router = useRouter();
   const currentUser = useQuery(api.users.getCurrentUser);
+  const adminStatus = useQuery(api.users.getIsAdmin, {});
+
   React.useEffect(() => {
-    // If currentUser is not null, user is authenticated
-    if (currentUser) {
-      router.push("/admin/dashboard");
+    if (!currentUser || adminStatus === undefined) {
+      return;
     }
-  }, [currentUser, router]);
+
+    router.push(adminStatus.isAdmin ? "/dashboard" : "/");
+  }, [adminStatus, currentUser, router]);
+
   const form = useForm({
     defaultValues: {
       name: "",
@@ -49,7 +53,6 @@ export function RegisterForm({
       setError(null);
       try {
         await signIn("password", { ...value, flow: "signUp" });
-        router.push("/admin/dashboard");
       } catch (err: unknown) {
         if (isErrorWithMessage(err)) {
           setError(err.message);

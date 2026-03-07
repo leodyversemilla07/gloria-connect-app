@@ -174,7 +174,7 @@ export default function EditBusinessPage() {
     };
     try {
       await updateBusiness({ id: id as Id<"businesses">, ...updatedBusiness });
-      router.push("/admin/businesses");
+      router.push("/businesses");
     } catch (err) {
       handleConvexError(err, "Failed to update business");
     }

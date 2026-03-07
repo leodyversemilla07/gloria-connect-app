@@ -2,12 +2,9 @@
 
 import * as React from "react"
 import {
-  IconCamera,
   IconChartBar,
   IconDashboard,
   IconDatabase,
-  IconFileAi,
-  IconFileDescription,
   IconHelp,
   IconListDetails,
   IconReport,
@@ -48,32 +45,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ...(isAdmin ? [
       {
         title: "Dashboard",
-        url: "/admin/dashboard",
+        url: "/dashboard",
         icon: IconDashboard,
       },
       {
         title: "Businesses",
-        url: "/admin/businesses",
+        url: "/businesses",
         icon: IconDatabase,
       },
       {
         title: "Categories",
-        url: "/admin/categories",
+        url: "/categories",
         icon: IconListDetails,
       },
       {
         title: "Analytics",
-        url: "/admin/analytics",
+        url: "/analytics",
         icon: IconChartBar,
       },
       {
         title: "Users",
-        url: "/admin/users",
+        url: "/users",
         icon: IconUsers,
       },
       {
         title: "Reports",
-        url: "/admin/reports",
+        url: "/reports",
         icon: IconReport,
       },
     ] : []),
@@ -82,7 +79,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navSecondary = [
     {
       title: "Settings",
-      url: "/admin/dashboard", // Redirect to admin dashboard since settings page doesn't exist
+      url: "/dashboard", // Redirect to admin dashboard since settings page doesn't exist
       icon: IconSettings,
     },
     {

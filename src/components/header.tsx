@@ -54,7 +54,7 @@ export default function Header({ language, messages, setLanguage, user, currentP
                 {user ? (
                   <NavigationMenuItem>
                     <Button asChild variant="default" size="sm">
-                      <Link href="/admin/dashboard">
+                      <Link href="/dashboard">
                         {messages["dashboard"] || (language === "en" ? "Dashboard" : "Dashboard")}
                       </Link>
                     </Button>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
@@ -26,6 +27,11 @@ import {
   CheckCircle,
   Calendar,
 } from "lucide-react";
+
+const BusinessLocationMap = dynamic(
+  () => import("@/components/business-location-map"),
+  { ssr: false }
+);
 
 export default function BusinessDetailPage() {
   const params = useParams();
@@ -341,20 +347,30 @@ export default function BusinessDetailPage() {
               </CardContent>
             </Card>
 
-            {/* Map */}
+{/* Map */}
             <Card>
               <CardContent className="p-6">
                 <h2 className="text-xl font-semibold text-foreground mb-4">{messages["location"] || "Location"}</h2>
-                <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground mb-3">Interactive Map</p>
-                    <Button size="sm" onClick={handleGetDirections}>
-                      <Navigation className="h-4 w-4 mr-2" />
-                      {messages["getDirections"] || "Get Directions"}
-                    </Button>
+                {business.address?.coordinates?.latitude && business.address?.coordinates?.longitude ? (
+                  <div className="aspect-square rounded-lg overflow-hidden">
+                    <BusinessLocationMap
+                      latitude={business.address.coordinates.latitude}
+                      longitude={business.address.coordinates.longitude}
+                      label={getName(business)}
+                    />
                   </div>
-                </div>
+                ) : (
+                  <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
+                    <div className="text-center">
+                      <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground mb-3">No location available</p>
+                    </div>
+                  </div>
+                )}
+                <Button className="w-full mt-4" onClick={handleGetDirections}>
+                  <Navigation className="h-4 w-4 mr-2" />
+                  {messages["getDirections"] || "Get Directions"}
+                </Button>
               </CardContent>
             </Card>
           </div>

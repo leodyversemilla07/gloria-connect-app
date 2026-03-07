@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useMutation } from "convex/react";
 import {
   Table,
   TableBody,
@@ -27,6 +29,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   MoreHorizontal,
   Search,
   Filter,
@@ -50,6 +62,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { toast } from "sonner";
+import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
+import { handleConvexError } from "@/hooks/use-convex-error";
 
 interface Business {
   _id: string;
@@ -88,6 +104,9 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
+  const [businessToDelete, setBusinessToDelete] = useState<Business | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const deleteBusiness = useMutation(api.businesses.remove);
 
   // Filter data based on search and filters
   const filteredData = data.filter((business) => {
@@ -152,228 +171,288 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!businessToDelete) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      await deleteBusiness({ id: businessToDelete._id as Id<"businesses"> });
+      toast.success("Business deleted successfully.");
+      setBusinessToDelete(null);
+    } catch (error) {
+      handleConvexError(error, "Failed to delete business");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Building2 className="h-5 w-5" />
-          Business Directory
-        </CardTitle>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="h-5 w-5" />
+            Business Directory
+          </CardTitle>
 
-        {/* Filters and Search */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search businesses..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+          <div className="flex flex-col sm:flex-row gap-4 mt-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search businesses..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-40">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-full sm:w-40">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category!}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+        </CardHeader>
 
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-40">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-full sm:w-40">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category!}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </CardHeader>
-
-      <CardContent>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50">
-                <TableHead className="font-semibold">Business</TableHead>
-                <TableHead className="font-semibold">Category</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="font-semibold">Contact</TableHead>
-                <TableHead className="font-semibold text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedData.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                    No businesses found matching your criteria.
-                  </TableCell>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="font-semibold">Business</TableHead>
+                  <TableHead className="font-semibold">Category</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Contact</TableHead>
+                  <TableHead className="font-semibold text-right">Actions</TableHead>
                 </TableRow>
-              ) : (
-                paginatedData.map((business) => {
-                  const addressText = [
-                    business.address?.street,
-                    business.address?.barangay,
-                  ]
-                    .filter(Boolean)
-                    .join(", ");
+              </TableHeader>
+              <TableBody>
+                {paginatedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      No businesses found matching your criteria.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedData.map((business) => {
+                    const addressText = [
+                      business.address?.street,
+                      business.address?.barangay,
+                    ]
+                      .filter(Boolean)
+                      .join(", ");
 
-                  return (
-                    <TableRow key={business._id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-medium text-foreground">
-                            {typeof business.name === "string"
-                              ? business.name
-                              : business.name?.english ||
-                                business.name?.tagalog ||
-                                "Unnamed Business"}
-                          </span>
-                          {business.metadata?.isVerified && (
-                            <div className="flex items-center gap-1 mt-1">
-                              <CheckCircle className="h-3 w-3 text-green-600" />
-                              <span className="text-xs text-green-600 font-medium">
-                                Verified
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </TableCell>
+                    return (
+                      <TableRow key={business._id} className="hover:bg-muted/30 transition-colors">
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-foreground">
+                              {typeof business.name === "string"
+                                ? business.name
+                                : business.name?.english ||
+                                  business.name?.tagalog ||
+                                  "Unnamed Business"}
+                            </span>
+                            {business.metadata?.isVerified && (
+                              <div className="flex items-center gap-1 mt-1">
+                                <CheckCircle className="h-3 w-3 text-green-600" />
+                                <span className="text-xs text-green-600 font-medium">
+                                  Verified
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
 
-                      <TableCell>
-                        <Badge variant="outline" className="text-xs">
-                          {business.category?.primary || "Uncategorized"}
-                        </Badge>
-                      </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-xs">
+                            {business.category?.primary || "Uncategorized"}
+                          </Badge>
+                        </TableCell>
 
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(business.metadata?.status)}
-                          {getStatusBadge(business.metadata?.status)}
-                        </div>
-                      </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(business.metadata?.status)}
+                            {getStatusBadge(business.metadata?.status)}
+                          </div>
+                        </TableCell>
 
-                      <TableCell>
-                        <div className="flex flex-col text-sm text-muted-foreground">
-                          {business.contact?.phone && (
-                            <div className="flex items-center gap-1">
-                              <Phone className="h-3 w-3" />
-                              <span>{business.contact.phone}</span>
-                            </div>
-                          )}
-                          {addressText && (
-                            <div className="flex items-center gap-1 mt-1">
-                              <MapPin className="h-3 w-3" />
-                              <span className="truncate max-w-32" title={addressText}>
-                                {addressText}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col text-sm text-muted-foreground">
+                            {business.contact?.phone && (
+                              <div className="flex items-center gap-1">
+                                <Phone className="h-3 w-3" />
+                                <span>{business.contact.phone}</span>
+                              </div>
+                            )}
+                            {addressText && (
+                              <div className="flex items-center gap-1 mt-1">
+                                <MapPin className="h-3 w-3" />
+                                <span className="truncate max-w-32" title={addressText}>
+                                  {addressText}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
 
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Eye className="h-4 w-4 mr-2" />
-                              View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit Business
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-end mt-4">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    className={
-                      currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
-                    }
-                  />
-                </PaginationItem>
-
-                {/* Page numbers */}
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNumber;
-                  if (totalPages <= 5) {
-                    pageNumber = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNumber = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNumber = totalPages - 4 + i;
-                  } else {
-                    pageNumber = currentPage - 2 + i;
-                  }
-
-                  return (
-                    <PaginationItem key={pageNumber}>
-                      <PaginationLink
-                        onClick={() => setCurrentPage(pageNumber)}
-                        isActive={currentPage === pageNumber}
-                        className="cursor-pointer"
-                      >
-                        {pageNumber}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
-
-                {totalPages > 5 && currentPage < totalPages - 2 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem asChild>
+                                <Link href={`/business/${business._id}`}>
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  View Details
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <Link href={`/businesses/${business._id}/edit`}>
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit Business
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-red-600"
+                                onSelect={() => setBusinessToDelete(business)}
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
-
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    className={
-                      currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"
-                    }
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+              </TableBody>
+            </Table>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-end mt-4">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      className={
+                        currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                      pageNumber = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + i;
+                    } else {
+                      pageNumber = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(pageNumber)}
+                          isActive={currentPage === pageNumber}
+                          className="cursor-pointer"
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+
+                  {totalPages > 5 && currentPage < totalPages - 2 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      className={
+                        currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <AlertDialog
+        open={businessToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) {
+            setBusinessToDelete(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete business?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {`This will permanently remove ${
+                businessToDelete
+                  ? (typeof businessToDelete.name === "string"
+                      ? businessToDelete.name
+                      : businessToDelete.name?.english || businessToDelete.name?.tagalog || "this business")
+                  : "this business"
+              } from the directory.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={(event) => {
+                event.preventDefault();
+                void handleDelete();
+              }}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

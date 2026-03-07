@@ -1,8 +1,8 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireAdmin } from "./auth_helpers";
+import { sendVerificationEmail } from "./emailVerification";
 
-// Query to get the current user's isAdmin status
 export const getIsAdmin = query({
   args: {},
   handler: async (ctx) => {
@@ -17,27 +17,106 @@ export const getIsAdmin = query({
   },
 });
 
-// Query to get the current user's identity
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.auth.getUserIdentity(); // null if not authenticated, otherwise user info
+    return await ctx.auth.getUserIdentity();
   },
 });
 
-// Mutation to set admin status for a user by email (requires admin access)
+export const sendVerificationCode = mutation({
+  args: { email: v.string() },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("email", (q) => q.eq("email", args.email))
+      .first();
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + 15 * 60 * 1000;
+
+    await ctx.db.insert("authVerificationCodes", {
+      userId: user._id,
+      code,
+      expiresAt,
+      email: args.email,
+      type: "email_verification",
+    });
+
+    await sendVerificationEmail(args.email, code);
+    return { success: true };
+  },
+});
+
+export const verifyEmailCode = mutation({
+  args: { email: v.string(), code: v.string() },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("email", (q) => q.eq("email", args.email))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const verificationCode = await ctx.db
+      .query("authVerificationCodes")
+      .withIndex("code", (q) => q.eq("code", args.code))
+      .filter((q) => q.eq(q.field("email"), args.email))
+      .first();
+
+    if (!verificationCode) {
+      throw new Error("Invalid verification code");
+    }
+
+    if (verificationCode.expiresAt && verificationCode.expiresAt < Date.now()) {
+      throw new Error("Verification code expired");
+    }
+
+    await ctx.db.patch(user._id, {
+      emailVerificationTime: Date.now(),
+    });
+
+    await ctx.db.delete(verificationCode._id);
+
+    return { success: true };
+  },
+});
+
+export const getEmailVerificationStatus = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity?.email) return { isVerified: false };
+    
+    const user = await ctx.db
+      .query("users")
+      .withIndex("email", (q) => q.eq("email", identity.email as string))
+      .first();
+    
+    return { 
+      isVerified: !!user?.emailVerificationTime,
+      email: identity.email 
+    };
+  },
+});
+
 export const setAdminStatus = mutation({
   args: {
     email: v.string(),
     isAdmin: v.boolean(),
   },
   handler: async (ctx, args) => {
-    // Only admins can modify admin status
     await requireAdmin(ctx);
 
     const user = await ctx.db
       .query("users")
-      .withIndex("email", (q: any) => q.eq("email", args.email))
+      .withIndex("email", (q) => q.eq("email", args.email))
       .first();
 
     if (!user) {

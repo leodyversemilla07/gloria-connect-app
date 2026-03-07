@@ -84,9 +84,8 @@ export default function BugReportForm() {
           }}
         >
           <FieldGroup>
-            <form.Field
-              name="title"
-              children={(field) => {
+              <form.Field name="title">
+                {(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
                 return (
@@ -108,10 +107,9 @@ export default function BugReportForm() {
                   </Field>
                 )
               }}
-            />
-            <form.Field
-              name="description"
-              children={(field) => {
+            </form.Field>
+            <form.Field name="description">
+              {(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
                 return (
@@ -145,7 +143,7 @@ export default function BugReportForm() {
                   </Field>
                 )
               }}
-            />
+            </form.Field>
           </FieldGroup>
         </form>
       </CardContent>

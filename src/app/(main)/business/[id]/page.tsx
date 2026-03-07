@@ -26,6 +26,19 @@ import {
   CheckCircle,
   Calendar,
 } from "lucide-react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+const icon = L.icon({
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
 export default function BusinessDetailPage() {
   const params = useParams();
@@ -341,20 +354,39 @@ export default function BusinessDetailPage() {
               </CardContent>
             </Card>
 
-            {/* Map */}
+{/* Map */}
             <Card>
               <CardContent className="p-6">
                 <h2 className="text-xl font-semibold text-foreground mb-4">{messages["location"] || "Location"}</h2>
-                <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground mb-3">Interactive Map</p>
-                    <Button size="sm" onClick={handleGetDirections}>
-                      <Navigation className="h-4 w-4 mr-2" />
-                      {messages["getDirections"] || "Get Directions"}
-                    </Button>
+                {business.address?.coordinates?.latitude && business.address?.coordinates?.longitude ? (
+                  <div className="aspect-square rounded-lg overflow-hidden">
+                    <MapContainer
+                      center={[business.address.coordinates.latitude, business.address.coordinates.longitude]}
+                      zoom={15}
+                      style={{ height: "100%", width: "100%" }}
+                      scrollWheelZoom={false}
+                    >
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <Marker position={[business.address.coordinates.latitude, business.address.coordinates.longitude]} icon={icon}>
+                        <Popup>{getName(business)}</Popup>
+                      </Marker>
+                    </MapContainer>
                   </div>
-                </div>
+                ) : (
+                  <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
+                    <div className="text-center">
+                      <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground mb-3">No location available</p>
+                    </div>
+                  </div>
+                )}
+                <Button className="w-full mt-4" onClick={handleGetDirections}>
+                  <Navigation className="h-4 w-4 mr-2" />
+                  {messages["getDirections"] || "Get Directions"}
+                </Button>
               </CardContent>
             </Card>
           </div>

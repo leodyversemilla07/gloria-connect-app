@@ -21,7 +21,7 @@ interface AdminGuardProps {
 export function AdminGuard({
   children,
   fallback,
-  redirectTo = "/",
+  redirectTo = "/login",
 }: AdminGuardProps) {
   const router = useRouter();
 
@@ -108,7 +108,7 @@ export function AdminGuard({
                     Access Denied
                   </h3>
                   <p className="text-muted-foreground mt-2">
-                    You don't have permission to access this page.
+                    You don&apos;t have permission to access this page.
                   </p>
                 </div>
               </div>

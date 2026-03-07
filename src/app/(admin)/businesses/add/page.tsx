@@ -170,7 +170,7 @@ export default function AddBusinessPage() {
     };
     try {
       await createBusiness(newBusiness);
-      router.push("/admin/businesses");
+      router.push("/businesses");
     } catch (err) {
       handleConvexError(err, "Failed to create business");
     }

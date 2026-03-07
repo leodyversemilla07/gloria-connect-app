@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const language = "en";
-  const messages = language === "fil" ? filMessages : enMessages;
+  const messages = enMessages;
 
   return (
     <ConvexClientProvider>

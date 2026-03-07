@@ -35,7 +35,8 @@ export default defineSchema({
     }).index("email", ["email"]),
 
     authVerificationCodes: defineTable({
-        accountId: v.id("authAccounts"),
+        accountId: v.optional(v.id("authAccounts")),
+        userId: v.optional(v.id("users")),
         code: v.string(),
         expiresAt: v.optional(v.float64()),
         emailVerified: v.optional(v.string()),
@@ -47,7 +48,8 @@ export default defineSchema({
         phone: v.optional(v.string()),
     })
         .index("accountId", ["accountId"])
-        .index("code", ["code"]),
+        .index("code", ["code"])
+        .index("userId", ["userId"]),
 
     authRefreshTokens: defineTable({
         sessionId: v.id("authSessions"),

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 
-export type Messages = Record<string, string>;
+export type Messages = Record<string, string | Record<string, string>>;
 
 type I18nContextType = {
     language: string;
@@ -18,20 +18,33 @@ const I18nContext = createContext<I18nContextType>({
     t: (key: string) => key,
 });
 
-// Helper to load messages dynamically
 async function loadMessages(lang: string): Promise<Messages> {
-    switch (lang) {
-        case "fil":
-            return (await import("../../../messages/fil.json")).default;
-        case "en":
-        default:
-            return (await import("../../../messages/en.json")).default;
+    try {
+        switch (lang) {
+            case "fil":
+                return (await import("../../messages/fil.json")).default;
+            case "en":
+            default:
+                return (await import("../../messages/en.json")).default;
+        }
+    } catch {
+        return {};
     }
 }
 
-export function I18nProvider({ language: initialLanguage, messages: initialMessages, children }: { language: string; messages: Messages; children: React.ReactNode }) {
-    const [language, setLanguage] = useState(initialLanguage);
-    const [messages, setMessages] = useState(initialMessages);
+export function I18nProvider({ 
+    language: initialLanguage, 
+    messages: initialMessages, 
+    children,
+    editable = false 
+}: { 
+    language?: string; 
+    messages?: Messages; 
+    children: React.ReactNode;
+    editable?: boolean;
+}) {
+    const [language, setLanguage] = useState(initialLanguage || "en");
+    const [messages, setMessages] = useState<Messages>(initialMessages || {});
 
     useEffect(() => {
         let mounted = true;
@@ -54,8 +67,10 @@ export function I18nProvider({ language: initialLanguage, messages: initialMessa
         return typeof value === "string" ? value : key;
     };
 
+    const handleSetLanguage = editable ? setLanguage : () => {};
+
     return (
-        <I18nContext.Provider value={{ language, messages, setLanguage, t }}>
+        <I18nContext.Provider value={{ language, messages, setLanguage: handleSetLanguage, t }}>
             {children}
         </I18nContext.Provider>
     );

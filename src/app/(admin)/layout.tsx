@@ -7,6 +7,8 @@ import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AdminGuard } from "@/components/admin-guard";
+import { I18nProvider } from "@/components/i18n-provider";
+import enMessages from "../../../messages/en.json";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -31,23 +33,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <ConvexClientProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                <SidebarProvider style={customStyle as React.CSSProperties}>
-                    <AppSidebar variant="inset" collapsible="icon" />
-                    <SidebarInset>
-                        <div className={`${geistSans.variable} ${geistMono.variable}`}>
-                            <SiteHeader />
-                        </div>
-                        <div className="flex flex-1 flex-col">
-                            <div className={`@container/main flex flex-1 flex-col gap-2 ${geistSans.variable} ${geistMono.variable}`}>
-                                <AdminGuard>
-                                    {children}
-                                </AdminGuard>
+            <I18nProvider language="en" messages={enMessages}>
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                    <SidebarProvider style={customStyle as React.CSSProperties}>
+                        <AppSidebar variant="inset" collapsible="icon" />
+                        <SidebarInset>
+                            <div className={`${geistSans.variable} ${geistMono.variable}`}>
+                                <SiteHeader />
                             </div>
-                        </div>
-                    </SidebarInset>
-                </SidebarProvider>
-            </ThemeProvider>
+                            <div className="flex flex-1 flex-col">
+                                <div className={`@container/main flex flex-1 flex-col gap-2 ${geistSans.variable} ${geistMono.variable}`}>
+                                    <AdminGuard>
+                                        {children}
+                                    </AdminGuard>
+                                </div>
+                            </div>
+                        </SidebarInset>
+                    </SidebarProvider>
+                </ThemeProvider>
+            </I18nProvider>
         </ConvexClientProvider>
     );
 }

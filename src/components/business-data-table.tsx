@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -51,6 +52,7 @@ import {
   Building2,
   MapPin,
   Phone,
+  Trash,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -106,6 +108,8 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
   const [pageSize] = useState(10);
   const [businessToDelete, setBusinessToDelete] = useState<Business | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [showBulkDelete, setShowBulkDelete] = useState(false);
   const deleteBusiness = useMutation(api.businesses.remove);
 
   // Filter data based on search and filters
@@ -189,8 +193,54 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
     }
   };
 
+  const handleBulkDelete = async () => {
+    setIsDeleting(true);
+    try {
+      for (const id of selectedIds) {
+        await deleteBusiness({ id: id as Id<"businesses"> });
+      }
+      toast.success(`${selectedIds.size} businesses deleted successfully.`);
+      setSelectedIds(new Set());
+      setShowBulkDelete(false);
+    } catch (error) {
+      handleConvexError(error, "Failed to delete businesses");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === paginatedData.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(paginatedData.map(b => b._id)));
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
   return (
     <>
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-4 mb-4 p-4 bg-muted rounded-lg">
+          <span className="text-sm font-medium">{selectedIds.size} selected</span>
+          <Button variant="destructive" size="sm" onClick={() => setShowBulkDelete(true)}>
+            <Trash className="h-4 w-4 mr-2" />
+            Delete Selected
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setSelectedIds(new Set())}>
+            Clear Selection
+          </Button>
+        </div>
+      )}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -243,6 +293,12 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={selectedIds.size === paginatedData.length && paginatedData.length > 0}
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </TableHead>
                   <TableHead className="font-semibold">Business</TableHead>
                   <TableHead className="font-semibold">Category</TableHead>
                   <TableHead className="font-semibold">Status</TableHead>
@@ -253,7 +309,7 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
               <TableBody>
                 {paginatedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                       No businesses found matching your criteria.
                     </TableCell>
                   </TableRow>
@@ -268,6 +324,12 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
 
                     return (
                       <TableRow key={business._id} className="hover:bg-muted/30 transition-colors">
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedIds.has(business._id)}
+                            onCheckedChange={() => toggleSelect(business._id)}
+                          />
+                        </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium text-foreground">
@@ -449,6 +511,30 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
               }}
             >
               {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showBulkDelete} onOpenChange={setShowBulkDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {selectedIds.size} businesses?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove {selectedIds.size} selected businesses from the directory. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={(event) => {
+                event.preventDefault();
+                void handleBulkDelete();
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Deleting..." : "Delete All"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

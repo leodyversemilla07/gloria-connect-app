@@ -46,6 +46,17 @@ export function LoginForm({
     router.push(adminStatus.isAdmin ? "/dashboard" : "/");
   }, [adminStatus, currentUser, router, verificationStatus]);
 
+  // Show loading while checking auth status
+  if (currentUser === undefined || adminStatus === undefined || verificationStatus === undefined) {
+    return (
+      <Card className={className}>
+        <CardContent className="py-10 text-center text-sm text-muted-foreground">
+          Loading...
+        </CardContent>
+      </Card>
+    );
+  }
+
   const form = useForm({
     defaultValues: {
       email: "",

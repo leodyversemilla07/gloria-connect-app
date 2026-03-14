@@ -31,7 +31,10 @@ export default function AdminBusinessesPage() {
     businesses.forEach((b) => {
       if (b.category?.primary) categories.add(b.category.primary);
     });
-    return Array.from(categories).sort();
+    return Array.from(categories).sort().map(id => ({
+      id,
+      name: t(`category.${id.toLowerCase()}`) || id,
+    }));
   };
 
   const filteredBusinesses = (businesses ?? []).filter((business: Doc<"businesses">) => {
@@ -91,12 +94,12 @@ export default function AdminBusinessesPage() {
               <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder={t("adminCategory")} />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("adminAllCategories")}</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                ))}
-              </SelectContent>
+                <SelectContent>
+                  <SelectItem value="all">{t("adminAllCategories")}</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                  ))}
+                </SelectContent>
             </Select>
           </div>
           

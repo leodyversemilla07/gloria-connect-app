@@ -31,14 +31,20 @@ export function LoginForm({
   const router = useRouter();
   const currentUser = useQuery(api.users.getCurrentUser);
   const adminStatus = useQuery(api.users.getIsAdmin, {});
+  const verificationStatus = useQuery(api.users.getEmailVerificationStatus, {});
 
   React.useEffect(() => {
-    if (!currentUser || adminStatus === undefined) {
+    if (!currentUser || adminStatus === undefined || verificationStatus === undefined) {
+      return;
+    }
+
+    if (!verificationStatus.isVerified) {
+      router.push("/verify-email");
       return;
     }
 
     router.push(adminStatus.isAdmin ? "/dashboard" : "/");
-  }, [adminStatus, currentUser, router]);
+  }, [adminStatus, currentUser, router, verificationStatus]);
 
   const form = useForm({
     defaultValues: {

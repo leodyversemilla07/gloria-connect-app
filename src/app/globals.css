@@ -7,6 +7,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-playfair);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -43,72 +44,98 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.75rem;
+  
+  /* Tropical Warmth Light Theme */
+  --background: #FDFBF7;
+  --foreground: #3D342B;
+  --card: #FFFFFF;
+  --card-foreground: #3D342B;
+  --popover: #FFFFFF;
+  --popover-foreground: #3D342B;
+  
+  /* Primary: Coral Sunset - warm, inviting */
+  --primary: #D4725F;
+  --primary-foreground: #FFFFFF;
+  
+  /* Secondary: Tropical Green - fresh, natural */
+  --secondary: #7BAE8A;
+  --secondary-foreground: #FFFFFF;
+  
+  /* Accent: Golden Sand - warm highlight */
+  --accent: #E8C87A;
+  --accent-foreground: #3D342B;
+  
+  --muted: #F5F0E8;
+  --muted-foreground: #7A7067;
+  --destructive: #C74B4B;
+  
+  /* Borders - warm undertone */
+  --border: #E8E2D9;
+  --input: #E8E2D9;
+  --ring: #D4725F;
+  
+  /* Charts - tropical palette */
+  --chart-1: #D4725F;
+  --chart-2: #7BAE8A;
+  --chart-3: #E8C87A;
+  --chart-4: #6B8E9B;
+  --chart-5: #B085A0;
+  
+  /* Sidebar */
+  --sidebar: #FDFBF7;
+  --sidebar-foreground: #3D342B;
+  --sidebar-primary: #D4725F;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F5F0E8;
+  --sidebar-accent-foreground: #3D342B;
+  --sidebar-border: #E8E2D9;
+  --sidebar-ring: #D4725F;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Tropical Warmth Dark Theme */
+  --background: #1A1814;
+  --foreground: #F5F0E8;
+  --card: #252117;
+  --card-foreground: #F5F0E8;
+  --popover: #252117;
+  --popover-foreground: #F5F0E8;
+  
+  /* Primary: Softer coral for dark */
+  --primary: #E88874;
+  --primary-foreground: #1A1814;
+  
+  /* Secondary: Brighter green for dark */
+  --secondary: #8FC4A0;
+  --secondary-foreground: #1A1814;
+  
+  /* Accent: Brighter gold */
+  --accent: #F0D896;
+  --accent-foreground: #1A1814;
+  
+  --muted: #2D2820;
+  --muted-foreground: #A89F94;
+  --destructive: #E05555;
+  
+  --border: #3D352C;
+  --input: #3D352C;
+  --ring: #E88874;
+  
+  --chart-1: #E88874;
+  --chart-2: #8FC4A0;
+  --chart-3: #F0D896;
+  --chart-4: #7AA3B3;
+  --chart-5: #C49DB8;
+  
+  --sidebar: #252117;
+  --sidebar-foreground: #F5F0E8;
+  --sidebar-primary: #E88874;
+  --sidebar-primary-foreground: #1A1814;
+  --sidebar-accent: #2D2820;
+  --sidebar-accent-foreground: #F5F0E8;
+  --sidebar-border: #3D352C;
+  --sidebar-ring: #E88874;
 }
 
 @layer base {
@@ -119,4 +146,246 @@
     @apply bg-background text-foreground;
     font-family: var(--font-geist-sans), sans-serif;
   }
+}
+
+/* Tropical-inspired subtle background pattern */
+.tropical-bg {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(212, 114, 95, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(123, 174, 138, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(232, 200, 122, 0.03) 0%, transparent 40%);
+}
+
+/* Warm gradient backgrounds - Light */
+.hero-gradient {
+  background: linear-gradient(135deg, #D4725F 0%, #E88874 50%, #F0A882 100%);
+}
+
+/* Warm gradient backgrounds - Dark */
+.dark .hero-gradient {
+  background: linear-gradient(135deg, #2D2820 0%, #3D342B 50%, #4D4438 100%);
+}
+
+/* Tropical background pattern - Light */
+.tropical-bg {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(212, 114, 95, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(123, 174, 138, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(232, 200, 122, 0.03) 0%, transparent 40%);
+}
+
+/* Tropical background pattern - Dark */
+.dark .tropical-bg {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(232, 136, 116, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(143, 196, 160, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(240, 216, 150, 0.05) 0%, transparent 40%);
+}
+
+.hero-gradient-dark {
+  background: linear-gradient(135deg, #252117 0%, #3D342B 100%);
+}
+
+/* Subtle card hover effects */
+.card-warm {
+  @apply transition-all duration-300;
+}
+
+.card-warm:hover {
+  @apply shadow-lg;
+  transform: translateY(-2px);
+}
+
+/* Smooth page transitions */
+.page-enter {
+  animation: fadeSlideIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered children animation */
+.stagger-children > * {
+  animation: fadeSlideIn 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+/* Rich tropical texture overlay */
+.tropical-texture {
+  position: relative;
+}
+
+.tropical-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Leaf pattern decoration */
+.leaf-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5 C35 15, 45 20, 55 30 C45 40, 35 45, 30 55 C25 45, 15 40, 5 30 C15 20, 25 15, 30 5Z' fill='%23D4725F' fill-opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* Elegant border decoration */
+.border-elegant {
+  position: relative;
+}
+
+.border-elegant::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  border-radius: 2px;
+}
+
+/* Card with depth */
+.card-depth {
+  @apply transition-all duration-300;
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 2px 4px rgba(0, 0, 0, 0.05),
+    0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card-depth:hover {
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 8px 16px rgba(0, 0, 0, 0.1),
+    0 16px 32px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(212, 114, 95, 0.1);
+  transform: translateY(-4px);
+}
+
+/* Glow effect */
+.glow-primary {
+  box-shadow: 0 0 20px rgba(212, 114, 95, 0.2);
+}
+
+.glow-primary:hover {
+  box-shadow: 0 0 30px rgba(212, 114, 95, 0.3);
+}
+
+/* Scroll animations */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse subtle */
+@keyframes pulseSubtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 2s ease-in-out infinite;
+}
+
+/* Beautiful divider */
+.divider-waves {
+  position: relative;
+  height: 60px;
+  overflow: hidden;
+}
+
+.divider-waves::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: currentColor;
+  opacity: 0.1;
+  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%23currentColor'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%23currentColor'/%3E%3C/svg%3E");
+  mask-size: cover;
+  -webkit-mask-size: cover;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+.stagger-children > *:nth-child(9) { animation-delay: 400ms; }
+
+/* Warm button hover effects */
+.btn-warm {
+  @apply relative overflow-hidden transition-all duration-300;
+}
+
+.btn-warm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 114, 95, 0.3);
+}
+
+/* Input focus with warm ring */
+.input-warm {
+  @apply transition-all duration-200;
+}
+
+.input-warm:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(212, 114, 95, 0.15);
+}
+
+/* Badge variants */
+.badge-warm {
+  @apply px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-coral {
+  @apply bg-primary/10 text-primary;
+}
+
+.badge-green {
+  @apply bg-secondary/10 text-secondary;
+}
+
+.badge-gold {
+  @apply bg-accent/10 text-accent-foreground;
 }

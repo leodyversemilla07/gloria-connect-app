@@ -55,6 +55,10 @@ export function I18nProvider({
     }, [language]);
 
     const t = (key: string): string => {
+        if (key in messages) {
+            return String(messages[key] || key);
+        }
+        
         const keys = key.split(".");
         let value: unknown = messages;
         for (const k of keys) {

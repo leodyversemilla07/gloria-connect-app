@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import type { Doc } from "../../../../convex/_generated/dataModel";
-import { Search, ArrowLeft } from "lucide-react";
+import { Search, ArrowLeft, MapPin, Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import BusinessCard from "@/components/business-card";
 import LanguageToggle from "@/components/language-toggle";
 import { useI18n } from "../i18n-provider";
 
-function getCategoriesFromBusinesses(businesses: Doc<"businesses">[], messages: Record<string, string>) {
+function getCategoriesFromBusinesses(businesses: Doc<"businesses">[], t: (key: string) => string) {
   const set = new Set<string>();
   businesses.forEach((b) => {
     if (b.category?.primary) set.add(b.category.primary);
@@ -21,12 +21,16 @@ function getCategoriesFromBusinesses(businesses: Doc<"businesses">[], messages: 
   const arr = Array.from(set);
   arr.sort();
   return [
-    { id: "all", name: messages["category.all"], nameTagalog: messages["category.all"] },
-    ...arr.map((id) => ({
-      id,
-      name: messages[`category.${id}`] || id.charAt(0).toUpperCase() + id.slice(1),
-      nameTagalog: messages[`category.${id}`] || id.charAt(0).toUpperCase() + id.slice(1),
-    })),
+    { id: "all", name: t("category.all"), nameTagalog: t("category.all") },
+    ...arr.map((id) => {
+      const key = `category.${id.toLowerCase()}`;
+      const translated = t(key);
+      return {
+        id,
+        name: translated === key ? id.charAt(0).toUpperCase() + id.slice(1) : translated,
+        nameTagalog: translated === key ? id.charAt(0).toUpperCase() + id.slice(1) : translated,
+      };
+    }),
   ];
 }
 
@@ -34,18 +38,18 @@ export default function BusinessesPage() {
   const businesses = useQuery(api.businesses.get);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const { language, messages, setLanguage } = useI18n();
+  const { language, messages, setLanguage, t } = useI18n();
 
   if (!businesses) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <span className="text-gray-500 text-lg">{messages["loading"] || "Loading..."}</span>
+      <div className="min-h-screen flex items-center justify-center bg-background tropical-bg">
+        <span className="text-muted-foreground text-lg">{t("loading")}</span>
       </div>
     );
   }
 
   type Business = Doc<"businesses">;
-  const categories = getCategoriesFromBusinesses(businesses, messages);
+  const categories = getCategoriesFromBusinesses(businesses, t);
   const getName = (business: Business) => typeof business.name === 'string' ? business.name : business.name?.english || "";
   const getDescription = (business: Business) => typeof business.description === 'string' ? business.description : business.description?.english || "";
   const getCategory = (business: Business) => {
@@ -62,29 +66,35 @@ export default function BusinessesPage() {
       selectedCategory === "all" || business.category?.primary === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
   function getTodayHours(business: Business) {
     const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
     const today = days[new Date().getDay()];
     const hours = business.operatingHours?.[today as keyof typeof business.operatingHours];
     if (!hours) return "";
-    if (hours.closed) return messages["closed"] || "Closed";
+    if (hours.closed) return t("closed");
     return `${hours.open} - ${hours.close}`;
   }
 
+  const text = {
+    ...messages,
+    featured: t("featured"),
+  };
+
   return (
-    <div className="min-h-screen antialiased font-sans bg-background text-foreground">
+    <div className="min-h-screen antialiased font-sans bg-background tropical-bg">
       {/* Header */}
-      <header className="shadow-sm border-b sticky top-0 z-50 bg-card text-card-foreground">
+      <header className="shadow-sm border-b sticky top-0 z-50 bg-card/95 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
             <Button
               asChild
               variant="link"
-              className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start"
+              className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start text-primary hover:text-primary/80"
             >
               <Link href="/">
                 <ArrowLeft className="h-5 w-5" />
-                <span className="font-medium">{messages["backToHome"] || "Back to Home"}</span>
+                <span className="font-medium">{t("backToHome")}</span>
               </Link>
             </Button>
             <LanguageToggle language={language} setLanguage={setLanguage} />
@@ -92,30 +102,42 @@ export default function BusinessesPage() {
         </div>
       </header>
 
-      {/* Page Header */}
-      <section className="py-8 md:py-12 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 md:mb-4">{messages["title"] || "All Businesses"}</h1>
-          <p className="text-lg sm:text-xl opacity-90 mb-6 md:mb-8">{messages["subtitle"] || "Discover all local businesses in Gloria, Oriental Mindoro"}</p>
+      {/* Hero Section */}
+      <section className="hero-gradient text-white py-12 md:py-16 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 dark:opacity-5">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Building2 className="h-6 w-6" />
+            <span className="text-sm font-medium opacity-80">Gloria, Oriental Mindoro</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 text-center font-[family-name:var(--font-playfair)]">
+            {t("title")}
+          </h1>
+          <p className="text-lg sm:text-xl opacity-90 mb-8 text-center max-w-2xl mx-auto">
+            {t("subtitle")}
+          </p>
 
           {/* Search and Filter Bar */}
-          <div className="max-w-4xl">
+          <div className="max-w-3xl mx-auto">
             <div className="flex flex-col sm:flex-row gap-3 mb-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                 <Input
                   type="text"
-                  placeholder={messages["searchPlaceholder"] || "Search businesses..."}
+                  placeholder={t("searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-12 text-foreground bg-background border-border"
+                  className="pl-12 h-14 text-foreground bg-white/95 backdrop-blur border-0 shadow-lg text-lg"
                 />
               </div>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full sm:w-48 h-12 text-foreground bg-background border-border">
-                  <SelectValue />
+                <SelectTrigger className="w-full sm:w-56 h-14 text-foreground bg-white/95 backdrop-blur border-0 shadow-lg">
+                  <SelectValue placeholder={t("category.all")} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-card border-border">
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {language === "en" ? category.name : category.nameTagalog}
@@ -124,15 +146,27 @@ export default function BusinessesPage() {
                 </SelectContent>
               </Select>
             </div>
+            <p className="text-center text-white/70 text-sm">
+              {filteredBusinesses.length} {filteredBusinesses.length === 1 ? 'business' : 'businesses'} found
+            </p>
           </div>
         </div>
       </section>
 
+      {/* Decorative Wave */}
+      <div className="relative -mt-1">
+        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-12 md:h-16">
+          <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="currentColor" className="text-background"/>
+        </svg>
+      </div>
+
       {/* All Businesses */}
       <section className="py-8 md:py-12 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-6 md:mb-8">{messages["allBusinesses"] || messages["title"] || "All Businesses"}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-8 font-[family-name:var(--font-playfair)]">
+            {t("allBusinesses")}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 stagger-children">
             {filteredBusinesses.map((business, idx) => (
               <BusinessCard
                 key={business._id}
@@ -143,21 +177,26 @@ export default function BusinessesPage() {
                 getDescription={getDescription}
                 getCategory={getCategory}
                 getTodayHours={getTodayHours}
-                text={{
-                  ...messages,
-                  featured: messages["featured"] || (language === "en" ? "Featured" : "Itinatampok"),
-                }}
+                text={text as Record<string, string>}
               />
             ))}
           </div>
 
           {filteredBusinesses.length === 0 && (
-            <div className="text-center py-12">
+            <div className="text-center py-16">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-6">
+                <MapPin className="h-10 w-10 text-muted-foreground" />
+              </div>
               <p className="text-muted-foreground text-lg">
-                {messages["noBusinesses"] || messages["noBusinessesFound"] || (language === "en"
-                  ? "No businesses found matching your search."
-                  : "Walang nahanap na negosyo na tumugma sa inyong paghahanap.")}
+                {t("noBusinessesFound")}
               </p>
+              <Button 
+                variant="link" 
+                className="mt-4 text-primary"
+                onClick={() => { setSearchTerm(""); setSelectedCategory("all"); }}
+              >
+                Clear filters
+              </Button>
             </div>
           )}
         </div>

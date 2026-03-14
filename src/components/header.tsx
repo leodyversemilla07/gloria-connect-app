@@ -1,14 +1,10 @@
+import { useState } from "react";
 import Logo from "@/components/logo";
 import LanguageToggle from "@/components/language-toggle";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink
-} from "@/components/ui/navigation-menu";
 
 interface HeaderProps {
   language: string;
@@ -19,64 +15,125 @@ interface HeaderProps {
 }
 
 export default function Header({ language, messages, setLanguage, user, currentPath }: HeaderProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { href: "/", label: messages["home"] || (language === "en" ? "Home" : "Tahanan") },
+    { href: "/business", label: messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo") },
+    { href: "/about", label: messages["about"] || (language === "en" ? "About" : "Tungkol") },
+  ];
+
   return (
-    <header className="bg-card shadow-sm border-b sticky top-0 z-50">
+    <header className="bg-card/95 backdrop-blur-sm shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
-          <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start">
-            <Link href="/" className="flex items-center space-x-2 group">
-              <Logo size={40} className="hidden lg:inline-block group-hover:scale-105 transition-transform" />
-              <span className="text-xl font-bold text-foreground group-hover:text-primary">Gloria Local Connect</span>
-            </Link>
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 group">
+            <Logo size={36} className="group-hover:scale-105 transition-transform" />
+            <span className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary hidden xs:inline">
+              Gloria Local Connect
+            </span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  currentPath === link.href ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="flex items-center gap-2">
+              <LanguageToggle language={language} setLanguage={setLanguage} />
+              <ThemeToggle />
+              {user ? (
+                <Button asChild size="sm">
+                  <Link href="/dashboard">
+                    {messages["dashboard"] || "Dashboard"}
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className={`text-sm font-medium transition-colors hover:text-primary ${
+                      currentPath === "/login" ? "text-primary" : ""
+                    }`}
+                  >
+                    {messages["login"] || (language === "en" ? "Login" : "Mag-login")}
+                  </Link>
+                  <Button asChild size="sm">
+                    <Link href="/register">
+                      {messages["register"] || (language === "en" ? "Register" : "Magrehistro")}
+                    </Link>
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
-          <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-end">
-            <LanguageToggle language={language} setLanguage={setLanguage} />
-            <ThemeToggle />
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link href="/" className={currentPath === "/" ? "text-primary font-bold" : ""}>{messages["home"] || (language === "en" ? "Home" : "Tahanan")}</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link href="/business" className={currentPath === "/business" ? "text-primary font-bold" : ""}>{messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo")}</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link href="/about" className={currentPath === "/about" ? "text-primary font-bold" : ""}>{messages["about"] || (language === "en" ? "About" : "Tungkol")}</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <div className="mx-2 border-l h-6 self-center" />
-                {/* Auth links visually separated */}
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 border-t">
+            <nav className="flex flex-col gap-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`text-base font-medium py-2 px-4 rounded-lg transition-colors ${
+                    currentPath === link.href
+                      ? "bg-primary/10 text-primary"
+                      : "hover:bg-muted"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <div className="flex items-center gap-3 px-4 py-2">
+                <LanguageToggle language={language} setLanguage={setLanguage} />
+                <ThemeToggle />
+              </div>
+              <div className="flex gap-2 px-4">
                 {user ? (
-                  <NavigationMenuItem>
-                    <Button asChild variant="default" size="sm">
-                      <Link href="/dashboard">
-                        {messages["dashboard"] || (language === "en" ? "Dashboard" : "Dashboard")}
-                      </Link>
-                    </Button>
-                  </NavigationMenuItem>
+                  <Button asChild className="flex-1">
+                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                      {messages["dashboard"] || "Dashboard"}
+                    </Link>
+                  </Button>
                 ) : (
                   <>
-                    <NavigationMenuItem>
-                      <NavigationMenuLink asChild>
-                        <Link href="/login" className={currentPath === "/login" ? "text-primary font-bold" : "font-semibold text-primary"}>{messages["login"] || (language === "en" ? "Login" : "Mag-login")}</Link>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                      <NavigationMenuLink asChild>
-                        <Link href="/register" className={currentPath === "/register" ? "text-primary font-bold" : "font-semibold text-primary"}>{messages["register"] || (language === "en" ? "Register" : "Magrehistro")}</Link>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
+                    <Button asChild variant="outline" className="flex-1">
+                      <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                        {messages["login"] || "Login"}
+                      </Link>
+                    </Button>
+                    <Button asChild className="flex-1">
+                      <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
+                        {messages["register"] || "Register"}
+                      </Link>
+                    </Button>
                   </>
                 )}
-              </NavigationMenuList>
-            </NavigationMenu>
+              </div>
+            </nav>
           </div>
-        </div>
+        )}
       </div>
     </header>
   );

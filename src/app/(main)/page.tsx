@@ -31,11 +31,15 @@ function getCategoriesFromBusinesses(businesses: Doc<"businesses">[], t: (key: s
   arr.sort();
   return [
     { id: "all", name: t("category.all"), nameTagalog: t("category.all") },
-    ...arr.map((id) => ({
-      id,
-      name: t(`category.${id}`) || id.charAt(0).toUpperCase() + id.slice(1),
-      nameTagalog: t(`category.${id}`) || id.charAt(0).toUpperCase() + id.slice(1),
-    })),
+    ...arr.map((id) => {
+      const key = `category.${id.toLowerCase()}`;
+      const translated = t(key);
+      return {
+        id,
+        name: translated === key ? id.charAt(0).toUpperCase() + id.slice(1) : translated,
+        nameTagalog: translated === key ? id.charAt(0).toUpperCase() + id.slice(1) : translated,
+      };
+    }),
   ];
 }
 
@@ -102,30 +106,52 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background tropical-bg leaf-pattern">
       <Header language={language} messages={messages as Record<string, string>} setLanguage={setLanguage} currentPath="/" />
       <main>
-        <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-8 md:py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 md:mb-4">Gloria Local Connect</h2>
-            <p className="text-lg sm:text-xl mb-6 md:mb-8 opacity-90">{t("subtitle")}</p>
-            <div className="max-w-2xl mx-auto">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                  <Input
-                    type="text"
-                    placeholder={t("searchPlaceholder")}
-                    value={searchTerm}
-                    onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                    className="pl-10 h-12 text-foreground bg-card border border-border focus:ring-2 focus:ring-primary"
-                  />
+        <section className="hero-gradient text-white py-12 md:py-20 lg:py-24 relative overflow-hidden">
+          {/* Decorative elements - responsive sizes */}
+          <div className="absolute inset-0 opacity-10 dark:opacity-5 overflow-hidden">
+            <div className="absolute -top-20 -left-20 w-48 md:w-64 lg:w-80 h-48 md:h-64 lg:h-80 bg-white/30 rounded-full blur-2xl md:blur-3xl"></div>
+            <div className="absolute -bottom-20 -right-20 w-56 md:w-72 lg:w-96 h-56 md:h-72 lg:h-96 bg-white/20 rounded-full blur-2xl md:blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 md:w-80 lg:w-96 h-64 md:h-80 lg:h-96 bg-primary/20 rounded-full blur-2xl md:blur-3xl hidden sm:block"></div>
+          </div>
+          
+          {/* Floating decorative shapes - hidden on small screens */}
+          <div className="absolute top-16 md:top-20 right-8 md:right-20 w-3 h-3 md:w-4 md:h-4 bg-white/20 rounded-full animate-float hidden lg:block"></div>
+          <div className="absolute bottom-24 md:bottom-32 left-4 md:left-16 w-2 h-2 md:w-3 md:h-3 bg-white/30 rounded-full animate-float hidden lg:block" style={{ animationDelay: '1s' }}></div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-white/10 rounded-full mb-4 sm:mb-6 backdrop-blur-sm">
+              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+              <span className="text-xs sm:text-sm font-medium">Gloria, Oriental Mindoro</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 lg:mb-6 font-[family-name:var(--font-playfair)] tracking-tight px-2">
+              {t("title")}
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 lg:mb-10 opacity-90 max-w-xl md:max-w-2xl mx-auto leading-relaxed px-4">
+              {t("subtitle")}
+            </p>
+            <div className="max-w-xl md:max-w-2xl mx-auto px-2 sm:px-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <div className="flex-1 relative group">
+                  <div className="absolute -inset-0.5 bg-white/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                  <div className="relative">
+                    <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 sm:h-5 sm:w-5" />
+                    <Input
+                      type="text"
+                      placeholder={t("searchPlaceholder")}
+                      value={searchTerm}
+                      onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                      className="pl-10 sm:pl-12 h-12 sm:h-14 text-foreground bg-white/95 backdrop-blur border-0 shadow-lg text-base"
+                    />
+                  </div>
                 </div>
                 <Select value={selectedCategory} onValueChange={(val) => { setSelectedCategory(val); setCurrentPage(1); }}>
-                  <SelectTrigger className="w-full sm:w-48 h-12 text-foreground bg-card border border-border focus:ring-2 focus:ring-primary">
-                    <SelectValue />
+                  <SelectTrigger className="w-full sm:w-40 md:w-48 lg:w-52 h-12 sm:h-14 text-foreground bg-white/95 backdrop-blur border-0 shadow-lg text-base">
+                    <SelectValue placeholder="Category" />
                   </SelectTrigger>
-                  <SelectContent className="bg-card border border-border">
+                  <SelectContent className="bg-card border-border">
                     {categories.map((category) => (
                       <SelectItem
                         key={category.id}
@@ -143,10 +169,17 @@ export default function HomePage() {
         </section>
 
         {featuredBusinesses.length > 0 && (
-          <section className="py-8 md:py-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-6 md:mb-8">{t("featuredTitle")}</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <section className="py-10 md:py-16 lg:py-20 relative">
+            <div className="absolute left-0 top-0 w-48 md:w-64 h-48 md:h-64 bg-primary/5 rounded-full blur-2xl md:blur-3xl"></div>
+            <div className="absolute right-0 bottom-0 w-48 md:w-64 h-48 md:h-64 bg-secondary/5 rounded-full blur-2xl md:blur-3xl"></div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className="text-center mb-8 md:mb-12">
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 md:mb-4 font-[family-name:var(--font-playfair)]">
+                  {t("featuredTitle")}
+                </h3>
+                <div className="w-16 md:w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 stagger-children">
                 {featuredBusinesses.map((business, idx) => (
                   <BusinessCard
                     key={business._id}
@@ -165,10 +198,16 @@ export default function HomePage() {
           </section>
         )}
 
-        <section className="py-8 md:py-12 bg-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-6 md:mb-8">{t("allBusinesses")}</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <section className="py-10 md:py-16 lg:py-20 bg-muted/20 relative">
+          <div className="absolute inset-0 leaf-pattern opacity-30 md:opacity-50"></div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-8 md:mb-12">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 md:mb-4 font-[family-name:var(--font-playfair)]">
+                {t("allBusinesses")}
+              </h3>
+              <div className="w-16 md:w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 stagger-children">
               {paginatedBusinesses.map((business, idx) => (
                 <BusinessCard
                   key={business._id}

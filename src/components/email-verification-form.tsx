@@ -34,7 +34,7 @@ export function EmailVerificationForm() {
   const [isVerifying, setIsVerifying] = React.useState(false);
 
   React.useEffect(() => {
-    if (token === null) {
+    if (token === null || token === undefined) {
       router.replace("/login");
     }
   }, [router, token]);
@@ -117,13 +117,26 @@ export function EmailVerificationForm() {
     return (
       <Card className="w-full">
         <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          Loading verification status...
+          Loading...
         </CardContent>
       </Card>
     );
   }
 
-  if (!currentUser?.email) {
+  if (token === null || !currentUser?.email) {
+    if (typeof window !== 'undefined') {
+      window.location.href = "/login";
+    }
+    return (
+      <Card className="w-full">
+        <CardContent className="py-10 text-center text-sm text-muted-foreground">
+          Redirecting to login...
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (verificationStatus.isVerified) {
     return (
       <Card className="w-full">
         <CardContent className="py-10 text-center text-sm text-muted-foreground">

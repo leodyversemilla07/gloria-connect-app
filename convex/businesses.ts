@@ -193,3 +193,79 @@ export const remove = mutation({
         return { success: true };
     },
 });
+
+// Mutation to update business status only
+export const updateStatus = mutation({
+    args: {
+        id: v.id("businesses"),
+        status: v.union(v.literal("active"), v.literal("inactive"), v.literal("pending")),
+    },
+    handler: async (ctx, args) => {
+        await requireAdmin(ctx);
+
+        const business = await ctx.db.get(args.id);
+        if (!business) {
+            throw new Error("Business not found");
+        }
+
+        const now = new Date().toISOString();
+        await ctx.db.patch(args.id, {
+            metadata: {
+                ...business.metadata,
+                status: args.status,
+                lastUpdated: now,
+            },
+        });
+        return { success: true, status: args.status };
+    },
+});
+
+// Mutation to toggle business verified status
+export const toggleVerified = mutation({
+    args: { id: v.id("businesses") },
+    handler: async (ctx, args) => {
+        await requireAdmin(ctx);
+
+        const business = await ctx.db.get(args.id);
+        if (!business) {
+            throw new Error("Business not found");
+        }
+
+        const now = new Date().toISOString();
+        const newVerified = !business.metadata?.isVerified;
+        await ctx.db.patch(args.id, {
+            metadata: {
+                ...business.metadata,
+                isVerified: newVerified,
+                lastUpdated: now,
+            },
+        });
+        return { success: true, isVerified: newVerified };
+    },
+});
+
+// Mutation to set reviewer notes
+export const setReviewer = mutation({
+    args: {
+        id: v.id("businesses"),
+        reviewer: v.string(),
+    },
+    handler: async (ctx, args) => {
+        await requireAdmin(ctx);
+
+        const business = await ctx.db.get(args.id);
+        if (!business) {
+            throw new Error("Business not found");
+        }
+
+        const now = new Date().toISOString();
+        await ctx.db.patch(args.id, {
+            metadata: {
+                ...business.metadata,
+                reviewer: args.reviewer,
+                lastUpdated: now,
+            },
+        });
+        return { success: true };
+    },
+});

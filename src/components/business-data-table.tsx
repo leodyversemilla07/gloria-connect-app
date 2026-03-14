@@ -111,6 +111,8 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showBulkDelete, setShowBulkDelete] = useState(false);
   const deleteBusiness = useMutation(api.businesses.remove);
+  const updateStatus = useMutation(api.businesses.updateStatus);
+  const toggleVerified = useMutation(api.businesses.toggleVerified);
 
   // Filter data based on search and filters
   const filteredData = data.filter((business) => {
@@ -225,6 +227,24 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
       newSelected.add(id);
     }
     setSelectedIds(newSelected);
+  };
+
+  const handleStatusChange = async (id: string, newStatus: "active" | "inactive" | "pending") => {
+    try {
+      await updateStatus({ id: id as Id<"businesses">, status: newStatus });
+      toast.success("Status updated successfully");
+    } catch (error) {
+      handleConvexError(error, "Failed to update status");
+    }
+  };
+
+  const handleToggleVerified = async (id: string) => {
+    try {
+      const result = await toggleVerified({ id: id as Id<"businesses"> });
+      toast.success(result.isVerified ? "Business verified" : "Verification removed");
+    } catch (error) {
+      handleConvexError(error, "Failed to toggle verification");
+    }
   };
 
   return (
@@ -401,6 +421,32 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                                   <Edit className="h-4 w-4 mr-2" />
                                   Edit Business
                                 </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem onSelect={() => handleToggleVerified(business._id)}>
+                                {business.metadata?.isVerified ? (
+                                  <>
+                                    <XCircle className="h-4 w-4 mr-2" />
+                                    Remove Verified
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckCircle className="h-4 w-4 mr-2" />
+                                    Mark as Verified
+                                  </>
+                                )}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onSelect={() => handleStatusChange(business._id, "active")}>
+                                <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
+                                Set Active
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onSelect={() => handleStatusChange(business._id, "pending")}>
+                                <Clock className="h-4 w-4 mr-2 text-yellow-600" />
+                                Set Pending
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onSelect={() => handleStatusChange(business._id, "inactive")}>
+                                <XCircle className="h-4 w-4 mr-2 text-red-600" />
+                                Set Inactive
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem

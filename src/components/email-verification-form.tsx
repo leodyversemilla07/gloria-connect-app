@@ -47,7 +47,7 @@ export function EmailVerificationForm() {
 
   React.useEffect(() => {
     const email = verificationStatus?.email;
-    if (!email || verificationStatus.isVerified) {
+    if (!email || verificationStatus?.isVerified) {
       return;
     }
 
@@ -123,7 +123,17 @@ export function EmailVerificationForm() {
     );
   }
 
-  if (!currentUser?.email || verificationStatus.isVerified) {
+  if (!currentUser?.email) {
+    return (
+      <Card className="w-full">
+        <CardContent className="py-10 text-center text-sm text-muted-foreground">
+          Please log in to verify your email.
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (verificationStatus.isVerified) {
     return null;
   }
 

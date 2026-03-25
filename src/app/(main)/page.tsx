@@ -190,7 +190,8 @@ export default function HomePage() {
                     getDescription={getDescription}
                     getCategory={getCategory}
                     getTodayHours={getTodayHours}
-                    text={text as Record<string, string>}
+                    getBarangay={(b) => b.address?.barangay || ""}
+                    text={messages as Record<string, string>}
                   />
                 ))}
               </div>
@@ -218,7 +219,8 @@ export default function HomePage() {
                   getDescription={getDescription}
                   getCategory={getCategory}
                   getTodayHours={getTodayHours}
-                  text={text as Record<string, string>}
+                  getBarangay={(b) => b.address?.barangay || ""}
+                  text={messages as Record<string, string>}
                 />
               ))}
             </div>

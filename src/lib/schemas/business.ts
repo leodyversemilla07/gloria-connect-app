@@ -79,6 +79,7 @@ export const operatingHoursSchema = z.object({
 /** Business photo schema */
 export const photoSchema = z.object({
     url: z.string().url("Please enter a valid image URL").or(z.literal("")),
+    storageId: z.string().optional(),
     alt: z.string(),
     isPrimary: z.boolean(),
 });

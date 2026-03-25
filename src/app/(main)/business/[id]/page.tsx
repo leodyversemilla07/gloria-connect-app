@@ -27,6 +27,7 @@ import {
   CheckCircle,
   Calendar,
 } from "lucide-react";
+import { getPhotoUrl, getPrimaryPhoto } from "@/lib/utils";
 
 const BusinessLocationMap = dynamic(
   () => import("@/components/business-location-map"),
@@ -96,6 +97,12 @@ export default function BusinessDetailPage() {
     }
   };
 
+  const primaryPhoto = getPrimaryPhoto(business);
+  const photos = getPhotos(business);
+  const displayPhotoUrl = photos.length > 0 
+    ? getPhotoUrl(photos[selectedImage]) 
+    : "/placeholder.svg";
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -122,13 +129,13 @@ export default function BusinessDetailPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Business Header */}
         <div className="bg-card rounded-lg shadow-sm overflow-hidden mb-8">
-          <div className="aspect-video relative">
+          <div className="aspect-video relative bg-muted">
             <Image
-              src="/placeholder.svg"
+              src={displayPhotoUrl}
               alt={getName(business)}
               width={800}
               height={450}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-opacity duration-500"
               style={{ width: "100%", height: "auto" }}
               priority={true}
             />
@@ -141,7 +148,6 @@ export default function BusinessDetailPage() {
                   {getName(business)}
                 </h1>
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  {/* No rating in schema, so omit or use a placeholder if needed */}
                   <Badge variant="secondary">
                     {getCategory(business)}
                   </Badge>
@@ -191,14 +197,14 @@ export default function BusinessDetailPage() {
               <CardContent className="p-6">
                 <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{messages["gallery"] || "Photo Gallery"}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
-                  {getPhotos(business).map((photo, index) => (
+                  {photos.length > 0 ? photos.map((photo, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
-                      className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${selectedImage === index ? "border-primary" : "border-muted"}`}
+                      className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index ? "border-primary ring-2 ring-primary/20" : "border-muted hover:border-primary/50"}`}
                     >
                       <Image
-                        src="/placeholder.svg"
+                        src={getPhotoUrl(photo)}
                         alt={`${getName(business)} ${index + 1}`}
                         width={200}
                         height={200}
@@ -206,7 +212,12 @@ export default function BusinessDetailPage() {
                         style={{ width: "100%", height: "auto" }}
                       />
                     </button>
-                  ))}
+                  )) : (
+                    <div className="col-span-full py-8 text-center bg-muted/20 rounded-lg border-2 border-dashed">
+                      <Camera className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                      <p className="text-sm text-muted-foreground">No photos available for this business.</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

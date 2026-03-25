@@ -11,10 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { MapPin, Phone, Mail, Globe, Clock, Camera, CheckCircle, AlertCircle, Save, X } from "lucide-react";
+import { MapPin, Phone, Mail, Globe, Clock, Camera, CheckCircle, AlertCircle, Save, X, Plus, Trash2 } from "lucide-react";
 import * as React from "react";
 import { handleConvexError } from "@/hooks/use-convex-error";
 import { businessFormSchema, type BusinessFormData } from "@/lib/schemas";
+import { ImageUpload } from "@/components/image-upload";
+import { Id } from "../../../../../convex/_generated/dataModel";
 
 export default function AddBusinessPage() {
   const router = useRouter();
@@ -47,7 +49,7 @@ export default function AddBusinessPage() {
         saturday: { open: '', close: '', closed: false },
         sunday: { open: '', close: '', closed: false },
       },
-      photos: [{ url: '', alt: '', isPrimary: true }],
+      photos: [],
       isVerified: false,
       status: 'active',
     });
@@ -73,7 +75,7 @@ export default function AddBusinessPage() {
     if (!form) return;
     // Handle booleans (checkboxes only)
     if (type === 'checkbox' && e.target instanceof HTMLInputElement) {
-      setForm({ ...form, [name]: e.target.checked });
+      setForm({ ...form, [name as keyof BusinessFormData]: e.target.checked });
       return;
     }
     // Handle categorySecondary (comma separated)
@@ -82,7 +84,25 @@ export default function AddBusinessPage() {
       return;
     }
     // Handle all other flat fields
-    setForm({ ...form, [name]: value });
+    setForm({ ...form, [name as keyof BusinessFormData]: value });
+  };
+
+  const addPhoto = () => {
+    if (!form) return;
+    setForm({
+      ...form,
+      photos: [...form.photos, { url: '', alt: '', isPrimary: form.photos.length === 0 }]
+    });
+  };
+
+  const removePhoto = (idx: number) => {
+    if (!form) return;
+    const newPhotos = form.photos.filter((_, i) => i !== idx);
+    // Ensure at least one primary if we deleted the primary
+    if (form.photos[idx].isPrimary && newPhotos.length > 0) {
+      newPhotos[0].isPrimary = true;
+    }
+    setForm({ ...form, photos: newPhotos });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,6 +116,15 @@ export default function AddBusinessPage() {
       handleConvexError(firstIssue?.message ?? "Invalid business form data", "Validation failed");
       return;
     }
+    
+    const photosToSubmit = form.photos
+      .filter(p => p.url || p.storageId)
+      .map(p => ({
+        url: p.url,
+        storageId: p.storageId as Id<"_storage"> | undefined,
+        alt: p.alt || "Business photo",
+        isPrimary: p.isPrimary
+      }));
 
     const newBusiness = {
       name: {
@@ -124,7 +153,7 @@ export default function AddBusinessPage() {
         tagalog: form.descriptionTagalog,
       },
       operatingHours: form.operatingHours,
-      photos: form.photos,
+      photos: photosToSubmit,
       metadata: {
         isVerified: form.isVerified,
         status: (form.status as "active" | "inactive" | "pending"),
@@ -141,7 +170,7 @@ export default function AddBusinessPage() {
   return (
     <div className="min-h-screen antialiased font-sans bg-background text-foreground flex flex-1 flex-col">
       <main className="@container/main flex flex-1 flex-col gap-2 p-4 sm:p-6 lg:p-8">
-        <form onSubmit={handleSubmit} className="space-y-8 w-full h-full">
+        <form onSubmit={handleSubmit} className="space-y-8 w-full h-full pb-20">
           {/* Basic Information */}
           <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
             <CardHeader className="pb-4">
@@ -469,71 +498,87 @@ export default function AddBusinessPage() {
 
           {/* Photos */}
           <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center space-x-2 text-lg">
-                <div className="h-8 w-8 rounded-lg bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
-                  <Camera className="h-4 w-4 text-pink-600 dark:text-pink-400" />
-                </div>
-                <span>Business Photos</span>
-              </CardTitle>
-              <CardDescription>
-                Add photos to showcase the business
-              </CardDescription>
+            <CardHeader className="pb-4 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-lg">
+                  <div className="h-8 w-8 rounded-lg bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
+                    <Camera className="h-4 w-4 text-pink-600 dark:text-pink-400" />
+                  </div>
+                  <span>Business Photos</span>
+                </CardTitle>
+                <CardDescription>
+                  Add photos to showcase the business
+                </CardDescription>
+              </div>
+              <Button type="button" onClick={addPhoto} size="sm" variant="outline" className="flex items-center gap-1">
+                <Plus className="h-4 w-4" /> Add Photo
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {form.photos.map((photo, idx) => (
-                  <Card key={idx} className="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
-                    <CardContent className="p-4">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Photo {idx + 1}</span>
-                          {photo.isPrimary && (
-                            <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
-                              Primary
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="space-y-2">
-                          <Input
-                            value={photo.url}
-                            onChange={e => {
-                              const newPhotos = [...form.photos];
-                              newPhotos[idx].url = e.target.value;
-                              setForm({ ...form, photos: newPhotos });
-                            }}
-                            placeholder="Photo URL"
-                            className="text-sm"
-                          />
-                          <Input
-                            value={photo.alt}
-                            onChange={e => {
-                              const newPhotos = [...form.photos];
-                              newPhotos[idx].alt = e.target.value;
-                              setForm({ ...form, photos: newPhotos });
-                            }}
-                            placeholder="Alt text (accessibility)"
-                            className="text-sm"
-                          />
-                          <Label className="flex items-center space-x-2 cursor-pointer">
-                            <Checkbox
-                              checked={photo.isPrimary}
-                              onCheckedChange={checked => {
-                                const newPhotos = form.photos.map((p, i) => ({
-                                  ...p,
-                                  isPrimary: i === idx ? !!checked : false
-                                }));
-                                setForm({ ...form, photos: newPhotos });
-                              }}
-                              aria-label="Set as primary photo"
-                            />
-                            <span className="text-xs text-muted-foreground">Set as primary photo</span>
-                          </Label>
-                        </div>
+                  <Card key={idx} className="relative border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="icon" 
+                      className="absolute top-2 right-2 z-10 text-destructive hover:bg-destructive/10"
+                      onClick={() => removePhoto(idx)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                    <CardContent className="p-4 space-y-4">
+                      <ImageUpload 
+                        label={`Photo ${idx + 1}`}
+                        onUploadComplete={(url, storageId) => {
+                          const newPhotos = [...form.photos];
+                          newPhotos[idx] = { ...newPhotos[idx], url, storageId };
+                          setForm({ ...form, photos: newPhotos });
+                        }}
+                        onRemove={() => {
+                          const newPhotos = [...form.photos];
+                          newPhotos[idx] = { ...newPhotos[idx], url: '', storageId: undefined };
+                          setForm({ ...form, photos: newPhotos });
+                        }}
+                      />
+                      <div className="space-y-2">
+                        <Label className="text-xs">Alternative Text (Accessibility)</Label>
+                        <Input
+                          value={photo.alt}
+                          onChange={e => {
+                            const newPhotos = [...form.photos];
+                            newPhotos[idx].alt = e.target.value;
+                            setForm({ ...form, photos: newPhotos });
+                          }}
+                          placeholder="Briefly describe what's in the photo"
+                          className="text-sm h-9"
+                        />
                       </div>
+                      <Label className="flex items-center space-x-2 cursor-pointer pt-1">
+                        <Checkbox
+                          checked={photo.isPrimary}
+                          onCheckedChange={checked => {
+                            const newPhotos = form.photos.map((p, i) => ({
+                              ...p,
+                              isPrimary: i === idx ? !!checked : false
+                            }));
+                            setForm({ ...form, photos: newPhotos });
+                          }}
+                        />
+                        <span className="text-xs font-medium">Set as primary photo</span>
+                      </Label>
                     </CardContent>
                   </Card>
                 ))}
+                {form.photos.length === 0 && (
+                  <div className="col-span-full py-12 text-center border-2 border-dashed rounded-lg bg-muted/20">
+                    <Camera className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-50" />
+                    <p className="text-sm text-muted-foreground">No photos added yet.</p>
+                    <Button type="button" variant="link" onClick={addPhoto} className="mt-1">
+                      Add your first photo
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

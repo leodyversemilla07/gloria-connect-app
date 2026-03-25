@@ -112,6 +112,7 @@ export default defineSchema({
         }),
         photos: v.optional(v.array(v.object({
             url: v.string(),
+            storageId: v.optional(v.id("_storage")),
             alt: v.string(),
             isPrimary: v.boolean(),
         }))),

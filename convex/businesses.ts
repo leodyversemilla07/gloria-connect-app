@@ -60,6 +60,7 @@ export const update = mutation({
         }),
         photos: v.optional(v.array(v.object({
             url: v.string(),
+            storageId: v.optional(v.id("_storage")),
             alt: v.string(),
             isPrimary: v.boolean(),
         }))),
@@ -143,6 +144,7 @@ export const create = mutation({
         }),
         photos: v.optional(v.array(v.object({
             url: v.string(),
+            storageId: v.optional(v.id("_storage")),
             alt: v.string(),
             isPrimary: v.boolean(),
         }))),

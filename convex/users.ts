@@ -2,7 +2,7 @@ import { query, mutation } from "./_generated/server";
 import type { MutationCtx } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { requireAdmin, requireAuth } from "./auth_helpers";
-import { sendVerificationEmail } from "./emailVerification";
+import { internal } from "./_generated/api";
 
 const VERIFICATION_CODE_TTL_MS = 15 * 60 * 1000;
 const SEND_LIMIT_WINDOW_MS = 15 * 60 * 1000;
@@ -117,7 +117,15 @@ export const sendVerificationCode = mutation({
       type: "email_verification",
     });
 
-    await sendVerificationEmail(args.email, code);
+    await ctx.scheduler.runAfter(
+      0,
+      internal.emailVerification.deliverVerificationEmail,
+      {
+        email: args.email,
+        code,
+      }
+    );
+
     return { success: true };
   },
 });

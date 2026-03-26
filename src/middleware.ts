@@ -2,30 +2,34 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const SUPPORTED_LANGUAGES = ['en', 'fil'];
 const DEFAULT_LANGUAGE = 'en';
+const PUBLIC_FILE = /\.[^/]+$/;
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Check if the pathname already starts with a language code
-  const hasLanguagePrefix = SUPPORTED_LANGUAGES.some((lang) => pathname.startsWith(`/${lang}`));
-
-  if (hasLanguagePrefix) {
-    // Language prefix already exists, proceed normally
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname === '/favicon.ico' ||
+    PUBLIC_FILE.test(pathname)
+  ) {
     return NextResponse.next();
   }
 
-  // If root path, redirect to default language
+  const [, maybeLocale] = pathname.split('/');
+  const hasLanguagePrefix = SUPPORTED_LANGUAGES.includes(maybeLocale);
+
+  if (hasLanguagePrefix) {
+    return NextResponse.next();
+  }
+
   if (pathname === '/' || pathname === '') {
     return NextResponse.redirect(new URL(`/${DEFAULT_LANGUAGE}`, request.url));
   }
 
-  // For any other path without language prefix, prepend the default language
   return NextResponse.redirect(new URL(`/${DEFAULT_LANGUAGE}${pathname}`, request.url));
 }
 
 export const config = {
-  matcher: [
-    // Skip all internal paths (_next, api, etc)
-    '/((?!_next|api|favicon.ico).*)',
-  ],
+  matcher: ['/((?!_next|api).*)'],
 };

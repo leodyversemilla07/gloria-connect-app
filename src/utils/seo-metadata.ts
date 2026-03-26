@@ -82,7 +82,7 @@ export function generateMetadata(
     alternates: {
       languages: {
         en: `${baseUrl}/en`,
-        fil: `${baseUrl}/fil`,
+        'fil-PH': `${baseUrl}/fil`,
       },
     },
   };

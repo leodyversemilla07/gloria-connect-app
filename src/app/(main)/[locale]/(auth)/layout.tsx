@@ -1,4 +1,3 @@
-import { ConvexClientProvider } from "@/app/convex-client-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "../../i18n-provider";
 import enMessages from "../../../../../messages/en.json";
@@ -24,7 +23,7 @@ export default async function LocaleAuthLayout({
     const messages = validLocale === 'fil' ? filMessages : enMessages;
 
     return (
-        <I18nProvider language={validLocale} messages={messages}>
+        <I18nProvider key={validLocale} language={validLocale} messages={messages}>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                 <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
                     <div className="flex w-full max-w-sm md:max-w-4xl flex-col gap-6">

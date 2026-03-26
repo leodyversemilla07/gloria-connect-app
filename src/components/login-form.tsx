@@ -19,7 +19,7 @@ import { api } from "../../convex/_generated/api";
 import { useForm } from "@tanstack/react-form"
 import { loginSchema, emailSchema, loginPasswordSchema, formatZodErrors } from "@/lib/schemas";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import Image from "next/image";
 
@@ -29,13 +29,14 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const { signIn } = useAuthActions();
   const router = useRouter();
+  const pathname = usePathname();
   const currentUser = useQuery(api.users.getCurrentUser);
+  const locale = pathname.split("/")[1] || "en";
   React.useEffect(() => {
-    // If currentUser is not null, user is authenticated
     if (currentUser) {
-      router.push("/admin/dashboard");
+      router.push(`/${locale}/admin/dashboard`);
     }
-  }, [currentUser, router]);
+  }, [currentUser, locale, router]);
   const form = useForm({
     defaultValues: {
       email: "",
@@ -48,7 +49,7 @@ export function LoginForm({
       setError(null);
       try {
         await signIn("password", { ...value, flow: "signIn" });
-        router.push("/admin/dashboard");
+        router.push(`/${locale}/admin/dashboard`);
       } catch (err: unknown) {
         if (isErrorWithMessage(err)) {
           setError(err.message);
@@ -182,7 +183,7 @@ export function LoginForm({
               )}
               <FieldDescription className="text-center">
                 Don&apos;t have an account?{" "}
-                <Link href="/register" className="underline underline-offset-4">
+                <Link href={`/${locale}/register`} className="underline underline-offset-4">
                   Sign up
                 </Link>
               </FieldDescription>

@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/sidebar"
 import Logo from "./logo"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useQuery } from "convex/react"
 import { api } from "../../convex/_generated/api"
 
@@ -43,37 +44,39 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { isAdmin } = useQuery(api.users.getIsAdmin, {}) ?? { isAdmin: false };
+  const pathname = usePathname();
+  const locale = pathname.split("/")[1] || "en";
 
   const navMain = [
     ...(isAdmin ? [
       {
         title: "Dashboard",
-        url: "/admin/dashboard",
+        url: `/${locale}/admin/dashboard`,
         icon: IconDashboard,
       },
       {
         title: "Businesses",
-        url: "/admin/businesses",
+        url: `/${locale}/admin/businesses`,
         icon: IconDatabase,
       },
       {
         title: "Categories",
-        url: "/admin/categories",
+        url: `/${locale}/admin/categories`,
         icon: IconListDetails,
       },
       {
         title: "Analytics",
-        url: "/admin/analytics",
+        url: `/${locale}/admin/analytics`,
         icon: IconChartBar,
       },
       {
         title: "Users",
-        url: "/admin/users",
+        url: `/${locale}/admin/users`,
         icon: IconUsers,
       },
       {
         title: "Reports",
-        url: "/admin/reports",
+        url: `/${locale}/admin/reports`,
         icon: IconReport,
       },
     ] : []),
@@ -82,17 +85,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navSecondary = [
     {
       title: "Settings",
-      url: "/admin/dashboard", // Redirect to admin dashboard since settings page doesn't exist
+      url: `/${locale}/admin/dashboard`,
       icon: IconSettings,
     },
     {
       title: "Help",
-      url: "/about", // Redirect to about page
+      url: `/${locale}/about`,
       icon: IconHelp,
     },
     {
       title: "Search",
-      url: "/business", // Redirect to business search
+      url: `/${locale}/business`,
       icon: IconSearch,
     },
   ];
@@ -106,7 +109,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <Link href="/">
+              <Link href={`/${locale}`}>
                 <Logo className="!h-8 !w-8" />
                 <span className="text-base font-semibold">Gloria Local Connect</span>
               </Link>

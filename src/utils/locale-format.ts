@@ -4,13 +4,14 @@
  */
 
 import { format, parseISO, formatDistance } from 'date-fns';
-import { enUS, fil } from 'date-fns/locale';
+import type { Locale } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 
 export type Language = 'en' | 'fil';
 
 const localeMap: Record<Language, Locale> = {
   en: enUS,
-  fil: fil,
+  fil: enUS,
 };
 
 const currencyMap: Record<Language, { code: string; symbol: string; locale: string }> = {

@@ -82,7 +82,7 @@ export default function BusinessesPage() {
               variant="link"
               className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start"
             >
-              <Link href="/">
+              <Link href={`/${language}`}>
                 <ArrowLeft className="h-5 w-5" />
                 <span className="font-medium">{messages["backToHome"] || "Back to Home"}</span>
               </Link>

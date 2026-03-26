@@ -20,6 +20,7 @@ export interface BusinessCardProps {
 export function BusinessCard({
     business,
     idx = 0,
+    language,
     getName,
     getDescription,
     getCategory,
@@ -68,7 +69,7 @@ export function BusinessCard({
             <CardFooter className="pt-2 mt-auto">
                 <div className="flex space-x-2 w-full">
                     <Button size="sm" className="flex-1 w-full" asChild>
-                        <Link href={`/business/${business._id}`}>
+                        <Link href={`/${language}/business/${business._id}`}>
                             {text["viewDetails"]}
                         </Link>
                     </Button>

@@ -33,7 +33,7 @@ export default async function LocaleLayout({
   const messages = validLocale === 'fil' ? filMessages : enMessages;
 
   return (
-    <I18nProvider language={validLocale} messages={messages}>
+    <I18nProvider key={validLocale} language={validLocale} messages={messages}>
       {children}
     </I18nProvider>
   );

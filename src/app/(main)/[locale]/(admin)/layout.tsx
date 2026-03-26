@@ -1,4 +1,3 @@
-import { ConvexClientProvider } from "@/app/convex-client-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
@@ -33,7 +32,7 @@ export default async function LocaleAdminLayout({
     };
 
     return (
-        <I18nProvider language={validLocale} messages={messages}>
+        <I18nProvider key={validLocale} language={validLocale} messages={messages}>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                 <SidebarProvider style={customStyle as React.CSSProperties}>
                     <AppSidebar variant="inset" collapsible="icon" />

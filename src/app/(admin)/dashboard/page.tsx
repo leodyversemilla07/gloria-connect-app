@@ -6,6 +6,7 @@ import { api } from "../../../../convex/_generated/api";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BusinessDataTable } from "@/components/business-data-table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +17,8 @@ import { Building2, CheckCircle, Clock, XCircle, TrendingUp, Users, Plus, Eye } 
 
 export default function AdminDashboard() {
   const businesses = useQuery(api.businesses.get);
+  const pathname = usePathname();
+  const locale = pathname.split("/")[1] || "en";
 
   // Removed searchTerm and selectedCategory, not needed for dashboard
   const [language] = useState<"en" | "tl">("en");
@@ -209,7 +212,7 @@ export default function AdminDashboard() {
             </div>
             <div className="ml-auto flex items-center space-x-4">
               <Button asChild size="sm" className="bg-primary text-primary-foreground">
-                <Link href="/admin/businesses/add">
+                <Link href={`/${locale}/admin/businesses/add`}>
                   <Plus className="h-4 w-4 mr-2" />
                   {text[language].addBusiness}
                 </Link>
@@ -408,19 +411,19 @@ export default function AdminDashboard() {
             <CardContent>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="outline">
-                <Link href="/admin/businesses">
+                <Link href={`/${locale}/admin/businesses`}>
                   <Eye className="h-4 w-4 mr-2" />
                   View All Businesses
                 </Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href="/admin/analytics">
+                <Link href={`/${locale}/admin/analytics`}>
                   <TrendingUp className="h-4 w-4 mr-2" />
                   View Analytics
                 </Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href="/admin/users">
+                <Link href={`/${locale}/admin/users`}>
                   <Users className="h-4 w-4 mr-2" />
                   Manage Users
                 </Link>

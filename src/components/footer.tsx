@@ -28,17 +28,17 @@ export default function Footer({ language, messages }: FooterProps) {
             </h4>
             <ul className="space-y-2 text-muted-foreground text-center md:text-left">
               <li>
-                <Link href="/" className="hover:text-foreground">
+                <Link href={`/${language}`} className="hover:text-foreground">
                   {messages["home"] || (language === "en" ? "Home" : "Tahanan")}
                 </Link>
               </li>
               <li>
-                <Link href="/business" className="hover:text-foreground">
+                <Link href={`/${language}/business`} className="hover:text-foreground">
                   {messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo")}
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-foreground">
+                <Link href={`/${language}/about`} className="hover:text-foreground">
                   {messages["about"] || (language === "en" ? "About" : "Tungkol")}
                 </Link>
               </li>

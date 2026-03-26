@@ -19,7 +19,7 @@ import { api } from "../../convex/_generated/api";
 import { useForm } from "@tanstack/react-form"
 import { loginSchema, emailSchema, loginPasswordSchema, formatZodErrors } from "@/lib/schemas";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import Image from "next/image";
 
@@ -29,9 +29,11 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const { signIn } = useAuthActions();
   const router = useRouter();
+  const pathname = usePathname();
   const currentUser = useQuery(api.users.getCurrentUser);
   const adminStatus = useQuery(api.users.getIsAdmin, {});
   const verificationStatus = useQuery(api.users.getEmailVerificationStatus, {});
+  const locale = pathname.split("/")[1] || "en";
 
   React.useEffect(() => {
     if (!currentUser || adminStatus === undefined || verificationStatus === undefined) {
@@ -39,14 +41,13 @@ export function LoginForm({
     }
 
     if (!verificationStatus.isVerified) {
-      router.push("/verify-email");
+      router.push(`/${locale}/verify-email`);
       return;
     }
 
-    router.push(adminStatus.isAdmin ? "/dashboard" : "/");
-  }, [adminStatus, currentUser, router, verificationStatus]);
+    router.push(adminStatus.isAdmin ? `/${locale}/admin/dashboard` : `/${locale}`);
+  }, [adminStatus, currentUser, locale, router, verificationStatus]);
 
-  // Show loading while checking auth status
   if (currentUser === undefined || adminStatus === undefined || verificationStatus === undefined) {
     return (
       <Card className={className}>
@@ -202,7 +203,7 @@ export function LoginForm({
               )}
               <FieldDescription className="text-center">
                 Don&apos;t have an account?{" "}
-                <Link href="/register" className="underline underline-offset-4">
+                <Link href={`/${locale}/register`} className="underline underline-offset-4">
                   Sign up
                 </Link>
               </FieldDescription>

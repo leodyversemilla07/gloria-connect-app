@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useMutation, useQuery } from "convex/react";
 import { useAuthToken } from "@convex-dev/auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "../../convex/_generated/api";
 import { handleConvexError } from "@/hooks/use-convex-error";
@@ -22,6 +22,7 @@ const SESSION_KEY_PREFIX = "verification-email-sent:";
 
 export function EmailVerificationForm() {
   const router = useRouter();
+  const pathname = usePathname();
   const token = useAuthToken();
   const currentUser = useQuery(api.users.getCurrentUser);
   const adminStatus = useQuery(api.users.getIsAdmin, {});
@@ -32,18 +33,19 @@ export function EmailVerificationForm() {
   const [code, setCode] = React.useState("");
   const [isSending, setIsSending] = React.useState(false);
   const [isVerifying, setIsVerifying] = React.useState(false);
+  const locale = pathname.split("/")[1] || "en";
 
   React.useEffect(() => {
     if (token === null || token === undefined) {
-      router.replace("/login");
+      router.replace(`/${locale}/login`);
     }
-  }, [router, token]);
+  }, [locale, router, token]);
 
   React.useEffect(() => {
     if (verificationStatus?.isVerified && adminStatus !== undefined) {
-      router.replace(adminStatus.isAdmin ? "/dashboard" : "/");
+      router.replace(adminStatus.isAdmin ? `/${locale}/admin/dashboard` : `/${locale}`);
     }
-  }, [adminStatus, router, verificationStatus]);
+  }, [adminStatus, locale, router, verificationStatus]);
 
   React.useEffect(() => {
     const email = verificationStatus?.email;
@@ -105,7 +107,7 @@ export function EmailVerificationForm() {
         code: code.trim(),
       });
       toast.success("Email verified.");
-      router.replace(adminStatus?.isAdmin ? "/dashboard" : "/");
+      router.replace(adminStatus?.isAdmin ? `/${locale}/admin/dashboard` : `/${locale}`);
     } catch (error) {
       handleConvexError(error, "Failed to verify email");
     } finally {
@@ -125,7 +127,7 @@ export function EmailVerificationForm() {
 
   if (token === null || !currentUser?.email) {
     if (typeof window !== 'undefined') {
-      window.location.href = "/login";
+      window.location.href = `/${locale}/login`;
     }
     return (
       <Card className="w-full">

@@ -92,7 +92,7 @@ export default function BusinessesPage() {
               variant="link"
               className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start text-primary hover:text-primary/80"
             >
-              <Link href="/">
+              <Link href={`/${language}`}>
                 <ArrowLeft className="h-5 w-5" />
                 <span className="font-medium">{t("backToHome")}</span>
               </Link>

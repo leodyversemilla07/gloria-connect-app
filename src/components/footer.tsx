@@ -28,24 +28,26 @@ export default function Footer({ language, messages }: FooterProps) {
             </h4>
             <ul className="space-y-3 text-muted-foreground text-center md:text-left">
               <li>
-                <Link href="/" className="hover:text-primary transition-colors">
+                <Link href={`/${language}`} className="hover:text-primary transition-colors">
                   {messages["home"] || (language === "en" ? "Home" : "Tahanan")}
                 </Link>
               </li>
               <li>
-                <Link href="/business" className="hover:text-primary transition-colors">
+                <Link href={`/${language}/business`} className="hover:text-primary transition-colors">
                   {messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo")}
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-primary transition-colors">
+                <Link href={`/${language}/about`} className="hover:text-primary transition-colors">
                   {messages["about"] || (language === "en" ? "About" : "Tungkol")}
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-center md:text-left font-[family-name:var(--font-playfair)]">{messages["contact"] || (language === "en" ? "Contact" : "Makipag-ugnayan")}</h4>
+            <h4 className="text-lg font-semibold mb-4 text-center md:text-left font-[family-name:var(--font-playfair)]">
+              {messages["contact"] || (language === "en" ? "Contact" : "Makipag-ugnayan")}
+            </h4>
             <p className="text-muted-foreground text-center md:text-left">
               Gloria, Oriental Mindoro
               <br />

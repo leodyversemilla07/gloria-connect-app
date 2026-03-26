@@ -56,7 +56,7 @@ export default function BusinessDetailPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-foreground mb-4">Business Not Found</h1>
-          <Link href="/">
+          <Link href={`/${language}/business`}>
             <Button>Return Home</Button>
           </Link>
         </div>
@@ -110,7 +110,7 @@ export default function BusinessDetailPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
             <Button asChild variant="link" className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start">
-              <Link href="/">
+              <Link href={`/${language}/business`}>
                 <ArrowLeft className="h-5 w-5" />
                 <span className="font-medium">{messages["backToHome"] || "Back to Home"}</span>
               </Link>

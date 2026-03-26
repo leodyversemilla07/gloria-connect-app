@@ -18,31 +18,29 @@ export default function Header({ language, messages, setLanguage, user, currentP
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: "/", label: messages["home"] || (language === "en" ? "Home" : "Tahanan") },
-    { href: "/business", label: messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo") },
-    { href: "/about", label: messages["about"] || (language === "en" ? "About" : "Tungkol") },
+    { href: `/${language}`, active: "/", label: messages["home"] || (language === "en" ? "Home" : "Tahanan") },
+    { href: `/${language}/business`, active: "/business", label: messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo") },
+    { href: `/${language}/about`, active: "/about", label: messages["about"] || (language === "en" ? "About" : "Tungkol") },
   ];
 
   return (
     <header className="bg-card/95 backdrop-blur-sm shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href={`/${language}`} className="flex items-center gap-2 group">
             <Logo size={36} className="group-hover:scale-105 transition-transform" />
             <span className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary hidden xs:inline">
               Gloria Local Connect
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
-                key={link.href}
+                key={link.active}
                 href={link.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
-                  currentPath === link.href ? "text-primary" : "text-muted-foreground"
+                  currentPath === link.active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 {link.label}
@@ -53,14 +51,14 @@ export default function Header({ language, messages, setLanguage, user, currentP
               <ThemeToggle />
               {user ? (
                 <Button asChild size="sm">
-                  <Link href="/dashboard">
+                  <Link href={`/${language}/admin/dashboard`}>
                     {messages["dashboard"] || "Dashboard"}
                   </Link>
                 </Button>
               ) : (
                 <>
                   <Link
-                    href="/login"
+                    href={`/${language}/login`}
                     className={`text-sm font-medium transition-colors hover:text-primary ${
                       currentPath === "/login" ? "text-primary" : ""
                     }`}
@@ -68,7 +66,7 @@ export default function Header({ language, messages, setLanguage, user, currentP
                     {messages["login"] || (language === "en" ? "Login" : "Mag-login")}
                   </Link>
                   <Button asChild size="sm">
-                    <Link href="/register">
+                    <Link href={`/${language}/register`}>
                       {messages["register"] || (language === "en" ? "Register" : "Magrehistro")}
                     </Link>
                   </Button>
@@ -77,7 +75,6 @@ export default function Header({ language, messages, setLanguage, user, currentP
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -87,19 +84,16 @@ export default function Header({ language, messages, setLanguage, user, currentP
           </button>
         </div>
 
-        {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t">
             <nav className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <Link
-                  key={link.href}
+                  key={link.active}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`text-base font-medium py-2 px-4 rounded-lg transition-colors ${
-                    currentPath === link.href
-                      ? "bg-primary/10 text-primary"
-                      : "hover:bg-muted"
+                    currentPath === link.active ? "bg-primary/10 text-primary" : "hover:bg-muted"
                   }`}
                 >
                   {link.label}
@@ -112,19 +106,19 @@ export default function Header({ language, messages, setLanguage, user, currentP
               <div className="flex gap-2 px-4">
                 {user ? (
                   <Button asChild className="flex-1">
-                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                    <Link href={`/${language}/admin/dashboard`} onClick={() => setMobileMenuOpen(false)}>
                       {messages["dashboard"] || "Dashboard"}
                     </Link>
                   </Button>
                 ) : (
                   <>
                     <Button asChild variant="outline" className="flex-1">
-                      <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                      <Link href={`/${language}/login`} onClick={() => setMobileMenuOpen(false)}>
                         {messages["login"] || "Login"}
                       </Link>
                     </Button>
                     <Button asChild className="flex-1">
-                      <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
+                      <Link href={`/${language}/register`} onClick={() => setMobileMenuOpen(false)}>
                         {messages["register"] || "Register"}
                       </Link>
                     </Button>

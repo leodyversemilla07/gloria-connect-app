@@ -19,7 +19,7 @@ import { api } from "../../convex/_generated/api";
 import { useForm } from "@tanstack/react-form"
 import { registerSchema, nameSchema, emailSchema, passwordSchema, formatZodErrors } from "@/lib/schemas";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import Image from "next/image";
 
@@ -29,9 +29,11 @@ export function RegisterForm({
 }: React.ComponentProps<"div">) {
   const { signIn } = useAuthActions();
   const router = useRouter();
+  const pathname = usePathname();
   const currentUser = useQuery(api.users.getCurrentUser);
   const adminStatus = useQuery(api.users.getIsAdmin, {});
   const verificationStatus = useQuery(api.users.getEmailVerificationStatus, {});
+  const locale = pathname.split("/")[1] || "en";
 
   React.useEffect(() => {
     if (!currentUser || adminStatus === undefined || verificationStatus === undefined) {
@@ -39,12 +41,12 @@ export function RegisterForm({
     }
 
     if (!verificationStatus.isVerified) {
-      router.push("/verify-email");
+      router.push(`/${locale}/verify-email`);
       return;
     }
 
-    router.push(adminStatus.isAdmin ? "/dashboard" : "/");
-  }, [adminStatus, currentUser, router, verificationStatus]);
+    router.push(adminStatus.isAdmin ? `/${locale}/admin/dashboard` : `/${locale}`);
+  }, [adminStatus, currentUser, locale, router, verificationStatus]);
 
   const form = useForm({
     defaultValues: {
@@ -207,7 +209,7 @@ export function RegisterForm({
               )}
               <FieldDescription className="text-center">
                 Already have an account?{" "}
-                <Link href="/login" className="underline underline-offset-4">
+                <Link href={`/${locale}/login`} className="underline underline-offset-4">
                   Sign in
                 </Link>
               </FieldDescription>

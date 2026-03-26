@@ -6,6 +6,7 @@ import { useI18n } from "@/components/i18n-provider";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BusinessDataTable } from "@/components/business-data-table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,9 +18,10 @@ import { Building2, CheckCircle, Clock, XCircle, TrendingUp, Users, Plus, Eye } 
 export default function AdminDashboard() {
   const businesses = useQuery(api.businesses.get);
   const { t } = useI18n();
+  const pathname = usePathname();
+  const locale = pathname.split("/")[1] || "en";
   const [language] = useState<"en" | "tl">("en");
 
-  // Dashboard summary stats
   const totalBusinesses = businesses?.length || 0;
   const verifiedBusinesses = businesses?.filter((b) => b.metadata?.isVerified).length || 0;
   const statusCounts = businesses ? {
@@ -28,31 +30,26 @@ export default function AdminDashboard() {
     inactive: businesses.filter((b) => b.metadata?.status === "inactive").length,
   } : { active: 0, pending: 0, inactive: 0 };
 
-  // Calculate additional metrics
   const percentOfTotal = (value: number) => (totalBusinesses > 0 ? ((value / totalBusinesses) * 100).toFixed(1) : "0.0");
   const activePercentage = percentOfTotal(statusCounts.active);
   const pendingPercentage = percentOfTotal(statusCounts.pending);
   const inactivePercentage = percentOfTotal(statusCounts.inactive);
 
-  // Chart data for business status distribution
   const statusChartData = [
     { name: "Active", value: statusCounts.active, percentage: activePercentage, color: "#22c55e" },
     { name: "Pending", value: statusCounts.pending, percentage: pendingPercentage, color: "#f59e0b" },
     { name: "Inactive", value: statusCounts.inactive, percentage: inactivePercentage, color: "#ef4444" },
   ];
 
-  // Recent businesses (last 5)
   const recentBusinesses = businesses
     ? businesses
         .sort((a, b) => (b._creationTime || 0) - (a._creationTime || 0))
         .slice(0, 5)
     : [];
 
-  // Handle loading state
   if (!businesses) {
     return (
       <div className="min-h-screen antialiased font-sans bg-background text-foreground flex flex-1 flex-col">
-        {/* Dashboard Header */}
         <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="container flex h-16 items-center px-4">
             <div className="flex items-center space-x-2">
@@ -65,14 +62,12 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Dashboard Main */}
         <main className="@container/main flex flex-1 flex-col gap-6 p-6">
           <div className="flex flex-col gap-2">
             <Skeleton className="h-9 w-48" />
             <Skeleton className="h-5 w-96" />
           </div>
 
-          {/* Summary Cards Skeleton */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <Card key={i}>
@@ -88,7 +83,6 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          {/* Charts and Recent Activity Skeleton */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             <Card className="col-span-4">
               <CardHeader>
@@ -199,7 +193,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen antialiased font-sans bg-background text-foreground flex flex-1 flex-col">
-        {/* Dashboard Header */}
         <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="container flex h-16 items-center px-4">
             <div className="flex items-center space-x-2">
@@ -208,7 +201,7 @@ export default function AdminDashboard() {
             </div>
             <div className="ml-auto flex items-center space-x-4">
               <Button asChild size="sm" className="bg-primary text-primary-foreground">
-                <Link href="/businesses/add">
+                <Link href={`/${locale}/admin/businesses/add`}>
                   <Plus className="h-4 w-4 mr-2" />
                   {text[language].addBusiness}
                 </Link>
@@ -217,14 +210,12 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Dashboard Main */}
         <main className="@container/main flex flex-1 flex-col gap-6 p-6">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
             <p className="text-muted-foreground">{text[language].subtitle}</p>
           </div>
 
-          {/* Summary Cards */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -280,9 +271,7 @@ export default function AdminDashboard() {
             </Card>
           </div>
 
-          {/* Charts and Recent Activity */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            {/* Status Distribution Chart */}
             <Card className="col-span-4">
               <CardHeader>
                 <CardTitle>Business Status Distribution</CardTitle>
@@ -348,7 +337,6 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
 
-            {/* Recent Activity */}
             <Card className="col-span-3">
               <CardHeader>
                 <CardTitle>Recent Businesses</CardTitle>
@@ -396,7 +384,6 @@ export default function AdminDashboard() {
             </Card>
           </div>
 
-          {/* Quick Actions */}
           <Card>
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
@@ -407,19 +394,19 @@ export default function AdminDashboard() {
             <CardContent>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="outline">
-                <Link href="/businesses">
+                <Link href={`/${locale}/admin/businesses`}>
                   <Eye className="h-4 w-4 mr-2" />
                   View All Businesses
                 </Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href="/analytics">
+                <Link href={`/${locale}/admin/analytics`}>
                   <TrendingUp className="h-4 w-4 mr-2" />
                   View Analytics
                 </Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href="/users">
+                <Link href={`/${locale}/admin/users`}>
                   <Users className="h-4 w-4 mr-2" />
                   Manage Users
                 </Link>
@@ -428,7 +415,6 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-          {/* All Businesses Table */}
           <BusinessDataTable data={businesses} />
         </main>
       </div>

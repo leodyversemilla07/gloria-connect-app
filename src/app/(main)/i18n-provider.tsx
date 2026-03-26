@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
+import { saveLanguagePreference } from "@/utils/i18n-storage";
 
 export type Messages = Record<string, string>;
 
@@ -18,7 +19,6 @@ const I18nContext = createContext<I18nContextType>({
     t: (key: string) => key,
 });
 
-// Helper to load messages dynamically
 async function loadMessages(lang: string): Promise<Messages> {
     switch (lang) {
         case "fil":
@@ -30,7 +30,7 @@ async function loadMessages(lang: string): Promise<Messages> {
 }
 
 export function I18nProvider({ language: initialLanguage, messages: initialMessages, children }: { language: string; messages: Messages; children: React.ReactNode }) {
-    const [language, setLanguage] = useState(initialLanguage);
+    const [language, setLanguageState] = useState(initialLanguage);
     const [messages, setMessages] = useState(initialMessages);
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export function I18nProvider({ language: initialLanguage, messages: initialMessa
         if (key in messages) {
             return messages[key] || key;
         }
-        
+
         const keys = key.split(".");
         let value: unknown = messages;
         for (const k of keys) {
@@ -56,6 +56,11 @@ export function I18nProvider({ language: initialLanguage, messages: initialMessa
             }
         }
         return typeof value === "string" ? value : key;
+    };
+
+    const setLanguage = (lang: string) => {
+        saveLanguagePreference(lang);
+        setLanguageState(lang);
     };
 
     return (

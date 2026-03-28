@@ -132,12 +132,12 @@ export function LoginForm({
                   <Field>
                     <div className="flex items-center">
                       <FieldLabel>Password</FieldLabel>
-                      <a
-                        href="#"
+                      <Link
+                        href={`/${locale}/forgot-password`}
                         className="ml-auto text-sm underline-offset-2 hover:underline"
                       >
                         Forgot your password?
-                      </a>
+                      </Link>
                     </div>
                     <div className="relative">
                       <Input

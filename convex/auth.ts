@@ -1,6 +1,7 @@
 import { convexAuth } from "@convex-dev/auth/server";
 import Google from "@auth/core/providers/google";
 import { Password } from "@convex-dev/auth/providers/Password";
+import { ResendPasswordReset } from "./ResendPasswordReset";
 import { query } from "./_generated/server";
 import { ConvexError } from "convex/values";
 import { z } from "zod";
@@ -10,7 +11,6 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
     Google,
     Password({
       profile(params) {
-        // Zod validation for email and name (updated for deprecation)
         const ProfileSchema = z.object({
           email: z.email(),
           name: z.string().min(1).max(100).optional(),
@@ -24,7 +24,6 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
         return profile;
       },
       validatePasswordRequirements(password: string) {
-        // Require at least 8 chars, one digit, one lowercase, one uppercase
         if (
           password.length < 8 ||
           !/\d/.test(password) ||
@@ -34,6 +33,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
           throw new ConvexError("Password must be at least 8 characters and include a digit, lowercase, and uppercase letter.");
         }
       },
+      reset: ResendPasswordReset,
     }),
   ],
 });

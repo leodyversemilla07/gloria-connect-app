@@ -59,9 +59,9 @@ export default defineSchema({
     authRefreshTokens: defineTable({
         sessionId: v.id("authSessions"),
         parentRefreshTokenId: v.optional(v.id("authRefreshTokens")),
-        userId: v.optional(v.id("users")), // TEMP: make optional for migration
-        expiresAt: v.optional(v.float64()), // TEMP: new field for migration
-        expirationTime: v.optional(v.float64()), // TEMP: keep old field for migration
+        userId: v.optional(v.id("users")),
+        expiresAt: v.optional(v.float64()),
+        expirationTime: v.optional(v.float64()),
         firstUsedTime: v.optional(v.float64()),
         consumed: v.optional(v.boolean()),
     })

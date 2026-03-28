@@ -8,12 +8,14 @@
  * @module
  */
 
+import type * as analytics from "../analytics.js";
 import type * as auth from "../auth.js";
 import type * as auth_helpers from "../auth_helpers.js";
 import type * as businesses from "../businesses.js";
 import type * as cleanup from "../cleanup.js";
 import type * as createAdmin from "../createAdmin.js";
 import type * as emailVerification from "../emailVerification.js";
+import type * as files from "../files.js";
 import type * as http from "../http.js";
 import type * as migrateAuthRefreshTokens from "../migrateAuthRefreshTokens.js";
 import type * as shell from "../shell.js";
@@ -26,12 +28,14 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  analytics: typeof analytics;
   auth: typeof auth;
   auth_helpers: typeof auth_helpers;
   businesses: typeof businesses;
   cleanup: typeof cleanup;
   createAdmin: typeof createAdmin;
   emailVerification: typeof emailVerification;
+  files: typeof files;
   http: typeof http;
   migrateAuthRefreshTokens: typeof migrateAuthRefreshTokens;
   shell: typeof shell;

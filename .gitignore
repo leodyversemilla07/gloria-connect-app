@@ -29,6 +29,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+/.codex-*.log
+/dev.log
+/nul
 
 # caches
 .eslintcache

@@ -26,6 +26,7 @@ import {
   Tag,
   CheckCircle,
   Calendar,
+  Camera,
 } from "lucide-react";
 import { getPhotoUrl, getPrimaryPhoto } from "@/lib/utils";
 

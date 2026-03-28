@@ -26,7 +26,8 @@ export function ImageUpload({
   const [previewUrl, setPreviewUrl] = useState<string | null>(defaultUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const generateUploadUrl = useMutation((api as any).files.generateUploadUrl);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

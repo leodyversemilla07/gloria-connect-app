@@ -136,6 +136,7 @@ export default function HomePage() {
                     getDescription={getDescription}
                     getCategory={getCategory}
                     getTodayHours={getTodayHours}
+                    getBarangay={(b) => b.address?.barangay || ""}
                     text={{
                       ...messages,
                       featured: messages["featured"] || (language === "en" ? "Featured" : "Tampok"),
@@ -162,6 +163,7 @@ export default function HomePage() {
                   getDescription={getDescription}
                   getCategory={getCategory}
                   getTodayHours={getTodayHours}
+                  getBarangay={(b) => b.address?.barangay || ""}
                   text={{
                     ...messages,
                     featured: messages["featured"] || (language === "en" ? "Featured" : "Tampok"),

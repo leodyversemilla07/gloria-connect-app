@@ -177,6 +177,7 @@ export default function BusinessesPage() {
                 getDescription={getDescription}
                 getCategory={getCategory}
                 getTodayHours={getTodayHours}
+                getBarangay={(b) => b.address?.barangay || ""}
                 text={text as Record<string, string>}
               />
             ))}

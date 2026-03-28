@@ -48,14 +48,11 @@ export function LoginForm({
     router.push(adminStatus.isAdmin ? `/${locale}/admin/dashboard` : `/${locale}`);
   }, [adminStatus, currentUser, locale, router, verificationStatus]);
 
-  if (currentUser === undefined || adminStatus === undefined || verificationStatus === undefined) {
-    return (
-      <Card className={className}>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          Loading...
-        </CardContent>
-      </Card>
-    );
+  const [error, setError] = React.useState<string | null>(null);
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  function isErrorWithMessage(err: unknown): err is { message: string } {
+    return typeof err === "object" && err !== null && "message" in err && typeof (err as { message?: unknown }).message === "string";
   }
 
   const form = useForm({
@@ -80,11 +77,16 @@ export function LoginForm({
     },
   });
 
-  const [error, setError] = React.useState<string | null>(null);
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  function isErrorWithMessage(err: unknown): err is { message: string } {
-    return typeof err === "object" && err !== null && "message" in err && typeof (err as { message?: unknown }).message === "string";
+  if (currentUser === undefined || adminStatus === undefined || verificationStatus === undefined) {
+    return (
+      <div className={cn("flex flex-col gap-6", className)} {...props}>
+        <Card className={className}>
+          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+            Loading...
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (

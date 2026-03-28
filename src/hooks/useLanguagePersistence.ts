@@ -18,7 +18,7 @@ export function useLanguagePersistence() {
     if (savedLanguage && savedLanguage !== language) {
       setLanguage(savedLanguage);
     }
-  }, []);
+  }, [language, setLanguage]);
 
   // Save language preference whenever it changes
   const handleLanguageChange = useCallback(

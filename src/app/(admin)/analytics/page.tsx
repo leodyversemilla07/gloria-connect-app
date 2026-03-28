@@ -46,7 +46,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 export default function AdminAnalyticsPage() {
-  const stats = useQuery(api.analytics.getDashboardStats);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const stats = useQuery((api as any).analytics.getDashboardStats);
   const { t } = useI18n();
 
   if (!stats) {
@@ -198,7 +199,7 @@ export default function AdminAnalyticsPage() {
                     cursor={{fill: 'transparent'}}
                   />
                   <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                    {stats.categoryCounts.map((entry, index) => (
+                    {stats.categoryCounts.map((_entry: { name: string; value: number }, index: number) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Bar>
@@ -224,7 +225,7 @@ export default function AdminAnalyticsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {stats.recentActivity.map((activity) => (
+                {stats.recentActivity.map((activity: { id: string; name: string; status: string; dateAdded: string }) => (
                   <TableRow key={activity.id}>
                     <TableCell className="font-medium truncate max-w-[150px]">{activity.name}</TableCell>
                     <TableCell>
@@ -253,7 +254,14 @@ export default function AdminAnalyticsPage() {
 }
 
 // Custom Tooltip component to avoid using ChartTooltip if it's too specific
-function Tooltip({ active, payload, content, cursor }: any) {
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number; payload: { name: string } }>;
+  content?: React.ReactNode;
+  cursor?: { fill?: string };
+}
+
+function Tooltip({ active, payload }: TooltipProps) {
   if (active && payload && payload.length) {
     return (
       <div className="bg-background border border-border p-2 rounded-lg shadow-lg text-xs">

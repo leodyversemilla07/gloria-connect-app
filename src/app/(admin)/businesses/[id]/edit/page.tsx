@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, usePathname } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../../convex/_generated/api";
 import { Id } from "../../../../../../convex/_generated/dataModel";
@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MapPin, Phone, Mail, Globe, Clock, Camera, CheckCircle, AlertCircle, Save, X, Plus, Trash2 } from "lucide-react";
 import * as React from "react";
@@ -20,9 +19,12 @@ import { ImageUpload } from "@/components/image-upload";
 export default function EditBusinessPage() {
   const router = useRouter();
   const { id } = useParams();
+  const pathname = usePathname();
 
   const business = useQuery(api.businesses.getById, { id: id as Id<"businesses"> });
   const updateBusiness = useMutation(api.businesses.update);
+  const localeMatch = pathname.match(/^\/(en|fil)(\/|$)/);
+  const adminBusinessesPath = localeMatch ? `/${localeMatch[1]}/admin/businesses` : "/admin/businesses";
 
   type FormState = {
     nameEnglish: string;
@@ -205,7 +207,7 @@ export default function EditBusinessPage() {
     };
     try {
       await updateBusiness({ id: id as Id<"businesses">, ...updatedBusiness });
-      router.push("/businesses");
+      router.push(adminBusinessesPath);
     } catch (err) {
       handleConvexError(err, "Failed to update business");
     }

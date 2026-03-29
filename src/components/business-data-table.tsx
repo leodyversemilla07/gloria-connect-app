@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useMutation } from "convex/react";
+import { usePathname } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -101,6 +102,7 @@ interface BusinessDataTableProps {
 }
 
 export function BusinessDataTable({ data }: BusinessDataTableProps) {
+  const pathname = usePathname();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -113,6 +115,9 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
   const deleteBusiness = useMutation(api.businesses.remove);
   const updateStatus = useMutation(api.businesses.updateStatus);
   const toggleVerified = useMutation(api.businesses.toggleVerified);
+  const localeMatch = pathname.match(/^\/(en|fil)(\/|$)/);
+  const publicBasePath = localeMatch ? `/${localeMatch[1]}/business` : "/business";
+  const adminBasePath = localeMatch ? `/${localeMatch[1]}/admin/businesses` : "/admin/businesses";
 
   // Filter data based on search and filters
   const filteredData = data.filter((business) => {
@@ -411,13 +416,13 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem asChild>
-                                <Link href={`/business/${business._id}`}>
+                                <Link href={`${publicBasePath}/${business._id}`}>
                                   <Eye className="h-4 w-4 mr-2" />
                                   View Details
                                 </Link>
                               </DropdownMenuItem>
                               <DropdownMenuItem asChild>
-                                <Link href={`/businesses/${business._id}/edit`}>
+                                <Link href={`${adminBasePath}/${business._id}/edit`}>
                                   <Edit className="h-4 w-4 mr-2" />
                                   Edit Business
                                 </Link>

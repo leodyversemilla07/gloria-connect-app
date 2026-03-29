@@ -10,8 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartContainer,
-  ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
@@ -94,13 +92,6 @@ export default function AdminAnalyticsPage() {
       </div>
     );
   }
-
-  const chartConfig = {
-    value: {
-      label: "Count",
-      color: "hsl(var(--primary))",
-    },
-  };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-in fade-in duration-500">

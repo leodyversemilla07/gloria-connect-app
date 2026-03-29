@@ -4,19 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import type { Doc } from "../../../../convex/_generated/dataModel";
 import { Search, ArrowLeft, MapPin, Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import BusinessCard from "@/components/business-card";
+import BusinessCard, { type PublicBusinessDigest } from "@/components/business-card";
 import LanguageToggle from "@/components/language-toggle";
 import { useI18n } from "../i18n-provider";
 
-function getCategoriesFromBusinesses(businesses: Doc<"businesses">[], t: (key: string) => string) {
+function getCategoriesFromBusinesses(businesses: PublicBusinessDigest[], t: (key: string) => string) {
   const set = new Set<string>();
   businesses.forEach((b) => {
-    if (b.category?.primary) set.add(b.category.primary);
+    set.add(b.categoryPrimary);
   });
   const arr = Array.from(set);
   arr.sort();
@@ -35,7 +34,7 @@ function getCategoriesFromBusinesses(businesses: Doc<"businesses">[], t: (key: s
 }
 
 export default function BusinessesPage() {
-  const businesses = useQuery(api.businesses.get);
+  const businesses = useQuery(api.businesses.getPublic);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const { language, messages, setLanguage, t } = useI18n();
@@ -48,29 +47,28 @@ export default function BusinessesPage() {
     );
   }
 
-  type Business = Doc<"businesses">;
   const categories = getCategoriesFromBusinesses(businesses, t);
-  const getName = (business: Business) => typeof business.name === 'string' ? business.name : business.name?.english || "";
-  const getDescription = (business: Business) => typeof business.description === 'string' ? business.description : business.description?.english || "";
-  const getCategory = (business: Business) => {
-    const cat = categories.find((c) => c.id === business.category?.primary);
+  const getName = (business: PublicBusinessDigest) => typeof business.name === 'string' ? business.name : business.name.english;
+  const getDescription = (business: PublicBusinessDigest) => typeof business.description === 'string' ? business.description : business.description.english;
+  const getCategory = (business: PublicBusinessDigest) => {
+    const cat = categories.find((c) => c.id === business.categoryPrimary);
     return language === "en" ? cat?.name : cat?.nameTagalog;
   };
-  const filteredBusinesses = businesses.filter((business: Business) => {
+  const filteredBusinesses = businesses.filter((business: PublicBusinessDigest) => {
     const name = getName(business).toLowerCase();
     const description = getDescription(business).toLowerCase();
     const matchesSearch =
       name.includes(searchTerm.toLowerCase()) ||
       description.includes(searchTerm.toLowerCase());
     const matchesCategory =
-      selectedCategory === "all" || business.category?.primary === selectedCategory;
+      selectedCategory === "all" || business.categoryPrimary === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  function getTodayHours(business: Business) {
+  function getTodayHours(business: PublicBusinessDigest) {
     const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
     const today = days[new Date().getDay()];
-    const hours = business.operatingHours?.[today as keyof typeof business.operatingHours];
+    const hours = business.operatingHours[today];
     if (!hours) return "";
     if (hours.closed) return t("closed");
     return `${hours.open} - ${hours.close}`;
@@ -177,7 +175,7 @@ export default function BusinessesPage() {
                 getDescription={getDescription}
                 getCategory={getCategory}
                 getTodayHours={getTodayHours}
-                getBarangay={(b) => b.address?.barangay || ""}
+                getBarangay={(b) => b.barangay}
                 text={text as Record<string, string>}
               />
             ))}

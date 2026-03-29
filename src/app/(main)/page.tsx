@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import type { Doc } from "../../../convex/_generated/dataModel";
 import { useI18n } from "./i18n-provider";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -14,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import BusinessCard from "@/components/business-card";
+import BusinessCard, { type PublicBusinessDigest } from "@/components/business-card";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
@@ -22,10 +21,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const ITEMS_PER_PAGE = 9;
 
-function getCategoriesFromBusinesses(businesses: Doc<"businesses">[], t: (key: string) => string) {
+function getCategoriesFromBusinesses(businesses: PublicBusinessDigest[], t: (key: string) => string) {
   const set = new Set<string>();
   businesses.forEach((b) => {
-    if (b.category?.primary) set.add(b.category.primary);
+    set.add(b.categoryPrimary);
   });
   const arr = Array.from(set);
   arr.sort();
@@ -44,29 +43,28 @@ function getCategoriesFromBusinesses(businesses: Doc<"businesses">[], t: (key: s
 }
 
 export default function HomePage() {
-  const businesses = useQuery(api.businesses.get);
+  const businesses = useQuery(api.businesses.getPublic);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const { language, messages, setLanguage, t } = useI18n();
 
-  type Business = Doc<"businesses">;
   const categories = getCategoriesFromBusinesses(businesses ?? [], t);
-  const getName = (b: Business) => typeof b.name === 'string' ? b.name : b.name?.english || "";
-  const getDescription = (b: Business) => typeof b.description === 'string' ? b.description : b.description?.english || "";
-  const getCategory = (b: Business) => {
-    const cat = categories.find((c) => c.id === b.category?.primary);
+  const getName = (b: PublicBusinessDigest) => typeof b.name === 'string' ? b.name : b.name.english;
+  const getDescription = (b: PublicBusinessDigest) => typeof b.description === 'string' ? b.description : b.description.english;
+  const getCategory = (b: PublicBusinessDigest) => {
+    const cat = categories.find((c) => c.id === b.categoryPrimary);
     return language === "en" ? cat?.name : cat?.nameTagalog;
   };
 
-  const filteredBusinesses = (businesses ?? []).filter((business: Business) => {
+  const filteredBusinesses = (businesses ?? []).filter((business: PublicBusinessDigest) => {
     const name = getName(business).toLowerCase();
     const description = getDescription(business).toLowerCase();
     const matchesSearch =
       name.includes(searchTerm.toLowerCase()) ||
       description.includes(searchTerm.toLowerCase());
     const matchesCategory =
-      selectedCategory === "all" || business.category?.primary === selectedCategory;
+      selectedCategory === "all" || business.categoryPrimary === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -86,10 +84,10 @@ export default function HomePage() {
     );
   }
 
-  function getTodayHours(business: Business) {
+  function getTodayHours(business: PublicBusinessDigest) {
     const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
     const today = days[new Date().getDay()];
-    const hours = business.operatingHours?.[today as keyof typeof business.operatingHours];
+    const hours = business.operatingHours[today];
     if (!hours) return "";
     if (hours.closed) return t("closed");
     return `${hours.open} - ${hours.close}`;
@@ -98,11 +96,6 @@ export default function HomePage() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const text = {
-    ...messages,
-    featured: t("featured"),
   };
 
   return (
@@ -190,7 +183,7 @@ export default function HomePage() {
                     getDescription={getDescription}
                     getCategory={getCategory}
                     getTodayHours={getTodayHours}
-                    getBarangay={(b) => b.address?.barangay || ""}
+                    getBarangay={(b) => b.barangay}
                     text={messages as Record<string, string>}
                   />
                 ))}
@@ -219,7 +212,7 @@ export default function HomePage() {
                   getDescription={getDescription}
                   getCategory={getCategory}
                   getTodayHours={getTodayHours}
-                  getBarangay={(b) => b.address?.barangay || ""}
+                  getBarangay={(b) => b.barangay}
                   text={messages as Record<string, string>}
                 />
               ))}

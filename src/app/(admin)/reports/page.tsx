@@ -20,15 +20,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
-  FileDown, 
   FileText, 
-  Filter,
   Download,
   Table as TableIcon
 } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Doc } from "../../../../convex/_generated/dataModel";
 
 export default function AdminReportsPage() {
   const businesses = useQuery(api.businesses.get);

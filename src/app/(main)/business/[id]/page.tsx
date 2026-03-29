@@ -28,7 +28,7 @@ import {
   Calendar,
   Camera,
 } from "lucide-react";
-import { getPhotoUrl, getPrimaryPhoto } from "@/lib/utils";
+import { getPhotoUrl } from "@/lib/utils";
 
 const BusinessLocationMap = dynamic(
   () => import("@/components/business-location-map"),
@@ -94,11 +94,10 @@ export default function BusinessDetailPage() {
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      alert(language === "en" ? "Link copied to clipboard!" : "Link na-copy sa clipboard!");
+      toast.success(language === "en" ? "Link copied to clipboard!" : "Link na-copy sa clipboard!");
     }
   };
 
-  const primaryPhoto = getPrimaryPhoto(business);
   const photos = getPhotos(business);
   const displayPhotoUrl = photos.length > 0 
     ? getPhotoUrl(photos[selectedImage]) 

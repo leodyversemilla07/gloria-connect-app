@@ -157,9 +157,10 @@ export const verifyEmailCode = mutation({
 
     const verificationCode = await ctx.db
       .query("authVerificationCodes")
-      .withIndex("code", (q) => q.eq("code", args.code))
-      .filter((q) => q.eq(q.field("email"), args.email))
-      .first();
+      .withIndex("by_email_and_code", (q) =>
+        q.eq("email", args.email).eq("code", args.code)
+      )
+      .unique();
 
     if (!verificationCode) {
       throw new ConvexError("Invalid verification code.");

@@ -33,7 +33,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <ConvexClientProvider>
-            <I18nProvider language="en" messages={enMessages}>
+            <I18nProvider language="en" messages={enMessages} editable>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                     <SidebarProvider style={customStyle as React.CSSProperties}>
                         <AppSidebar variant="inset" collapsible="icon" />

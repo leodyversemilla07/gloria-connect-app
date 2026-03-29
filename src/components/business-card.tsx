@@ -4,18 +4,49 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Clock, MapPin } from "lucide-react";
-import type { Doc } from "../../convex/_generated/dataModel";
-import { getPhotoUrl, getPrimaryPhoto } from "@/lib/utils";
+import { getPhotoUrl } from "@/lib/utils";
+
+export interface PublicBusinessDigest {
+    _id: string;
+    name:
+        | string
+        | {
+            english: string;
+            tagalog: string;
+        };
+    description:
+        | string
+        | {
+            english: string;
+            tagalog: string;
+        };
+    categoryPrimary: string;
+    barangay: string;
+    phone: string;
+    operatingHours: {
+        monday: { open: string; close: string; closed: boolean };
+        tuesday: { open: string; close: string; closed: boolean };
+        wednesday: { open: string; close: string; closed: boolean };
+        thursday: { open: string; close: string; closed: boolean };
+        friday: { open: string; close: string; closed: boolean };
+        saturday: { open: string; close: string; closed: boolean };
+        sunday: { open: string; close: string; closed: boolean };
+    };
+    primaryPhoto: {
+        url: string;
+        alt: string;
+    } | null;
+}
 
 export interface BusinessCardProps {
-    business: Doc<"businesses">;
+    business: PublicBusinessDigest;
     idx?: number;
     language: "en" | "fil";
-    getName: (business: Doc<"businesses">) => string;
-    getDescription: (business: Doc<"businesses">) => string;
-    getCategory: (business: Doc<"businesses">) => string | undefined;
-    getTodayHours: (business: Doc<"businesses">) => string;
-    getBarangay: (business: Doc<"businesses">) => string;
+    getName: (business: PublicBusinessDigest) => string;
+    getDescription: (business: PublicBusinessDigest) => string;
+    getCategory: (business: PublicBusinessDigest) => string | undefined;
+    getTodayHours: (business: PublicBusinessDigest) => string;
+    getBarangay: (business: PublicBusinessDigest) => string;
     text: Record<string, string>;
 }
 
@@ -30,8 +61,7 @@ export function BusinessCard({
     getBarangay,
     text,
 }: BusinessCardProps) {
-    const primaryPhoto = getPrimaryPhoto(business);
-    const photoUrl = getPhotoUrl(primaryPhoto);
+    const photoUrl = getPhotoUrl(business.primaryPhoto);
 
     return (
         <Card className="overflow-hidden hover:shadow-lg transition-all bg-background text-foreground flex flex-col h-full group">
@@ -84,7 +114,7 @@ export function BusinessCard({
                         </Link>
                     </Button>
                     <Button size="sm" variant="outline" className="shadow-sm px-3" asChild title={text["callNow"]}>
-                        <a href={`tel:${business.contact.phone ?? ""}`}>
+                        <a href={`tel:${business.phone}`}>
                             <Phone className="h-4 w-4" />
                         </a>
                     </Button>

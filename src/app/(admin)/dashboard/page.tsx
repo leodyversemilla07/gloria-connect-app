@@ -3,7 +3,6 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useI18n } from "@/components/i18n-provider";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,18 +16,19 @@ import { Building2, CheckCircle, Clock, XCircle, TrendingUp, Users, Plus, Eye } 
 
 export default function AdminDashboard() {
   const businesses = useQuery(api.businesses.get);
+  const stats = useQuery(api.analytics.getDashboardStats);
   const { t } = useI18n();
   const pathname = usePathname();
   const locale = pathname.split("/")[1] || "en";
-  const [language] = useState<"en" | "tl">("en");
+  const language = "en";
 
-  const totalBusinesses = businesses?.length || 0;
-  const verifiedBusinesses = businesses?.filter((b) => b.metadata?.isVerified).length || 0;
-  const statusCounts = businesses ? {
-    active: businesses.filter((b) => b.metadata?.status === "active").length,
-    pending: businesses.filter((b) => b.metadata?.status === "pending").length,
-    inactive: businesses.filter((b) => b.metadata?.status === "inactive").length,
-  } : { active: 0, pending: 0, inactive: 0 };
+  const totalBusinesses = stats?.totalBusinesses || 0;
+  const verifiedBusinesses = stats?.verifiedBusinesses || 0;
+  const statusCounts = {
+    active: stats?.statusCounts.find((item) => item.name === "active")?.value || 0,
+    pending: stats?.statusCounts.find((item) => item.name === "pending")?.value || 0,
+    inactive: stats?.statusCounts.find((item) => item.name === "inactive")?.value || 0,
+  };
 
   const percentOfTotal = (value: number) => (totalBusinesses > 0 ? ((value / totalBusinesses) * 100).toFixed(1) : "0.0");
   const activePercentage = percentOfTotal(statusCounts.active);
@@ -41,13 +41,9 @@ export default function AdminDashboard() {
     { name: "Inactive", value: statusCounts.inactive, percentage: inactivePercentage, color: "#ef4444" },
   ];
 
-  const recentBusinesses = businesses
-    ? businesses
-        .sort((a, b) => (b._creationTime || 0) - (a._creationTime || 0))
-        .slice(0, 5)
-    : [];
+  const recentBusinesses = stats?.recentActivity || [];
 
-  if (!businesses) {
+  if (!businesses || !stats) {
     return (
       <div className="min-h-screen antialiased font-sans bg-background text-foreground flex flex-1 flex-col">
         <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -347,35 +343,28 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {recentBusinesses.map((business) => (
-                    <div key={business._id} className="flex items-center">
+                    <div key={business.id} className="flex items-center">
                       <div className="ml-4 space-y-1">
                         <p className="text-sm font-medium leading-none">
-                          {typeof business.name === 'string'
-                            ? business.name
-                            : business.name?.english || business.name?.tagalog || "Unnamed Business"}
+                          {business.name || "Unnamed Business"}
                         </p>
                         <div className="flex items-center space-x-2">
                           <Badge
                             variant={
-                              business.metadata?.status === "active"
+                              business.status === "active"
                                 ? "default"
-                                : business.metadata?.status === "pending"
+                                : business.status === "pending"
                                 ? "secondary"
                                 : "destructive"
                             }
                             className="text-xs"
                           >
-                            {business.metadata?.status || "unknown"}
+                            {business.status || "unknown"}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
-                            {business.category?.primary || "Uncategorized"}
+                            {new Date(business.dateAdded).toLocaleDateString()}
                           </span>
                         </div>
-                      </div>
-                      <div className="ml-auto font-medium">
-                        {business.metadata?.isVerified && (
-                          <CheckCircle className="h-4 w-4 text-green-600" />
-                        )}
                       </div>
                     </div>
                   ))}

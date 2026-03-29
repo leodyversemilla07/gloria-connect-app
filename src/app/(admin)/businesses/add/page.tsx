@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MapPin, Phone, Mail, Globe, Clock, Camera, CheckCircle, AlertCircle, Save, X, Plus, Trash2 } from "lucide-react";
 import * as React from "react";
@@ -20,8 +19,11 @@ import { Id } from "../../../../../convex/_generated/dataModel";
 
 export default function AddBusinessPage() {
   const router = useRouter();
+  const pathname = usePathname();
 
   const createBusiness = useMutation(api.businesses.create);
+  const localeMatch = pathname.match(/^\/(en|fil)(\/|$)/);
+  const adminBusinessesPath = localeMatch ? `/${localeMatch[1]}/admin/businesses` : "/admin/businesses";
 
   const [form, setForm] = React.useState<BusinessFormData | null>(null);
 
@@ -161,7 +163,7 @@ export default function AddBusinessPage() {
     };
     try {
       await createBusiness(newBusiness);
-      router.push("/businesses");
+      router.push(adminBusinessesPath);
     } catch (err) {
       handleConvexError(err, "Failed to create business");
     }

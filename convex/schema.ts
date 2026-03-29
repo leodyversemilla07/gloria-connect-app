@@ -53,6 +53,7 @@ export default defineSchema({
         phone: v.optional(v.string()),
     })
         .index("accountId", ["accountId"])
+        .index("by_email_and_code", ["email", "code"])
         .index("code", ["code"])
         .index("userId", ["userId"]),
 
@@ -125,5 +126,5 @@ export default defineSchema({
             limit: v.optional(v.string()),
             reviewer: v.optional(v.string()),
         }),
-    }),
+    }).index("by_status", ["metadata.status"]),
 });

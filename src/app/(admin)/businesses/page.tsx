@@ -16,14 +16,18 @@ import { useI18n } from "@/components/i18n-provider";
 import { useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
+import { usePathname } from "next/navigation";
 import type { Doc } from "../../../../convex/_generated/dataModel";
 
 export default function AdminBusinessesPage() {
   const businesses = useQuery(api.businesses.get);
   const { t } = useI18n();
+  const pathname = usePathname();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const localeMatch = pathname.match(/^\/(en|fil)(\/|$)/);
+  const adminBasePath = localeMatch ? `/${localeMatch[1]}/admin/businesses` : "/admin/businesses";
 
   const getCategories = () => {
     if (!businesses) return [];
@@ -64,7 +68,7 @@ export default function AdminBusinessesPage() {
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">{t("adminAllBusinesses")}</h1>
             <Button asChild size="lg" className="bg-primary text-primary-foreground">
-              <Link href="/businesses/add">+ {t("adminAddBusiness")}</Link>
+              <Link href={`${adminBasePath}/add`}>+ {t("adminAddBusiness")}</Link>
             </Button>
           </div>
           

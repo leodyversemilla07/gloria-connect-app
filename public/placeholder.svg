@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Image placeholder</title>
+  <desc id="desc">A neutral placeholder image for missing business photos.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)" />
+  <g fill="#64748b">
+    <path d="M328 638l148-188 126 152 93-117 177 153H328z" opacity="0.9" />
+    <circle cx="489" cy="323" r="72" opacity="0.9" />
+  </g>
+  <text x="50%" y="82%" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" fill="#475569">
+    Gloria Connect
+  </text>
+</svg>

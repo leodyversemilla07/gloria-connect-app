@@ -8,6 +8,12 @@ import {
   contactSchema,
   addressSchema,
   businessFormSchema,
+  bilingualNameSchema,
+  bilingualDescriptionSchema,
+  dayHoursSchema,
+  photoSchema,
+  categorySchema,
+  businessMetadataSchema,
 } from './schemas/business';
 
 describe('cn utility', () => {
@@ -145,6 +151,164 @@ describe('addressSchema', () => {
   });
 });
 
+describe('bilingualNameSchema', () => {
+  it('validates bilingual names', () => {
+    const result = bilingualNameSchema.safeParse({
+      english: 'Test Business',
+      tagalog: 'Negosyong Pansubok',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects empty English name', () => {
+    const result = bilingualNameSchema.safeParse({
+      english: '',
+      tagalog: 'Test',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects empty Tagalog name', () => {
+    const result = bilingualNameSchema.safeParse({
+      english: 'Test',
+      tagalog: '',
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('bilingualDescriptionSchema', () => {
+  it('validates bilingual descriptions', () => {
+    const result = bilingualDescriptionSchema.safeParse({
+      english: 'A wonderful business description',
+      tagalog: 'Isang magandang paglalarawan ng negosyo',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects descriptions shorter than 10 characters', () => {
+    const result = bilingualDescriptionSchema.safeParse({
+      english: 'Short',
+      tagalog: 'Maikli',
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('dayHoursSchema', () => {
+  it('validates day hours', () => {
+    const result = dayHoursSchema.safeParse({
+      open: '09:00',
+      close: '17:00',
+      closed: false,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts closed days', () => {
+    const result = dayHoursSchema.safeParse({
+      open: '00:00',
+      close: '00:00',
+      closed: true,
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+describe('photoSchema', () => {
+  it('validates photo with URL', () => {
+    const result = photoSchema.safeParse({
+      url: 'https://example.com/photo.jpg',
+      alt: 'Business photo',
+      isPrimary: true,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts empty URL string', () => {
+    const result = photoSchema.safeParse({
+      url: '',
+      alt: 'Photo',
+      isPrimary: false,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts optional storageId', () => {
+    const result = photoSchema.safeParse({
+      url: 'https://example.com/photo.jpg',
+      storageId: 'storage_123',
+      alt: 'Photo',
+      isPrimary: true,
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+describe('categorySchema', () => {
+  it('validates category with primary only', () => {
+    const result = categorySchema.safeParse({
+      primary: 'restaurants',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('validates category with secondary categories', () => {
+    const result = categorySchema.safeParse({
+      primary: 'restaurants',
+      secondary: ['filipino', 'casual-dining'],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects empty primary category', () => {
+    const result = categorySchema.safeParse({
+      primary: '',
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('businessMetadataSchema', () => {
+  it('validates metadata with required fields', () => {
+    const result = businessMetadataSchema.safeParse({
+      isVerified: true,
+      status: 'active',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('validates all status values', () => {
+    const statuses = ['active', 'inactive', 'pending'];
+    statuses.forEach(status => {
+      const result = businessMetadataSchema.safeParse({
+        isVerified: false,
+        status,
+      });
+      expect(result.success).toBe(true);
+    });
+  });
+
+  it('rejects invalid status', () => {
+    const result = businessMetadataSchema.safeParse({
+      isVerified: true,
+      status: 'invalid',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts optional fields', () => {
+    const result = businessMetadataSchema.safeParse({
+      isVerified: true,
+      status: 'active',
+      target: 'Target value',
+      limit: 'Limit value',
+      reviewer: 'Admin',
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
 describe('businessFormSchema', () => {
   it('validates complete business form data', () => {
     const result = businessFormSchema.safeParse({
@@ -192,6 +356,64 @@ describe('businessFormSchema', () => {
       addressLongitude: '',
       descriptionEnglish: '',
       descriptionTagalog: '',
+      operatingHours: {
+        monday: { open: '08:00', close: '18:00', closed: false },
+        tuesday: { open: '08:00', close: '18:00', closed: false },
+        wednesday: { open: '08:00', close: '18:00', closed: false },
+        thursday: { open: '08:00', close: '18:00', closed: false },
+        friday: { open: '08:00', close: '18:00', closed: false },
+        saturday: { open: '08:00', close: '18:00', closed: false },
+        sunday: { open: '08:00', close: '18:00', closed: false },
+      },
+      photos: [],
+      isVerified: false,
+      status: 'pending',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates latitude and longitude boundaries', () => {
+    const result = businessFormSchema.safeParse({
+      nameEnglish: 'Test',
+      nameTagalog: 'Test',
+      categoryPrimary: 'restaurants',
+      categorySecondary: [],
+      phone: '09123456789',
+      addressStreet: 'Street',
+      addressBarangay: 'Barangay',
+      addressLatitude: '90',
+      addressLongitude: '180',
+      descriptionEnglish: 'Description long enough',
+      descriptionTagalog: 'Sapat na paglalarawan',
+      operatingHours: {
+        monday: { open: '08:00', close: '18:00', closed: false },
+        tuesday: { open: '08:00', close: '18:00', closed: false },
+        wednesday: { open: '08:00', close: '18:00', closed: false },
+        thursday: { open: '08:00', close: '18:00', closed: false },
+        friday: { open: '08:00', close: '18:00', closed: false },
+        saturday: { open: '08:00', close: '18:00', closed: false },
+        sunday: { open: '08:00', close: '18:00', closed: false },
+      },
+      photos: [],
+      isVerified: false,
+      status: 'pending',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects out of range coordinates', () => {
+    const result = businessFormSchema.safeParse({
+      nameEnglish: 'Test',
+      nameTagalog: 'Test',
+      categoryPrimary: 'restaurants',
+      categorySecondary: [],
+      phone: '09123456789',
+      addressStreet: 'Street',
+      addressBarangay: 'Barangay',
+      addressLatitude: '91',
+      addressLongitude: '181',
+      descriptionEnglish: 'Description long enough',
+      descriptionTagalog: 'Sapat na paglalarawan',
       operatingHours: {
         monday: { open: '08:00', close: '18:00', closed: false },
         tuesday: { open: '08:00', close: '18:00', closed: false },

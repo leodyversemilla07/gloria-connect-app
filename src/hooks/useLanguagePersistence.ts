@@ -6,7 +6,7 @@
 'use client';
 
 import { useEffect, useCallback } from 'react';
-import { useI18n } from '@/app/(main)/i18n-provider';
+import { useI18n } from '@/components/i18n-provider';
 import { saveLanguagePreference, getLanguagePreference } from '@/utils/i18n-storage';
 
 export function useLanguagePersistence() {

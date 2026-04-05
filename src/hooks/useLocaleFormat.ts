@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useI18n } from '@/app/(main)/i18n-provider';
+import { useI18n } from '@/components/i18n-provider';
 import {
   formatDate,
   formatDateTime,

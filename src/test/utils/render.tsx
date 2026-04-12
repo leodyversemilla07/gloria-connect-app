@@ -45,4 +45,3 @@ export function render(
 
 // Re-export everything from @testing-library/react
 export * from '@testing-library/react';
-export { render };

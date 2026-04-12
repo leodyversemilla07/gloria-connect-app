@@ -18,6 +18,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 import type { Doc } from "../../../../../convex/_generated/dataModel";
+import { localeRoute } from "@/lib/locale-paths";
 
 export default function AdminBusinessesPage() {
   const businesses = useQuery(api.businesses.get);
@@ -26,8 +27,7 @@ export default function AdminBusinessesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const localeMatch = pathname.match(/^\/(en|fil)(\/|$)/);
-  const adminBasePath = localeMatch ? `/${localeMatch[1]}/admin/businesses` : "/en/admin/businesses";
+  const adminBasePath = localeRoute(pathname, "/businesses");
 
   const getCategories = () => {
     if (!businesses) return [];

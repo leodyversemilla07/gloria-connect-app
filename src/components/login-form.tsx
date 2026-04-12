@@ -22,6 +22,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import Image from "next/image";
+import { localeRoute } from "@/lib/locale-paths";
 
 export function LoginForm({
   className,
@@ -45,8 +46,8 @@ export function LoginForm({
       return;
     }
 
-    router.push(adminStatus.isAdmin ? `/${locale}/admin/dashboard` : `/${locale}`);
-  }, [adminStatus, currentUser, locale, router, verificationStatus]);
+    router.push(adminStatus.isAdmin ? localeRoute(pathname, "/dashboard") : localeRoute(pathname, "/"));
+  }, [adminStatus, currentUser, locale, pathname, router, verificationStatus]);
 
   const [error, setError] = React.useState<string | null>(null);
   const [showPassword, setShowPassword] = React.useState(false);

@@ -69,6 +69,7 @@ import { toast } from "sonner";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { handleConvexError } from "@/hooks/use-convex-error";
+import { localeRoute } from "@/lib/locale-paths";
 
 interface Business {
   _id: string;
@@ -115,9 +116,8 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
   const deleteBusiness = useMutation(api.businesses.remove);
   const updateStatus = useMutation(api.businesses.updateStatus);
   const toggleVerified = useMutation(api.businesses.toggleVerified);
-  const localeMatch = pathname.match(/^\/(en|fil)(\/|$)/);
-  const publicBasePath = localeMatch ? `/${localeMatch[1]}/business` : "/business";
-  const adminBasePath = localeMatch ? `/${localeMatch[1]}/admin/businesses` : "/admin/businesses";
+  const publicBasePath = localeRoute(pathname, "/business");
+  const adminBasePath = localeRoute(pathname, "/businesses");
 
   // Filter data based on search and filters
   const filteredData = data.filter((business) => {

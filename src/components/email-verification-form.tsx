@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "../../convex/_generated/api";
 import { handleConvexError } from "@/hooks/use-convex-error";
+import { localeRoute } from "@/lib/locale-paths";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -43,9 +44,9 @@ export function EmailVerificationForm() {
 
   React.useEffect(() => {
     if (verificationStatus?.isVerified && adminStatus !== undefined) {
-      router.replace(adminStatus.isAdmin ? `/${locale}/admin/dashboard` : `/${locale}`);
+      router.replace(adminStatus.isAdmin ? localeRoute(pathname, "/dashboard") : localeRoute(pathname, "/"));
     }
-  }, [adminStatus, locale, router, verificationStatus]);
+  }, [adminStatus, locale, pathname, router, verificationStatus]);
 
   React.useEffect(() => {
     const email = verificationStatus?.email;
@@ -107,7 +108,7 @@ export function EmailVerificationForm() {
         code: code.trim(),
       });
       toast.success("Email verified.");
-      router.replace(adminStatus?.isAdmin ? `/${locale}/admin/dashboard` : `/${locale}`);
+      router.replace(adminStatus?.isAdmin ? localeRoute(pathname, "/dashboard") : localeRoute(pathname, "/"));
     } catch (error) {
       handleConvexError(error, "Failed to verify email");
     } finally {
@@ -133,16 +134,6 @@ export function EmailVerificationForm() {
       <Card className="w-full">
         <CardContent className="py-10 text-center text-sm text-muted-foreground">
           Redirecting to login...
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (verificationStatus.isVerified) {
-    return (
-      <Card className="w-full">
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          Please log in to verify your email.
         </CardContent>
       </Card>
     );

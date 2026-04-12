@@ -16,14 +16,14 @@ import { handleConvexError } from "@/hooks/use-convex-error";
 import { businessFormSchema, type BusinessFormData } from "@/lib/schemas";
 import { ImageUpload } from "@/components/image-upload";
 import { Id } from "../../../../../../convex/_generated/dataModel";
+import { localeRoute } from "@/lib/locale-paths";
 
 export default function AddBusinessPage() {
   const router = useRouter();
   const pathname = usePathname();
 
   const createBusiness = useMutation(api.businesses.create);
-  const localeMatch = pathname.match(/^\/(en|fil)(\/|$)/);
-  const adminBusinessesPath = localeMatch ? `/${localeMatch[1]}/admin/businesses` : "/admin/businesses";
+  const adminBusinessesPath = localeRoute(pathname, "/businesses");
 
   const [form, setForm] = React.useState<BusinessFormData | null>(null);
 

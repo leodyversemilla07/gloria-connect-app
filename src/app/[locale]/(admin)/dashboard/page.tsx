@@ -20,7 +20,6 @@ export default function AdminDashboard() {
   const { t } = useI18n();
   const pathname = usePathname();
   const locale = pathname.split("/")[1] || "en";
-  const language = "en";
 
   const totalBusinesses = stats?.totalBusinesses || 0;
   const verifiedBusinesses = stats?.verifiedBusinesses || 0;
@@ -132,7 +131,7 @@ export default function AdminDashboard() {
           </div>
           <div className="ml-auto flex items-center space-x-4">
             <Button asChild size="sm" className="bg-primary text-primary-foreground">
-              <Link href={`/${locale}/admin/businesses/add`}>
+              <Link href={`/${locale}/businesses/add`}>
                 <Plus className="h-4 w-4 mr-2" />
                 {text.addBusiness}
               </Link>
@@ -291,19 +290,19 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="outline">
-                <Link href={`/${locale}/admin/businesses`}>
+                <Link href={`/${locale}/businesses`}>
                   <Eye className="h-4 w-4 mr-2" />
                   View All Businesses
                 </Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href={`/${locale}/admin/analytics`}>
+                <Link href={`/${locale}/analytics`}>
                   <TrendingUp className="h-4 w-4 mr-2" />
                   View Analytics
                 </Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href={`/${locale}/admin/users`}>
+                <Link href={`/${locale}/users`}>
                   <Users className="h-4 w-4 mr-2" />
                   Manage Users
                 </Link>

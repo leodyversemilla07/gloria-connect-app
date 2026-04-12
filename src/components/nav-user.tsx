@@ -9,7 +9,8 @@ import {
 } from "@tabler/icons-react"
 
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { authPath } from "@/lib/locale-paths";
 
 import {
   Avatar,
@@ -45,13 +46,14 @@ export interface NavUserUIProps {
 export function NavUser({ user, isMobile = false, onLogout }: NavUserUIProps) {
   const { signOut } = useAuthActions();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     if (onLogout) {
       onLogout();
     } else {
       await signOut();
-      router.replace("/login");
+      router.replace(authPath(pathname, "/login"));
     }
   };
 

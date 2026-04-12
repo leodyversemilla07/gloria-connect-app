@@ -44,8 +44,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 export default function AdminAnalyticsPage() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const stats = useQuery((api as any).analytics.getDashboardStats);
+  const stats = useQuery(api.analytics.getDashboardStats);
   const { t } = useI18n();
 
   if (!stats) {

@@ -38,7 +38,7 @@ const BusinessLocationMap = dynamic(
 export default function BusinessDetailPage() {
   const params = useParams();
   const [selectedImage, setSelectedImage] = useState(0);
-  const { language, messages, setLanguage, t } = useI18n();
+  const { language, setLanguage, t } = useI18n();
 
   const businessId = params.id as Id<"businesses">;
   const business = useQuery(api.businesses.getById, { id: businessId });

@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Button } from "./ui/button"
 import { Eye, Pencil, Trash2, MoreVertical } from "lucide-react"
 import { useReactTable, getCoreRowModel, getSortedRowModel, getPaginationRowModel, flexRender, SortingState, ColumnDef, VisibilityState } from "@tanstack/react-table"
-import Link from "next/link"
+
 
 export const businessSchema = z.object({
     id: z.string(),
@@ -107,10 +107,8 @@ const columns: ColumnDef<Business>[] = [
                     <DropdownMenuItem onClick={() => alert(`View business: ${row.original.id}`)}>
                         <Eye className="w-4 h-4 mr-2" /> View
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href={`/admin/businesses/${row.original.id}/edit`}>
-                        <Pencil className="w-4 h-4 mr-2" /> Edit
-                      </Link>
+                    <DropdownMenuItem onClick={() => alert(`Edit business: ${row.original.id}`)}>
+                      <Pencil className="w-4 h-4 mr-2" /> Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={() => {

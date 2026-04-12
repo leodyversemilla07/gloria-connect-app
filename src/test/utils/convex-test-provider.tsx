@@ -72,7 +72,7 @@ export function mockUseQuery<T>(returnValue?: T) {
  * ```
  */
 export function mockUseMutation<T = unknown>() {
-  return vi.fn<[], (args: unknown) => Promise<T>>();
+  return vi.fn<(args: unknown) => Promise<T>>();
 }
 
 /**

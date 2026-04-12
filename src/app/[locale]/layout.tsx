@@ -5,7 +5,6 @@ import { ConvexClientProvider } from "../convex-client-provider";
 import { I18nProvider } from "@/components/i18n-provider";
 import enMessages from "../../../messages/en.json";
 import filMessages from "../../../messages/fil.json";
-import { generateMetadata as generateSeoMetadata } from "@/utils/seo-metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,18 +34,10 @@ type LocaleLayoutProps = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({
-  params,
-}: Pick<LocaleLayoutProps, "params">): Promise<Metadata> {
-  const { locale } = await params;
-  const isValidLocale = ["en", "fil"].includes(locale);
-
-  if (!isValidLocale) {
-    return {};
-  }
-
-  return generateSeoMetadata("home", locale as "en" | "fil");
-}
+export const metadata: Metadata = {
+  title: "Gloria Connect",
+  description: "A modern local business directory application.",
+};
 
 export async function generateStaticParams() {
   return [{ locale: "en" }, { locale: "fil" }];

@@ -51,7 +51,7 @@ export default function Header({ language, messages, setLanguage, user, currentP
               <ThemeToggle />
               {user ? (
                 <Button asChild size="sm">
-                  <Link href={`/${language}/admin/dashboard`}>
+                  <Link href={`/${language}/dashboard`}>
                     {messages["dashboard"] || "Dashboard"}
                   </Link>
                 </Button>
@@ -106,7 +106,7 @@ export default function Header({ language, messages, setLanguage, user, currentP
               <div className="flex gap-2 px-4">
                 {user ? (
                   <Button asChild className="flex-1">
-                    <Link href={`/${language}/admin/dashboard`} onClick={() => setMobileMenuOpen(false)}>
+                    <Link href={`/${language}/dashboard`} onClick={() => setMobileMenuOpen(false)}>
                       {messages["dashboard"] || "Dashboard"}
                     </Link>
                   </Button>

@@ -3,10 +3,12 @@
 import { useQuery } from "convex/react";
 import { useAuthToken } from "@convex-dev/auth/react";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { api } from "../../convex/_generated/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { authPath, localeRoute } from "@/lib/locale-paths";
 
 interface AdminGuardProps {
   children: React.ReactNode;
@@ -21,9 +23,10 @@ interface AdminGuardProps {
 export function AdminGuard({
   children,
   fallback,
-  redirectTo = "/",
+  redirectTo,
 }: AdminGuardProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const token = useAuthToken();
   const isLoading = token === undefined;
@@ -34,15 +37,15 @@ export function AdminGuard({
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace("/login");
+      router.replace(authPath(pathname, "/login"));
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, pathname, router]);
 
   useEffect(() => {
     if (!isLoading && isAuthenticated && isAdmin === false) {
-      router.replace(redirectTo);
+      router.replace(redirectTo ?? localeRoute(pathname, "/"));
     }
-  }, [isLoading, isAuthenticated, isAdmin, router, redirectTo]);
+  }, [isLoading, isAuthenticated, isAdmin, router, redirectTo, pathname]);
 
   if (isLoading) {
     return (

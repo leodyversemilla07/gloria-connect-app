@@ -15,6 +15,7 @@ import { MapPin, Phone, Mail, Globe, Clock, Camera, CheckCircle, AlertCircle, Sa
 import * as React from "react";
 import { handleConvexError } from "@/hooks/use-convex-error";
 import { ImageUpload } from "@/components/image-upload";
+import { localeRoute } from "@/lib/locale-paths";
 
 export default function EditBusinessPage() {
   const router = useRouter();
@@ -23,8 +24,7 @@ export default function EditBusinessPage() {
 
   const business = useQuery(api.businesses.getById, { id: id as Id<"businesses"> });
   const updateBusiness = useMutation(api.businesses.update);
-  const localeMatch = pathname.match(/^\/(en|fil)(\/|$)/);
-  const adminBusinessesPath = localeMatch ? `/${localeMatch[1]}/admin/businesses` : "/admin/businesses";
+  const adminBusinessesPath = localeRoute(pathname, "/businesses");
 
   type FormState = {
     nameEnglish: string;

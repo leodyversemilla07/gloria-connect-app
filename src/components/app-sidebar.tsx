@@ -30,6 +30,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useQuery } from "convex/react"
 import { api } from "../../convex/_generated/api"
+import { localeRoute } from "@/lib/locale-paths"
 
 const data = {
   user: {
@@ -48,32 +49,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ...(isAdmin ? [
       {
         title: "Dashboard",
-        url: `/${locale}/admin/dashboard`,
+        url: localeRoute(pathname, "/dashboard"),
         icon: IconDashboard,
       },
       {
         title: "Businesses",
-        url: `/${locale}/admin/businesses`,
+        url: localeRoute(pathname, "/businesses"),
         icon: IconDatabase,
       },
       {
         title: "Categories",
-        url: `/${locale}/admin/categories`,
+        url: localeRoute(pathname, "/categories"),
         icon: IconListDetails,
       },
       {
         title: "Analytics",
-        url: `/${locale}/admin/analytics`,
+        url: localeRoute(pathname, "/analytics"),
         icon: IconChartBar,
       },
       {
         title: "Users",
-        url: `/${locale}/admin/users`,
+        url: localeRoute(pathname, "/users"),
         icon: IconUsers,
       },
       {
         title: "Reports",
-        url: `/${locale}/admin/reports`,
+        url: localeRoute(pathname, "/reports"),
         icon: IconReport,
       },
     ] : []),
@@ -82,7 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navSecondary = [
     {
       title: "Settings",
-      url: `/${locale}/admin/dashboard`,
+      url: localeRoute(pathname, "/dashboard"),
       icon: IconSettings,
     },
     {

@@ -4,7 +4,8 @@ import { convexAuth } from "@convex-dev/auth/server";
 import { ConvexError } from "convex/values";
 import { z } from "zod";
 import { query } from "./_generated/server";
-import { ResendPasswordReset } from "./ResendPasswordReset";
+import { ResendPasswordReset } from "./email/resendPasswordReset";
+import { getAdminStatusByIdentity } from "./users/shared";
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
@@ -44,13 +45,6 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 export const getIsAdmin = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return { isAdmin: false };
-    if (!identity.email) return { isAdmin: false };
-    const user = await ctx.db
-      .query("users")
-      .withIndex("email", (q) => q.eq("email", identity.email as string))
-      .first();
-    return { isAdmin: !!user?.isAdmin };
+    return await getAdminStatusByIdentity(ctx);
   },
 });

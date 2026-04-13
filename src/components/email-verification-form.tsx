@@ -19,11 +19,11 @@ export function EmailVerificationForm() {
   const router = useRouter();
   const pathname = usePathname();
   const token = useAuthToken();
-  const currentUser = useQuery(api.users.getCurrentUser);
-  const adminStatus = useQuery(api.users.getIsAdmin, {});
-  const verificationStatus = useQuery(api.users.getEmailVerificationStatus, {});
-  const sendVerificationCode = useMutation(api.users.sendVerificationCode);
-  const verifyEmailCode = useMutation(api.users.verifyEmailCode);
+  const currentUser = useQuery(api.users.queries.getCurrentUser);
+  const adminStatus = useQuery(api.users.queries.getIsAdmin, {});
+  const verificationStatus = useQuery(api.users.queries.getEmailVerificationStatus, {});
+  const sendVerificationCode = useMutation(api.users.mutations.sendVerificationCode);
+  const verifyEmailCode = useMutation(api.users.mutations.verifyEmailCode);
 
   const [code, setCode] = React.useState("");
   const [isSending, setIsSending] = React.useState(false);

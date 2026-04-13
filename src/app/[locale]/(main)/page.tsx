@@ -46,7 +46,7 @@ function getCategoriesFromBusinesses(
 }
 
 export default function HomePage() {
-  const businesses = useQuery(api.businesses.getPublic);
+  const businesses = useQuery(api.businesses.public.getPublic);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);

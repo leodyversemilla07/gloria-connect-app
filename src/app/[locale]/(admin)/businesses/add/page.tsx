@@ -41,7 +41,7 @@ export default function AddBusinessPage() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const createBusiness = useMutation(api.businesses.create);
+  const createBusiness = useMutation(api.businesses.admin.create);
   const adminBusinessesPath = localeRoute(pathname, "/businesses");
 
   const [form, setForm] = React.useState<BusinessFormData | null>(null);

@@ -41,8 +41,8 @@ export default function EditBusinessPage() {
   const { id } = useParams();
   const pathname = usePathname();
 
-  const business = useQuery(api.businesses.getById, { id: id as Id<"businesses"> });
-  const updateBusiness = useMutation(api.businesses.update);
+  const business = useQuery(api.businesses.public.getById, { id: id as Id<"businesses"> });
+  const updateBusiness = useMutation(api.businesses.admin.update);
   const adminBusinessesPath = localeRoute(pathname, "/businesses");
 
   type FormState = {

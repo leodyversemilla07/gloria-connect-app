@@ -114,9 +114,9 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showBulkDelete, setShowBulkDelete] = useState(false);
-  const deleteBusiness = useMutation(api.businesses.remove);
-  const updateStatus = useMutation(api.businesses.updateStatus);
-  const toggleVerified = useMutation(api.businesses.toggleVerified);
+  const deleteBusiness = useMutation(api.businesses.admin.remove);
+  const updateStatus = useMutation(api.businesses.admin.updateStatus);
+  const toggleVerified = useMutation(api.businesses.admin.toggleVerified);
   const publicBasePath = localeRoute(pathname, "/business");
   const adminBasePath = localeRoute(pathname, "/businesses");
 

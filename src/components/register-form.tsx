@@ -34,9 +34,9 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
   const { signIn } = useAuthActions();
   const router = useRouter();
   const pathname = usePathname();
-  const currentUser = useQuery(api.users.getCurrentUser);
-  const adminStatus = useQuery(api.users.getIsAdmin, {});
-  const verificationStatus = useQuery(api.users.getEmailVerificationStatus, {});
+  const currentUser = useQuery(api.users.queries.getCurrentUser);
+  const adminStatus = useQuery(api.users.queries.getIsAdmin, {});
+  const verificationStatus = useQuery(api.users.queries.getEmailVerificationStatus, {});
   const locale = pathname.split("/")[1] || "en";
 
   React.useEffect(() => {

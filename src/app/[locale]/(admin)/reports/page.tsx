@@ -18,7 +18,7 @@ import {
 import { api } from "../../../../../convex/_generated/api";
 
 export default function AdminReportsPage() {
-  const businesses = useQuery(api.businesses.get);
+  const businesses = useQuery(api.businesses.public.get);
   const { t } = useI18n();
 
   if (!businesses) {

@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "../../../../../convex/_generated/api";
 
 export default function AdminDashboard() {
-  const businesses = useQuery(api.businesses.get);
+  const businesses = useQuery(api.businesses.public.get);
   const stats = useQuery(api.analytics.getDashboardStats);
   const { t } = useI18n();
   const pathname = usePathname();

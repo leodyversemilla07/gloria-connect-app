@@ -2,12 +2,19 @@
 
 import { useAuthToken } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
+import type { FunctionReference } from "convex/server";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { authPath, localeRoute } from "@/lib/locale-paths";
-import { api } from "../../convex/_generated/api";
+
+const getIsAdminQuery = "users/queries:getIsAdmin" as unknown as FunctionReference<
+  "query",
+  "public",
+  {},
+  { isAdmin: boolean }
+>;
 
 interface AdminGuardProps {
   children: React.ReactNode;
@@ -27,7 +34,7 @@ export function AdminGuard({ children, fallback, redirectTo }: AdminGuardProps) 
   const isLoading = token === undefined;
   const isAuthenticated = !!token;
 
-  const adminQueryResult = useQuery(api.users.getIsAdmin, {});
+  const adminQueryResult = useQuery(getIsAdminQuery, {});
   const isAdmin = adminQueryResult?.isAdmin;
 
   useEffect(() => {

@@ -39,7 +39,7 @@ export default function BusinessDetailPage() {
   const { language, setLanguage, t } = useI18n();
 
   const businessId = params.id as Id<"businesses">;
-  const business = useQuery(api.businesses.getById, { id: businessId });
+  const business = useQuery(api.businesses.public.getById, { id: businessId });
 
   if (business === undefined) {
     // Still loading

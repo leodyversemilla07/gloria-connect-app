@@ -22,7 +22,7 @@ import { api } from "../../../../../convex/_generated/api";
 import type { Doc } from "../../../../../convex/_generated/dataModel";
 
 export default function AdminBusinessesPage() {
-  const businesses = useQuery(api.businesses.get);
+  const businesses = useQuery(api.businesses.public.get);
   const { t } = useI18n();
   const pathname = usePathname();
   const [searchTerm, setSearchTerm] = useState("");

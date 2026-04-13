@@ -40,7 +40,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { isAdmin } = useQuery(api.users.getIsAdmin, {}) ?? { isAdmin: false };
+  const { isAdmin } = useQuery(api.users.queries.getIsAdmin, {}) ?? { isAdmin: false };
   const pathname = usePathname();
   const locale = pathname.split("/")[1] || "en";
 

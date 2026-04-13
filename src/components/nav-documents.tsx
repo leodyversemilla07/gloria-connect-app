@@ -36,19 +36,9 @@ export function NavDocuments({
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </a>
-            </SidebarMenuButton>
+            <SidebarMenuButton render={<a href={item.url}><item.icon /><span>{item.name}</span></a>} nativeButton={false} />
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuAction showOnHover className="data-[state=open]:bg-accent rounded-sm">
-                  <IconDots />
-                  <span className="sr-only">More</span>
-                </SidebarMenuAction>
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger render={<SidebarMenuAction showOnHover className="data-[state=open]:bg-accent rounded-sm"><IconDots /><span className="sr-only">More</span></SidebarMenuAction>} />
               <DropdownMenuContent
                 className="w-24 rounded-lg"
                 side={isMobile ? "bottom" : "right"}

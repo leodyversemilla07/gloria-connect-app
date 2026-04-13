@@ -104,12 +104,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <Link href={`/${locale}`}>
-                <Logo className="!h-8 !w-8" />
-                <span className="text-base font-semibold">Gloria Local Connect</span>
-              </Link>
-            </SidebarMenuButton>
+            <SidebarMenuButton render={<Link href={`/${locale}`}><Logo className="!h-8 !w-8" /><span className="text-base font-semibold">Gloria Local Connect</span></Link>} nativeButton={false} className="data-[slot=sidebar-menu-button]:!p-1.5" />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

@@ -50,7 +50,7 @@ export function NavUser({ user, isMobile = false, onLogout }: NavUserUIProps) {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger render={
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
@@ -67,7 +67,7 @@ export function NavUser({ user, isMobile = false, onLogout }: NavUserUIProps) {
               </div>
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>
-          </DropdownMenuTrigger>
+          } />
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}

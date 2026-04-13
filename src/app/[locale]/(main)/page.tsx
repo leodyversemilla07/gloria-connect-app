@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -163,25 +164,28 @@ export default function HomePage() {
                   </div>
                 </div>
                 <Select
+                  items={[{ label: t("category.all"), value: "all" }, ...categories.map(c => ({ label: language === "en" ? c.name : c.nameTagalog, value: c.id }))]}
                   value={selectedCategory}
                   onValueChange={(val) => {
-                    setSelectedCategory(val);
+                    setSelectedCategory(val ?? "all");
                     setCurrentPage(1);
                   }}
                 >
                   <SelectTrigger className="w-full sm:w-40 md:w-48 lg:w-52 h-12 sm:h-14 text-foreground bg-white/95 backdrop-blur border-0 shadow-lg text-base">
-                    <SelectValue placeholder="Category" />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
-                    {categories.map((category) => (
-                      <SelectItem
-                        key={category.id}
-                        value={category.id}
-                        className="bg-card text-foreground hover:bg-accent focus:bg-accent focus:text-foreground"
-                      >
-                        {language === "en" ? category.name : category.nameTagalog}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                      {categories.map((category) => (
+                        <SelectItem
+                          key={category.id}
+                          value={category.id}
+                          className="bg-card text-foreground hover:bg-accent focus:bg-accent focus:text-foreground"
+                        >
+                          {language === "en" ? category.name : category.nameTagalog}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>

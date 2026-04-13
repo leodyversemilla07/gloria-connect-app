@@ -14,9 +14,7 @@ export default function AdminUsersPage() {
     <section className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 md:px-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Manage Users</h1>
-        <Button asChild>
-          <Link href="#">Create User</Link>
-        </Button>
+        <Button nativeButton={false} render={<Link href="#">Create User</Link>} />
       </div>
       <Table className="bg-white border rounded min-w-full text-sm">
         <TableHeader className="bg-gray-100">

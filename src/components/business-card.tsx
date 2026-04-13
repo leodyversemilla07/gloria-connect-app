@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { getPhotoUrl } from "@/lib/utils";
 
 export interface PublicBusinessDigest {
   _id: string;
@@ -61,7 +60,7 @@ export function BusinessCard({
   getBarangay,
   text,
 }: BusinessCardProps) {
-  const photoUrl = getPhotoUrl(business.primaryPhoto);
+  const photoUrl = business.primaryPhoto?.url || "/placeholder.svg";
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all bg-background text-foreground flex flex-col h-full group">
@@ -108,20 +107,20 @@ export function BusinessCard({
       </CardContent>
       <CardFooter className="pt-2 mt-auto p-4 border-t bg-muted/5 group-hover:bg-muted/10 transition-colors">
         <div className="flex space-x-2 w-full">
-          <Button size="sm" className="flex-1 w-full" asChild>
-            <Link href={`/${language}/business/${business._id}`}>{text.viewDetails}</Link>
-          </Button>
+          <Button
+            size="sm"
+            className="flex-1 w-full"
+            render={<Link href={`/${language}/business/${business._id}`}>{text.viewDetails}</Link>}
+            nativeButton={false}
+          />
           <Button
             size="sm"
             variant="outline"
             className="shadow-sm px-3"
-            asChild
+            render={<a href={`tel:${business.phone}`}><Phone className="h-4 w-4" /></a>}
+            nativeButton={false}
             title={text.callNow}
-          >
-            <a href={`tel:${business.phone}`}>
-              <Phone className="h-4 w-4" />
-            </a>
-          </Button>
+          />
         </div>
       </CardFooter>
     </Card>

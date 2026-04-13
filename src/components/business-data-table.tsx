@@ -54,6 +54,7 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -271,30 +272,40 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
               />
             </div>
 
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select
+              items={[{ label: "All Status", value: "all" }, { label: "Active", value: "active" }, { label: "Pending", value: "pending" }, { label: "Inactive", value: "inactive" }]}
+              value={statusFilter}
+              onValueChange={(v) => setStatusFilter(v ?? "all")}
+            >
               <SelectTrigger className="w-full sm:w-40">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Status" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectGroup>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectGroup>
               </SelectContent>
             </Select>
 
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <Select
+              items={[{ label: "All Categories", value: "all" }, ...categories.map(c => ({ label: c, value: c }))]}
+              value={categoryFilter}
+              onValueChange={(v) => setCategoryFilter(v ?? "all")}
+            >
               <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Category" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
@@ -393,24 +404,10 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
 
                         <TableCell className="text-right">
                           <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
+                            <DropdownMenuTrigger render={<Button variant="ghost" size="sm"><MoreHorizontal className="h-4 w-4" /></Button>} />
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem asChild>
-                                <Link href={`${publicBasePath}/${business._id}`}>
-                                  <Eye className="h-4 w-4 mr-2" />
-                                  View Details
-                                </Link>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem asChild>
-                                <Link href={`${adminBasePath}/${business._id}/edit`}>
-                                  <Edit className="h-4 w-4 mr-2" />
-                                  Edit Business
-                                </Link>
-                              </DropdownMenuItem>
+                              <DropdownMenuItem render={<Link href={`${publicBasePath}/${business._id}`}><Eye className="h-4 w-4 mr-2" />View Details</Link>} />
+                              <DropdownMenuItem render={<Link href={`${adminBasePath}/${business._id}/edit`}><Edit className="h-4 w-4 mr-2" />Edit Business</Link>} />
                               <DropdownMenuSeparator />
                               <DropdownMenuItem onSelect={() => handleToggleVerified(business._id)}>
                                 {business.metadata?.isVerified ? (

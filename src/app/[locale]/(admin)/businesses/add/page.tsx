@@ -675,7 +675,7 @@ export default function AddBusinessPage() {
                   </Label>
                   <Select
                     value={form.status}
-                    onValueChange={(value) => setForm({ ...form, status: value })}
+                    onValueChange={(value) => setForm({ ...form, status: value ?? form.status })}
                   >
                     <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select status" />

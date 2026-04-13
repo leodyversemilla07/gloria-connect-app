@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -71,9 +72,7 @@ export default function AdminBusinessesPage() {
       <main className="@container/main flex flex-1 flex-col gap-2 p-4 sm:p-6 lg:p-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">{t("adminAllBusinesses")}</h1>
-          <Button asChild size="lg" className="bg-primary text-primary-foreground">
-            <Link href={`${adminBasePath}/add`}>+ {t("adminAddBusiness")}</Link>
-          </Button>
+          <Button nativeButton={false} render={<Link href={`${adminBasePath}/add`}>+ {t("adminAddBusiness")}</Link>} size="lg" className="bg-primary text-primary-foreground" />
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -87,28 +86,38 @@ export default function AdminBusinessesPage() {
               className="pl-10"
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select
+            items={[{ label: t("adminStatus"), value: "all" }, { label: t("adminActive"), value: "active" }, { label: t("adminPendingReview"), value: "pending" }, { label: t("adminInactive"), value: "inactive" }]}
+            value={statusFilter}
+            onValueChange={(v) => setStatusFilter(v ?? "all")}
+          >
             <SelectTrigger className="w-full sm:w-40">
-              <SelectValue placeholder={t("adminStatus")} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t("adminStatus")}</SelectItem>
-              <SelectItem value="active">{t("adminActive")}</SelectItem>
-              <SelectItem value="pending">{t("adminPendingReview")}</SelectItem>
-              <SelectItem value="inactive">{t("adminInactive")}</SelectItem>
+              <SelectGroup>
+                <SelectItem value="active">{t("adminActive")}</SelectItem>
+                <SelectItem value="pending">{t("adminPendingReview")}</SelectItem>
+                <SelectItem value="inactive">{t("adminInactive")}</SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <Select
+            items={[{ label: t("adminAllCategories"), value: "all" }, ...categories.map(c => ({ label: c.name, value: c.id }))]}
+            value={categoryFilter}
+            onValueChange={(v) => setCategoryFilter(v ?? "all")}
+          >
             <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder={t("adminCategory")} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t("adminAllCategories")}</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>

@@ -68,9 +68,10 @@ export default function Header({
               <LanguageToggle language={language} setLanguage={setLanguage} />
               <ThemeToggle />
               {user ? (
-                <Button asChild size="sm">
-                  <Link href={`/${language}/dashboard`}>{messages.dashboard || "Dashboard"}</Link>
-                </Button>
+                <Button
+                  render={<Link href={`/${language}/dashboard`}>{messages.dashboard || "Dashboard"}</Link>}
+                  size="sm"
+                />
               ) : (
                 <>
                   <Link
@@ -81,11 +82,15 @@ export default function Header({
                   >
                     {messages.login || (language === "en" ? "Login" : "Mag-login")}
                   </Link>
-                  <Button asChild size="sm">
-                    <Link href={`/${language}/register`}>
-                      {messages.register || (language === "en" ? "Register" : "Magrehistro")}
-                    </Link>
-                  </Button>
+                  <Button
+                    render={
+                      <Link href={`/${language}/register`}>
+                        {messages.register || (language === "en" ? "Register" : "Magrehistro")}
+                      </Link>
+                    }
+                    nativeButton={false}
+                    size="sm"
+                  />
                 </>
               )}
             </div>
@@ -122,23 +127,33 @@ export default function Header({
               </div>
               <div className="flex gap-2 px-4">
                 {user ? (
-                  <Button asChild className="flex-1">
-                    <Link href={`/${language}/dashboard`} onClick={() => setMobileMenuOpen(false)}>
-                      {messages.dashboard || "Dashboard"}
-                    </Link>
-                  </Button>
+                  <Button
+                    render={
+                      <Link href={`/${language}/dashboard`} onClick={() => setMobileMenuOpen(false)}>
+                        {messages.dashboard || "Dashboard"}
+                      </Link>
+                    }
+                    className="flex-1"
+                  />
                 ) : (
                   <>
-                    <Button asChild variant="outline" className="flex-1">
-                      <Link href={`/${language}/login`} onClick={() => setMobileMenuOpen(false)}>
-                        {messages.login || "Login"}
-                      </Link>
-                    </Button>
-                    <Button asChild className="flex-1">
-                      <Link href={`/${language}/register`} onClick={() => setMobileMenuOpen(false)}>
-                        {messages.register || "Register"}
-                      </Link>
-                    </Button>
+                    <Button
+                      render={
+                        <Link href={`/${language}/login`} onClick={() => setMobileMenuOpen(false)}>
+                          {messages.login || "Login"}
+                        </Link>
+                      }
+                      variant="outline"
+                      className="flex-1"
+                    />
+                    <Button
+                      render={
+                        <Link href={`/${language}/register`} onClick={() => setMobileMenuOpen(false)}>
+                          {messages.register || "Register"}
+                        </Link>
+                      }
+                      className="flex-1"
+                    />
                   </>
                 )}
               </div>

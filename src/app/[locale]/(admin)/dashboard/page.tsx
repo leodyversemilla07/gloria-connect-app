@@ -141,12 +141,7 @@ export default function AdminDashboard() {
             <h1 className="text-xl font-semibold">{text.title}</h1>
           </div>
           <div className="ml-auto flex items-center space-x-4">
-            <Button asChild size="sm" className="bg-primary text-primary-foreground">
-              <Link href={`/${locale}/businesses/add`}>
-                <Plus className="h-4 w-4 mr-2" />
-                {text.addBusiness}
-              </Link>
-            </Button>
+            <Button nativeButton={false} render={<Link href={`/${locale}/businesses/add`}><Plus className="h-4 w-4 mr-2" />{text.addBusiness}</Link>} size="sm" className="bg-primary text-primary-foreground" />
           </div>
         </div>
       </div>
@@ -308,24 +303,9 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
-              <Button asChild variant="outline">
-                <Link href={`/${locale}/businesses`}>
-                  <Eye className="h-4 w-4 mr-2" />
-                  View All Businesses
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href={`/${locale}/analytics`}>
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  View Analytics
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href={`/${locale}/users`}>
-                  <Users className="h-4 w-4 mr-2" />
-                  Manage Users
-                </Link>
-              </Button>
+              <Button nativeButton={false} render={<Link href={`/${locale}/businesses`}><Eye className="h-4 w-4 mr-2" />View All Businesses</Link>} variant="outline" />
+              <Button nativeButton={false} render={<Link href={`/${locale}/analytics`}><TrendingUp className="h-4 w-4 mr-2" />View Analytics</Link>} variant="outline" />
+              <Button nativeButton={false} render={<Link href={`/${locale}/users`}><Users className="h-4 w-4 mr-2" />Manage Users</Link>} variant="outline" />
             </div>
           </CardContent>
         </Card>

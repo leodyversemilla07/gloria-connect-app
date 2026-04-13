@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -104,15 +105,11 @@ export default function BusinessesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
             <Button
-              asChild
+              render={<Link href={`/${language}`}><ArrowLeft className="h-5 w-5" /><span className="font-medium">{t("backToHome")}</span></Link>}
+              nativeButton={false}
               variant="link"
               className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start text-primary hover:text-primary/80"
-            >
-              <Link href={`/${language}`}>
-                <ArrowLeft className="h-5 w-5" />
-                <span className="font-medium">{t("backToHome")}</span>
-              </Link>
-            </Button>
+            />
             <LanguageToggle language={language} setLanguage={setLanguage} />
           </div>
         </div>
@@ -149,16 +146,22 @@ export default function BusinessesPage() {
                   className="pl-12 h-14 text-foreground bg-white/95 backdrop-blur border-0 shadow-lg text-lg"
                 />
               </div>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                items={[{ label: t("category.all"), value: "all" }, ...categories.map(c => ({ label: language === "en" ? c.name : c.nameTagalog, value: c.id }))]}
+                value={selectedCategory}
+                onValueChange={(v) => setSelectedCategory(v ?? "all")}
+              >
                 <SelectTrigger className="w-full sm:w-56 h-14 text-foreground bg-white/95 backdrop-blur border-0 shadow-lg">
-                  <SelectValue placeholder={t("category.all")} />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-card border-border">
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {language === "en" ? category.name : category.nameTagalog}
-                    </SelectItem>
-                  ))}
+                  <SelectGroup>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {language === "en" ? category.name : category.nameTagalog}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>

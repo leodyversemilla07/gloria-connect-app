@@ -26,7 +26,6 @@ import LanguageToggle from "@/components/language-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getPhotoUrl } from "@/lib/utils";
 import { api } from "../../../../../../convex/_generated/api";
 import type { Doc, Id } from "../../../../../../convex/_generated/dataModel";
 
@@ -103,7 +102,7 @@ export default function BusinessDetailPage() {
 
   const photos = getPhotos(business);
   const displayPhotoUrl =
-    photos.length > 0 ? getPhotoUrl(photos[selectedImage]) : "/placeholder.svg";
+    photos.length > 0 ? (photos[selectedImage].url || "/placeholder.svg") : "/placeholder.svg";
 
   return (
     <div className="min-h-screen bg-background">
@@ -112,15 +111,11 @@ export default function BusinessDetailPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
             <Button
-              asChild
+              render={<Link href={`/${language}/business`}><ArrowLeft className="h-5 w-5" /><span className="font-medium">{t("backToHome") || "Back to Home"}</span></Link>}
+              nativeButton={false}
               variant="link"
               className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start"
-            >
-              <Link href={`/${language}/business`}>
-                <ArrowLeft className="h-5 w-5" />
-                <span className="font-medium">{t("backToHome") || "Back to Home"}</span>
-              </Link>
-            </Button>
+            />
 
             <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-end">
               <LanguageToggle language={language} setLanguage={setLanguage} />
@@ -160,12 +155,7 @@ export default function BusinessDetailPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button className="flex-1" asChild>
-                <a href={`tel:${business.contact?.phone ?? ""}`}>
-                  <Phone className="h-4 w-4 mr-2" />
-                  {t("callNow") || "Call Now"}
-                </a>
-              </Button>
+              <Button className="flex-1" nativeButton={false} render={<a href={`tel:${business.contact?.phone ?? ""}`}><Phone className="h-4 w-4 mr-2" />{t("callNow") || "Call Now"}</a>} />
               <Button
                 variant="outline"
                 className="flex-1 bg-transparent"
@@ -178,20 +168,10 @@ export default function BusinessDetailPage() {
             {/* Website and Email */}
             <div className="flex flex-col sm:flex-row gap-3 mt-3">
               {business.contact?.website && (
-                <Button className="flex-1" asChild variant="outline">
-                  <a href={business.contact.website} target="_blank" rel="noopener noreferrer">
-                    <Globe className="h-4 w-4 mr-2" />
-                    {business.contact.website.replace(/^https?:\/\//, "")}
-                  </a>
-                </Button>
+                <Button className="flex-1" variant="outline" nativeButton={false} render={<a href={business.contact.website} target="_blank" rel="noopener noreferrer"><Globe className="h-4 w-4 mr-2" />{business.contact.website.replace(/^https?:\/\//, "")}</a>} />
               )}
               {business.contact?.email && (
-                <Button className="flex-1" asChild variant="outline">
-                  <a href={`mailto:${business.contact.email}`}>
-                    <Mail className="h-4 w-4 mr-2" />
-                    {business.contact.email}
-                  </a>
-                </Button>
+                <Button className="flex-1" variant="outline" nativeButton={false} render={<a href={`mailto:${business.contact.email}`}><Mail className="h-4 w-4 mr-2" />{business.contact.email}</a>} />
               )}
             </div>
           </div>
@@ -216,7 +196,7 @@ export default function BusinessDetailPage() {
                         className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index ? "border-primary ring-2 ring-primary/20" : "border-muted hover:border-primary/50"}`}
                       >
                         <Image
-                          src={getPhotoUrl(photo)}
+                          src={photo.url || "/placeholder.svg"}
                           alt={`${getName(business)} ${index + 1}`}
                           width={200}
                           height={200}

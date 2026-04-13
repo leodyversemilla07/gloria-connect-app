@@ -1,35 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { useMutation } from "convex/react";
+import {
+  Building2,
+  CheckCircle,
+  Clock,
+  Edit,
+  Eye,
+  Filter,
+  MapPin,
+  MoreHorizontal,
+  Phone,
+  Search,
+  Trash,
+  Trash2,
+  XCircle,
+} from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,22 +30,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  MoreHorizontal,
-  Search,
-  Filter,
-  Eye,
-  Edit,
-  Trash2,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Building2,
-  MapPin,
-  Phone,
-  Trash,
-} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -65,11 +51,25 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { toast } from "sonner";
-import { api } from "../../convex/_generated/api";
-import type { Id } from "../../convex/_generated/dataModel";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { handleConvexError } from "@/hooks/use-convex-error";
 import { localeRoute } from "@/lib/locale-paths";
+import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 
 interface Business {
   _id: string;
@@ -127,11 +127,8 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
         : business.name?.english || business.name?.tagalog || "";
     const matchesSearch =
       businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (business.category?.primary ?? "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || business.metadata?.status === statusFilter;
+      (business.category?.primary ?? "").toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "all" || business.metadata?.status === statusFilter;
     const matchesCategory =
       categoryFilter === "all" || business.category?.primary === categoryFilter;
 
@@ -144,24 +141,14 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
   const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
 
   // Get unique categories for filter
-  const categories = Array.from(
-    new Set(data.map((b) => b.category?.primary).filter(Boolean))
-  );
+  const categories = Array.from(new Set(data.map((b) => b.category?.primary).filter(Boolean))) as string[];
 
   const getStatusBadge = (status?: string) => {
     switch (status) {
       case "active":
-        return (
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-            Active
-          </Badge>
-        );
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>;
       case "pending":
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-            Pending
-          </Badge>
-        );
+        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>;
       case "inactive":
         return <Badge variant="secondary">Inactive</Badge>;
       default:
@@ -220,7 +207,7 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
     if (selectedIds.size === paginatedData.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(paginatedData.map(b => b._id)));
+      setSelectedIds(new Set(paginatedData.map((b) => b._id)));
     }
   };
 
@@ -304,7 +291,7 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
-                  <SelectItem key={category} value={category!}>
+                  <SelectItem key={category} value={category}>
                     {category}
                   </SelectItem>
                 ))}
@@ -320,7 +307,9 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                 <TableRow className="bg-muted/50">
                   <TableHead className="w-12">
                     <Checkbox
-                      checked={selectedIds.size === paginatedData.length && paginatedData.length > 0}
+                      checked={
+                        selectedIds.size === paginatedData.length && paginatedData.length > 0
+                      }
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
@@ -340,10 +329,7 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                   </TableRow>
                 ) : (
                   paginatedData.map((business) => {
-                    const addressText = [
-                      business.address?.street,
-                      business.address?.barangay,
-                    ]
+                    const addressText = [business.address?.street, business.address?.barangay]
                       .filter(Boolean)
                       .join(", ");
 
@@ -367,9 +353,7 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                             {business.metadata?.isVerified && (
                               <div className="flex items-center gap-1 mt-1">
                                 <CheckCircle className="h-3 w-3 text-green-600" />
-                                <span className="text-xs text-green-600 font-medium">
-                                  Verified
-                                </span>
+                                <span className="text-xs text-green-600 font-medium">Verified</span>
                               </div>
                             )}
                           </div>
@@ -441,15 +425,21 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                                   </>
                                 )}
                               </DropdownMenuItem>
-                              <DropdownMenuItem onSelect={() => handleStatusChange(business._id, "active")}>
+                              <DropdownMenuItem
+                                onSelect={() => handleStatusChange(business._id, "active")}
+                              >
                                 <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
                                 Set Active
                               </DropdownMenuItem>
-                              <DropdownMenuItem onSelect={() => handleStatusChange(business._id, "pending")}>
+                              <DropdownMenuItem
+                                onSelect={() => handleStatusChange(business._id, "pending")}
+                              >
                                 <Clock className="h-4 w-4 mr-2 text-yellow-600" />
                                 Set Pending
                               </DropdownMenuItem>
-                              <DropdownMenuItem onSelect={() => handleStatusChange(business._id, "inactive")}>
+                              <DropdownMenuItem
+                                onSelect={() => handleStatusChange(business._id, "inactive")}
+                              >
                                 <XCircle className="h-4 w-4 mr-2 text-red-600" />
                                 Set Inactive
                               </DropdownMenuItem>
@@ -486,7 +476,7 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                   </PaginationItem>
 
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNumber;
+                    let pageNumber: number;
                     if (totalPages <= 5) {
                       pageNumber = i + 1;
                     } else if (currentPage <= 3) {
@@ -520,7 +510,9 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
                     <PaginationNext
                       onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                       className={
-                        currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"
+                        currentPage === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
                       }
                     />
                   </PaginationItem>
@@ -545,9 +537,11 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
             <AlertDialogDescription>
               {`This will permanently remove ${
                 businessToDelete
-                  ? (typeof businessToDelete.name === "string"
-                      ? businessToDelete.name
-                      : businessToDelete.name?.english || businessToDelete.name?.tagalog || "this business")
+                  ? typeof businessToDelete.name === "string"
+                    ? businessToDelete.name
+                    : businessToDelete.name?.english ||
+                      businessToDelete.name?.tagalog ||
+                      "this business"
                   : "this business"
               } from the directory.`}
             </AlertDialogDescription>
@@ -572,7 +566,8 @@ export function BusinessDataTable({ data }: BusinessDataTableProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete {selectedIds.size} businesses?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently remove {selectedIds.size} selected businesses from the directory. This action cannot be undone.
+              This will permanently remove {selectedIds.size} selected businesses from the
+              directory. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

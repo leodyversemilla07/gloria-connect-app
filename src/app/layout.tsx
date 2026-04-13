@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   description: "Business directory for Gloria Local Connect - Connect with purpose",
   alternates: {
     languages: {
-      en: 'https://gloria-connect.com/en',
-      'fil-PH': 'https://gloria-connect.com/fil',
+      en: "https://gloria-connect.com/en",
+      "fil-PH": "https://gloria-connect.com/fil",
     },
   },
 };
@@ -36,9 +36,7 @@ export default function RootLayout({
         <link rel="alternate" hrefLang="fil-PH" href="https://gloria-connect.com/fil" />
         <link rel="alternate" hrefLang="x-default" href="https://gloria-connect.com/en" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-      </body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
     </html>
   );
 }

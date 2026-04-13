@@ -1,14 +1,13 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { useAuthToken } from "@convex-dev/auth/react";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import { useEffect } from "react";
-import { api } from "../../convex/_generated/api";
-import { Card, CardContent } from "@/components/ui/card";
+import { useQuery } from "convex/react";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { authPath, localeRoute } from "@/lib/locale-paths";
+import { api } from "../../convex/_generated/api";
 
 interface AdminGuardProps {
   children: React.ReactNode;
@@ -20,11 +19,7 @@ interface AdminGuardProps {
  * Higher-order component that protects admin routes
  * Requires user to be authenticated and have admin role
  */
-export function AdminGuard({
-  children,
-  fallback,
-  redirectTo,
-}: AdminGuardProps) {
+export function AdminGuard({ children, fallback, redirectTo }: AdminGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
 

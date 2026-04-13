@@ -1,14 +1,12 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { api } from "../../../../../convex/_generated/api";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Download, FileText, Table as TableIcon } from "lucide-react";
+import { useI18n } from "@/components/i18n-provider";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -17,15 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  FileText, 
-  Download,
-  Table as TableIcon
-} from "lucide-react";
-import { useI18n } from "@/components/i18n-provider";
-import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "../../../../../convex/_generated/api";
 
 export default function AdminReportsPage() {
   const businesses = useQuery(api.businesses.get);
@@ -45,8 +35,8 @@ export default function AdminReportsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
+              {["report-skeleton-1", "report-skeleton-2", "report-skeleton-3", "report-skeleton-4", "report-skeleton-5"].map((rowKey) => (
+                <Skeleton key={rowKey} className="h-12 w-full" />
               ))}
             </div>
           </CardContent>
@@ -57,27 +47,27 @@ export default function AdminReportsPage() {
 
   const exportToCSV = () => {
     const headers = ["Name", "Category", "Phone", "Email", "Status", "Verified", "Date Added"];
-    const rows = businesses.map(b => [
-      typeof b.name === 'string' ? b.name : b.name.english,
+    const rows = businesses.map((b) => [
+      typeof b.name === "string" ? b.name : b.name.english,
       b.category.primary,
       b.contact.phone,
       b.contact.email || "",
       b.metadata.status,
       b.metadata.isVerified ? "Yes" : "No",
-      new Date(b.metadata.dateAdded).toLocaleDateString()
+      new Date(b.metadata.dateAdded).toLocaleDateString(),
     ]);
 
-    const csvContent = [
-      headers.join(","),
-      ...rows.map(e => e.join(","))
-    ].join("\n");
+    const csvContent = [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `gloria_connect_businesses_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
+    link.setAttribute(
+      "download",
+      `gloria_connect_businesses_${new Date().toISOString().split("T")[0]}.csv`,
+    );
+    link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -91,8 +81,12 @@ export default function AdminReportsPage() {
             <FileText className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t("adminReportsTitle") || "Reports"}</h1>
-            <p className="text-muted-foreground text-sm">{t("adminReportsSubtitle") || "Generate and export business directory reports"}</p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {t("adminReportsTitle") || "Reports"}
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              {t("adminReportsSubtitle") || "Generate and export business directory reports"}
+            </p>
           </div>
         </div>
         <Button onClick={exportToCSV} className="w-full sm:w-auto">
@@ -110,7 +104,8 @@ export default function AdminReportsPage() {
                 {t("adminBusinessSummary") || "Business Summary Report"}
               </CardTitle>
               <CardDescription>
-                {t("adminReportDescription") || "A comprehensive list of all businesses with their key information"}
+                {t("adminReportDescription") ||
+                  "A comprehensive list of all businesses with their key information"}
               </CardDescription>
             </div>
           </CardHeader>
@@ -130,33 +125,44 @@ export default function AdminReportsPage() {
                 {businesses.map((business) => (
                   <TableRow key={business._id}>
                     <TableCell className="font-medium">
-                      {typeof business.name === 'string' ? business.name : business.name.english}
+                      {typeof business.name === "string" ? business.name : business.name.english}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-[10px] capitalize">
-                        {t(`category.${business.category.primary.toLowerCase()}`) || business.category.primary}
+                        {t(`category.${business.category.primary.toLowerCase()}`) ||
+                          business.category.primary}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-xs">
                       <div className="flex flex-col">
                         <span>{business.contact.phone}</span>
-                        {business.contact.email && <span className="text-muted-foreground">{business.contact.email}</span>}
+                        {business.contact.email && (
+                          <span className="text-muted-foreground">{business.contact.email}</span>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge 
+                      <Badge
                         variant={
-                          business.metadata.status === "active" ? "default" : 
-                          business.metadata.status === "pending" ? "secondary" : "destructive"
+                          business.metadata.status === "active"
+                            ? "default"
+                            : business.metadata.status === "pending"
+                              ? "secondary"
+                              : "destructive"
                         }
                         className="capitalize text-[10px]"
                       >
-                        {t(`admin${business.metadata.status.charAt(0).toUpperCase() + business.metadata.status.slice(1)}`) || business.metadata.status}
+                        {t(
+                          `admin${business.metadata.status.charAt(0).toUpperCase() + business.metadata.status.slice(1)}`,
+                        ) || business.metadata.status}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       {business.metadata.isVerified ? (
-                        <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
+                        <Badge
+                          variant="secondary"
+                          className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
+                        >
                           {t("adminYes") || "Yes"}
                         </Badge>
                       ) : (

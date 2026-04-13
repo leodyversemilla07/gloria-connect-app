@@ -1,39 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useQuery } from "convex/react";
-import { api } from "../../../../../../convex/_generated/api";
-import type { Doc, Id } from "../../../../../../convex/_generated/dataModel";
-import { useI18n } from "@/components/i18n-provider";
-import LanguageToggle from "@/components/language-toggle";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
 import {
   ArrowLeft,
-  MapPin,
-  Phone,
-  Clock,
-  Globe,
-  Share2,
-  Navigation,
-  Mail,
-  Tag,
-  CheckCircle,
   Calendar,
   Camera,
+  CheckCircle,
+  Clock,
+  Globe,
+  Mail,
+  MapPin,
+  Navigation,
+  Phone,
+  Share2,
+  Tag,
 } from "lucide-react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useI18n } from "@/components/i18n-provider";
+import LanguageToggle from "@/components/language-toggle";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { getPhotoUrl } from "@/lib/utils";
+import { api } from "../../../../../../convex/_generated/api";
+import type { Doc, Id } from "../../../../../../convex/_generated/dataModel";
 
-const BusinessLocationMap = dynamic(
-  () => import("@/components/business-location-map"),
-  { ssr: false }
-);
+const BusinessLocationMap = dynamic(() => import("@/components/business-location-map"), {
+  ssr: false,
+});
 
 export default function BusinessDetailPage() {
   const params = useParams();
@@ -65,8 +64,10 @@ export default function BusinessDetailPage() {
     );
   }
 
-  const getName = (b: Doc<"businesses">) => typeof b.name === 'string' ? b.name : b.name?.english || "";
-  const getDescription = (b: Doc<"businesses">) => typeof b.description === 'string' ? b.description : b.description?.english || "";
+  const getName = (b: Doc<"businesses">) =>
+    typeof b.name === "string" ? b.name : b.name?.english || "";
+  const getDescription = (b: Doc<"businesses">) =>
+    typeof b.description === "string" ? b.description : b.description?.english || "";
   const getCategory = (b: Doc<"businesses">) => b.category?.primary || "";
   const getPhotos = (b: Doc<"businesses">) => b.photos || [];
   const getSpecialties = (b: Doc<"businesses">) => b.category?.secondary || [];
@@ -87,7 +88,9 @@ export default function BusinessDetailPage() {
           text: getDescription(business),
           url: window.location.href,
         });
-        toast.success(language === "en" ? "Link shared successfully!" : "Matagumpay na na-share ang link!");
+        toast.success(
+          language === "en" ? "Link shared successfully!" : "Matagumpay na na-share ang link!",
+        );
       } catch {
         toast.error(language === "en" ? "Failed to share link." : "Hindi na-share ang link.");
       }
@@ -99,9 +102,8 @@ export default function BusinessDetailPage() {
   };
 
   const photos = getPhotos(business);
-  const displayPhotoUrl = photos.length > 0 
-    ? getPhotoUrl(photos[selectedImage]) 
-    : "/placeholder.svg";
+  const displayPhotoUrl =
+    photos.length > 0 ? getPhotoUrl(photos[selectedImage]) : "/placeholder.svg";
 
   return (
     <div className="min-h-screen bg-background">
@@ -109,7 +111,11 @@ export default function BusinessDetailPage() {
       <header className="bg-card shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-4 md:py-0 gap-4 md:gap-0">
-            <Button asChild variant="link" className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start">
+            <Button
+              asChild
+              variant="link"
+              className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start"
+            >
               <Link href={`/${language}/business`}>
                 <ArrowLeft className="h-5 w-5" />
                 <span className="font-medium">{t("backToHome") || "Back to Home"}</span>
@@ -148,9 +154,7 @@ export default function BusinessDetailPage() {
                   {getName(business)}
                 </h1>
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  <Badge variant="secondary">
-                    {getCategory(business)}
-                  </Badge>
+                  <Badge variant="secondary">{getCategory(business)}</Badge>
                 </div>
               </div>
             </div>
@@ -162,7 +166,11 @@ export default function BusinessDetailPage() {
                   {t("callNow") || "Call Now"}
                 </a>
               </Button>
-              <Button variant="outline" className="flex-1 bg-transparent" onClick={handleGetDirections}>
+              <Button
+                variant="outline"
+                className="flex-1 bg-transparent"
+                onClick={handleGetDirections}
+              >
                 <Navigation className="h-4 w-4 mr-2" />
                 {t("getDirections") || "Get Directions"}
               </Button>
@@ -195,27 +203,34 @@ export default function BusinessDetailPage() {
             {/* Photo Gallery */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{t("gallery") || "Photo Gallery"}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">
+                  {t("gallery") || "Photo Gallery"}
+                </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
-                  {photos.length > 0 ? photos.map((photo, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedImage(index)}
-                      className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index ? "border-primary ring-2 ring-primary/20" : "border-muted hover:border-primary/50"}`}
-                    >
-                      <Image
-                        src={getPhotoUrl(photo)}
-                        alt={`${getName(business)} ${index + 1}`}
-                        width={200}
-                        height={200}
-                        className="w-full h-full object-cover"
-                        style={{ width: "100%", height: "auto" }}
-                      />
-                    </button>
-                  )) : (
+                  {photos.length > 0 ? (
+                    photos.map((photo, index) => (
+                      <button
+                        type="button"
+                        key={`${photo.url ?? photo.storageId ?? `photo-${index + 1}`}`}
+                        onClick={() => setSelectedImage(index)}
+                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index ? "border-primary ring-2 ring-primary/20" : "border-muted hover:border-primary/50"}`}
+                      >
+                        <Image
+                          src={getPhotoUrl(photo)}
+                          alt={`${getName(business)} ${index + 1}`}
+                          width={200}
+                          height={200}
+                          className="w-full h-full object-cover"
+                          style={{ width: "100%", height: "auto" }}
+                        />
+                      </button>
+                    ))
+                  ) : (
                     <div className="col-span-full py-8 text-center bg-muted/20 rounded-lg border-2 border-dashed">
                       <Camera className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-                      <p className="text-sm text-muted-foreground">No photos available for this business.</p>
+                      <p className="text-sm text-muted-foreground">
+                        No photos available for this business.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -225,26 +240,32 @@ export default function BusinessDetailPage() {
             {/* About */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{t("about") || "About"}</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  {getDescription(business)}
-                </p>
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">
+                  {t("about") || "About"}
+                </h2>
+                <p className="text-muted-foreground leading-relaxed">{getDescription(business)}</p>
               </CardContent>
             </Card>
 
             {/* Specialties */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">{t("specialties") || "Specialties"}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">
+                  {t("specialties") || "Specialties"}
+                </h2>
                 <div className="flex flex-wrap gap-2">
                   {getSpecialties(business).length > 0 ? (
-                    getSpecialties(business).map((specialty: string, index: number) => (
-                      <Badge key={index} variant="outline">
+                    getSpecialties(business).map((specialty: string) => (
+                      <Badge key={specialty} variant="outline">
                         {specialty}
                       </Badge>
                     ))
                   ) : (
-                    <span className="text-muted-foreground text-sm">{language === "en" ? "No specialties listed." : "Walang nakalistang specialty."}</span>
+                    <span className="text-muted-foreground text-sm">
+                      {language === "en"
+                        ? "No specialties listed."
+                        : "Walang nakalistang specialty."}
+                    </span>
                   )}
                 </div>
               </CardContent>
@@ -256,7 +277,9 @@ export default function BusinessDetailPage() {
             {/* Contact Information */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-xl font-semibold text-foreground mb-4">{t("contact") || "Contact Information"}</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">
+                  {t("contact") || "Contact Information"}
+                </h2>
                 <div className="space-y-4">
                   <div className="flex items-start space-x-3">
                     <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
@@ -270,7 +293,10 @@ export default function BusinessDetailPage() {
                     <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Phone</p>
-                      <a href={`tel:${business.contact?.phone ?? ""}`} className="text-sm text-primary hover:text-primary/80">
+                      <a
+                        href={`tel:${business.contact?.phone ?? ""}`}
+                        className="text-sm text-primary hover:text-primary/80"
+                      >
                         {business.contact?.phone ?? ""}
                       </a>
                     </div>
@@ -281,7 +307,10 @@ export default function BusinessDetailPage() {
                       <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
                       <div>
                         <p className="text-sm font-medium text-foreground">Email</p>
-                        <a href={`mailto:${business.contact.email}`} className="text-sm text-primary hover:text-primary/80">
+                        <a
+                          href={`mailto:${business.contact.email}`}
+                          className="text-sm text-primary hover:text-primary/80"
+                        >
                           {business.contact.email}
                         </a>
                       </div>
@@ -293,7 +322,12 @@ export default function BusinessDetailPage() {
                       <Globe className="h-5 w-5 text-muted-foreground mt-0.5" />
                       <div>
                         <p className="text-sm font-medium text-foreground">Website</p>
-                        <a href={business.contact.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary/80">
+                        <a
+                          href={business.contact.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-primary hover:text-primary/80"
+                        >
                           {business.contact.website.replace(/^https?:\/\//, "")}
                         </a>
                       </div>
@@ -303,15 +337,26 @@ export default function BusinessDetailPage() {
                   <div className="flex items-start space-x-3">
                     <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-foreground">{t("hours") || "Operating Hours"}</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {t("hours") || "Operating Hours"}
+                      </p>
                       <p className="text-sm text-muted-foreground">
                         {(() => {
                           // Show today's hours if available
-                          const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
+                          const days = [
+                            "sunday",
+                            "monday",
+                            "tuesday",
+                            "wednesday",
+                            "thursday",
+                            "friday",
+                            "saturday",
+                          ] as const;
                           const today = days[new Date().getDay()];
                           const hours = business.operatingHours?.[today];
                           if (!hours) return "";
-                          if (hours.closed) return t("closed") || (language === "en" ? "Closed" : "Sarado");
+                          if (hours.closed)
+                            return t("closed") || (language === "en" ? "Closed" : "Sarado");
                           return `${hours.open} - ${hours.close}`;
                         })()}
                       </p>
@@ -330,39 +375,62 @@ export default function BusinessDetailPage() {
                     <Tag className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Status</p>
-                      <p className="text-sm text-muted-foreground capitalize">{business.metadata?.status || "unknown"}</p>
+                      <p className="text-sm text-muted-foreground capitalize">
+                        {business.metadata?.status || "unknown"}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Verified</p>
-                      <p className="text-sm text-muted-foreground">{business.metadata?.isVerified ? "Yes" : "No"}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {business.metadata?.isVerified ? "Yes" : "No"}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Date Added</p>
-                      <p className="text-sm text-muted-foreground">{business.metadata?.dateAdded ? new Date(business.metadata.dateAdded).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {business.metadata?.dateAdded
+                          ? new Date(business.metadata.dateAdded).toLocaleDateString(undefined, {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          : "N/A"}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Last Updated</p>
-                      <p className="text-sm text-muted-foreground">{business.metadata?.lastUpdated ? new Date(business.metadata.lastUpdated).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {business.metadata?.lastUpdated
+                          ? new Date(business.metadata.lastUpdated).toLocaleDateString(undefined, {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          : "N/A"}
+                      </p>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-{/* Map */}
+            {/* Map */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-xl font-semibold text-foreground mb-4">{t("location") || "Location"}</h2>
-                {business.address?.coordinates?.latitude && business.address?.coordinates?.longitude ? (
+                <h2 className="text-xl font-semibold text-foreground mb-4">
+                  {t("location") || "Location"}
+                </h2>
+                {business.address?.coordinates?.latitude &&
+                business.address?.coordinates?.longitude ? (
                   <div className="aspect-square rounded-lg overflow-hidden">
                     <BusinessLocationMap
                       latitude={business.address.coordinates.latitude}

@@ -1,10 +1,10 @@
-import { Id } from '@/../../convex/_generated/dataModel';
+import type { Id } from "@/../../convex/_generated/dataModel";
 
 /**
  * Mock user data for testing
  */
 export interface MockUser {
-  _id: Id<'users'>;
+  _id: Id<"users">;
   _creationTime: number;
   email: string;
   name?: string;
@@ -22,11 +22,11 @@ export interface MockUser {
  */
 export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
   const defaults: MockUser = {
-    _id: 'user_mock123' as Id<'users'>,
+    _id: "user_mock123" as Id<"users">,
     _creationTime: Date.now(),
-    email: 'test@example.com',
-    name: 'Test User',
-    image: 'https://example.com/avatar.jpg',
+    email: "test@example.com",
+    name: "Test User",
+    image: "https://example.com/avatar.jpg",
     emailVerificationTime: Date.now(),
     isAdmin: false,
     isAnonymous: false,
@@ -40,8 +40,8 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
  */
 export function createMockAdmin(overrides: Partial<MockUser> = {}): MockUser {
   return createMockUser({
-    email: 'admin@example.com',
-    name: 'Admin User',
+    email: "admin@example.com",
+    name: "Admin User",
     isAdmin: true,
     ...overrides,
   });
@@ -51,12 +51,12 @@ export function createMockAdmin(overrides: Partial<MockUser> = {}): MockUser {
  * Create multiple mock users for testing lists
  */
 export function createMockUsers(count: number): MockUser[] {
-  return Array.from({ length: count }, (_, i) => 
+  return Array.from({ length: count }, (_, i) =>
     createMockUser({
-      _id: `user_mock${i}` as Id<'users'>,
+      _id: `user_mock${i}` as Id<"users">,
       email: `user${i}@example.com`,
       name: `User ${i}`,
-    })
+    }),
   );
 }
 

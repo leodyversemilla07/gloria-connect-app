@@ -1,5 +1,5 @@
-import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
+import { internalMutation } from "./_generated/server";
 
 export const seedAdminUser = internalMutation({
   args: { email: v.string(), name: v.string() },

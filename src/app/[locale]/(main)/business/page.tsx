@@ -1,18 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { useQuery } from "convex/react";
-import { api } from "../../../../../convex/_generated/api";
-import { Search, ArrowLeft, MapPin, Building2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Building2, MapPin, Search } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 import BusinessCard, { type PublicBusinessDigest } from "@/components/business-card";
-import LanguageToggle from "@/components/language-toggle";
 import { useI18n } from "@/components/i18n-provider";
+import LanguageToggle from "@/components/language-toggle";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { api } from "../../../../../convex/_generated/api";
 
-function getCategoriesFromBusinesses(businesses: PublicBusinessDigest[], t: (key: string) => string) {
+function getCategoriesFromBusinesses(
+  businesses: PublicBusinessDigest[],
+  t: (key: string) => string,
+) {
   const set = new Set<string>();
   businesses.forEach((b) => {
     set.add(b.categoryPrimary);
@@ -48,8 +57,10 @@ export default function BusinessesPage() {
   }
 
   const categories = getCategoriesFromBusinesses(businesses, t);
-  const getName = (business: PublicBusinessDigest) => typeof business.name === 'string' ? business.name : business.name.english;
-  const getDescription = (business: PublicBusinessDigest) => typeof business.description === 'string' ? business.description : business.description.english;
+  const getName = (business: PublicBusinessDigest) =>
+    typeof business.name === "string" ? business.name : business.name.english;
+  const getDescription = (business: PublicBusinessDigest) =>
+    typeof business.description === "string" ? business.description : business.description.english;
   const getCategory = (business: PublicBusinessDigest) => {
     const cat = categories.find((c) => c.id === business.categoryPrimary);
     return language === "en" ? cat?.name : cat?.nameTagalog;
@@ -58,15 +69,22 @@ export default function BusinessesPage() {
     const name = getName(business).toLowerCase();
     const description = getDescription(business).toLowerCase();
     const matchesSearch =
-      name.includes(searchTerm.toLowerCase()) ||
-      description.includes(searchTerm.toLowerCase());
+      name.includes(searchTerm.toLowerCase()) || description.includes(searchTerm.toLowerCase());
     const matchesCategory =
       selectedCategory === "all" || business.categoryPrimary === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   function getTodayHours(business: PublicBusinessDigest) {
-    const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
+    const days = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ] as const;
     const today = days[new Date().getDay()];
     const hours = business.operatingHours[today];
     if (!hours) return "";
@@ -145,7 +163,8 @@ export default function BusinessesPage() {
               </Select>
             </div>
             <p className="text-center text-white/70 text-sm">
-              {filteredBusinesses.length} {filteredBusinesses.length === 1 ? 'business' : 'businesses'} found
+              {filteredBusinesses.length}{" "}
+              {filteredBusinesses.length === 1 ? "business" : "businesses"} found
             </p>
           </div>
         </div>
@@ -153,8 +172,18 @@ export default function BusinessesPage() {
 
       {/* Decorative Wave */}
       <div className="relative -mt-1">
-        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-12 md:h-16">
-          <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="currentColor" className="text-background"/>
+        <svg
+          viewBox="0 0 1440 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-12 md:h-16"
+          aria-hidden="true"
+        >
+          <path
+            d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
+            fill="currentColor"
+            className="text-background"
+          />
         </svg>
       </div>
 
@@ -186,13 +215,14 @@ export default function BusinessesPage() {
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-6">
                 <MapPin className="h-10 w-10 text-muted-foreground" />
               </div>
-              <p className="text-muted-foreground text-lg">
-                {t("noBusinessesFound")}
-              </p>
-              <Button 
-                variant="link" 
+              <p className="text-muted-foreground text-lg">{t("noBusinessesFound")}</p>
+              <Button
+                variant="link"
                 className="mt-4 text-primary"
-                onClick={() => { setSearchTerm(""); setSelectedCategory("all"); }}
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("all");
+                }}
               >
                 Clear filters
               </Button>

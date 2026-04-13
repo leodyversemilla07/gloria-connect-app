@@ -30,8 +30,10 @@ export function handleConvexError(error: unknown, customMessage?: string) {
  */
 export function isAuthError(error: unknown): boolean {
   if (error instanceof ConvexError) {
-    return error.message.includes("Authentication required") ||
-           error.message.includes("Admin access required");
+    return (
+      error.message.includes("Authentication required") ||
+      error.message.includes("Admin access required")
+    );
   }
   return false;
 }

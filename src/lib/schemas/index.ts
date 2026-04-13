@@ -1,13 +1,13 @@
 /**
  * Centralized Zod Schema Library
- * 
+ *
  * This module exports all validation schemas for the Gloria Connect App.
  * Use these schemas for form validation, API input validation, and type inference.
- * 
+ *
  * @example
  * ```tsx
  * import { loginSchema, type LoginFormData } from "@/lib/schemas";
- * 
+ *
  * const form = useForm<LoginFormData>({
  *   validators: { onSubmit: loginSchema },
  * });
@@ -16,49 +16,49 @@
 
 // Auth schemas
 export {
-    emailSchema,
-    passwordSchema,
-    loginPasswordSchema,
-    nameSchema,
-    loginSchema,
-    registerSchema,
-    type LoginFormData,
-    type RegisterFormData,
+  emailSchema,
+  type LoginFormData,
+  loginPasswordSchema,
+  loginSchema,
+  nameSchema,
+  passwordSchema,
+  type RegisterFormData,
+  registerSchema,
 } from "./auth";
 
 // Business schemas
 export {
-    phoneSchema,
-    latitudeSchema,
-    longitudeSchema,
-    coordinatesSchema,
-    contactSchema,
-    addressSchema,
-    dayHoursSchema,
-    operatingHoursSchema,
-    photoSchema,
-    bilingualNameSchema,
-    bilingualDescriptionSchema,
-    categorySchema,
-    businessMetadataSchema,
-    businessSchema,
-    businessFormSchema,
-    type Business,
-    type BusinessFormData,
-    type Contact,
-    type Address,
-    type OperatingHours,
-    type DayHours,
-    type Photo,
-    type Coordinates,
+  type Address,
+  addressSchema,
+  type Business,
+  type BusinessFormData,
+  bilingualDescriptionSchema,
+  bilingualNameSchema,
+  businessFormSchema,
+  businessMetadataSchema,
+  businessSchema,
+  type Contact,
+  type Coordinates,
+  categorySchema,
+  contactSchema,
+  coordinatesSchema,
+  type DayHours,
+  dayHoursSchema,
+  latitudeSchema,
+  longitudeSchema,
+  type OperatingHours,
+  operatingHoursSchema,
+  type Photo,
+  phoneSchema,
+  photoSchema,
 } from "./business";
 
 // Common utilities
 export {
-    urlSchema,
-    optionalEmailSchema,
-    formatZodErrors,
-    getFirstError,
-    type SchemaInput,
-    type SchemaOutput,
+  formatZodErrors,
+  getFirstError,
+  optionalEmailSchema,
+  type SchemaInput,
+  type SchemaOutput,
+  urlSchema,
 } from "./common";

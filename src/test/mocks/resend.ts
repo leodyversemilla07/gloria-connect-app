@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 /**
  * Mock Resend email service
@@ -7,10 +7,10 @@ import { vi } from 'vitest';
 export const mockResend = {
   emails: {
     send: vi.fn().mockResolvedValue({
-      id: 'email_mock_123',
-      from: 'noreply@gloriaconnect.com',
-      to: 'test@example.com',
-      subject: 'Test Email',
+      id: "email_mock_123",
+      from: "noreply@gloriaconnect.com",
+      to: "test@example.com",
+      subject: "Test Email",
     }),
   },
 };
@@ -25,18 +25,18 @@ export function resetResendMock() {
 /**
  * Mock successful email send
  */
-export function mockEmailSendSuccess(emailId = 'email_mock_123') {
+export function mockEmailSendSuccess(emailId = "email_mock_123") {
   mockResend.emails.send.mockResolvedValueOnce({
     id: emailId,
-    from: 'noreply@gloriaconnect.com',
-    to: 'test@example.com',
-    subject: 'Test Email',
+    from: "noreply@gloriaconnect.com",
+    to: "test@example.com",
+    subject: "Test Email",
   });
 }
 
 /**
  * Mock email send failure
  */
-export function mockEmailSendFailure(error = 'Failed to send email') {
+export function mockEmailSendFailure(error = "Failed to send email") {
   mockResend.emails.send.mockRejectedValueOnce(new Error(error));
 }

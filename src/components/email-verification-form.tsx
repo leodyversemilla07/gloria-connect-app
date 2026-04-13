@@ -1,23 +1,17 @@
 "use client";
 
-import * as React from "react";
-import { useMutation, useQuery } from "convex/react";
 import { useAuthToken } from "@convex-dev/auth/react";
+import { useMutation, useQuery } from "convex/react";
 import { usePathname, useRouter } from "next/navigation";
+import * as React from "react";
 import { toast } from "sonner";
-import { api } from "../../convex/_generated/api";
-import { handleConvexError } from "@/hooks/use-convex-error";
-import { localeRoute } from "@/lib/locale-paths";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { handleConvexError } from "@/hooks/use-convex-error";
+import { localeRoute } from "@/lib/locale-paths";
+import { api } from "../../convex/_generated/api";
 
 const SESSION_KEY_PREFIX = "verification-email-sent:";
 
@@ -44,9 +38,11 @@ export function EmailVerificationForm() {
 
   React.useEffect(() => {
     if (verificationStatus?.isVerified && adminStatus !== undefined) {
-      router.replace(adminStatus.isAdmin ? localeRoute(pathname, "/dashboard") : localeRoute(pathname, "/"));
+      router.replace(
+        adminStatus.isAdmin ? localeRoute(pathname, "/dashboard") : localeRoute(pathname, "/"),
+      );
     }
-  }, [adminStatus, locale, pathname, router, verificationStatus]);
+  }, [adminStatus, pathname, router, verificationStatus]);
 
   React.useEffect(() => {
     const email = verificationStatus?.email;
@@ -81,10 +77,7 @@ export function EmailVerificationForm() {
     setIsSending(true);
     try {
       await sendVerificationCode({ email: verificationStatus.email });
-      window.sessionStorage.setItem(
-        `${SESSION_KEY_PREFIX}${verificationStatus.email}`,
-        "true"
-      );
+      window.sessionStorage.setItem(`${SESSION_KEY_PREFIX}${verificationStatus.email}`, "true");
       toast.success("Verification code sent.");
     } catch (error) {
       handleConvexError(error, "Failed to send verification code");
@@ -108,7 +101,9 @@ export function EmailVerificationForm() {
         code: code.trim(),
       });
       toast.success("Email verified.");
-      router.replace(adminStatus?.isAdmin ? localeRoute(pathname, "/dashboard") : localeRoute(pathname, "/"));
+      router.replace(
+        adminStatus?.isAdmin ? localeRoute(pathname, "/dashboard") : localeRoute(pathname, "/"),
+      );
     } catch (error) {
       handleConvexError(error, "Failed to verify email");
     } finally {
@@ -127,7 +122,7 @@ export function EmailVerificationForm() {
   }
 
   if (token === null || !currentUser?.email) {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       window.location.href = `/${locale}/login`;
     }
     return (

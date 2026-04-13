@@ -1,21 +1,40 @@
 "use client";
 
-import { useRouter, useParams, usePathname } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "../../../../../../../convex/_generated/api";
-import { Id } from "../../../../../../../convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import {
+  AlertCircle,
+  Camera,
+  CheckCircle,
+  Clock,
+  Globe,
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import * as React from "react";
+import { ImageUpload } from "@/components/image-upload";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { MapPin, Phone, Mail, Globe, Clock, Camera, CheckCircle, AlertCircle, Save, X, Plus, Trash2 } from "lucide-react";
-import * as React from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { handleConvexError } from "@/hooks/use-convex-error";
-import { ImageUpload } from "@/components/image-upload";
 import { localeRoute } from "@/lib/locale-paths";
+import { api } from "../../../../../../../convex/_generated/api";
+import type { Id } from "../../../../../../../convex/_generated/dataModel";
 
 export default function EditBusinessPage() {
   const router = useRouter();
@@ -64,12 +83,20 @@ export default function EditBusinessPage() {
   React.useEffect(() => {
     if (business) {
       // Handle name field - can be string or object
-      const nameEnglish = typeof business.name === 'string' ? business.name : business.name?.english ?? "";
-      const nameTagalog = typeof business.name === 'object' && business.name ? business.name.tagalog ?? "" : "";
+      const nameEnglish =
+        typeof business.name === "string" ? business.name : (business.name?.english ?? "");
+      const nameTagalog =
+        typeof business.name === "object" && business.name ? (business.name.tagalog ?? "") : "";
 
       // Handle description field - can be string or object
-      const descriptionEnglish = typeof business.description === 'string' ? business.description : business.description?.english ?? "";
-      const descriptionTagalog = typeof business.description === 'object' && business.description ? business.description.tagalog ?? "" : "";
+      const descriptionEnglish =
+        typeof business.description === "string"
+          ? business.description
+          : (business.description?.english ?? "");
+      const descriptionTagalog =
+        typeof business.description === "object" && business.description
+          ? (business.description.tagalog ?? "")
+          : "";
 
       setForm({
         nameEnglish,
@@ -86,24 +113,27 @@ export default function EditBusinessPage() {
         descriptionEnglish,
         descriptionTagalog,
         operatingHours: business.operatingHours ?? {
-          monday: { open: '', close: '', closed: false },
-          tuesday: { open: '', close: '', closed: false },
-          wednesday: { open: '', close: '', closed: false },
-          thursday: { open: '', close: '', closed: false },
-          friday: { open: '', close: '', closed: false },
-          saturday: { open: '', close: '', closed: false },
-          sunday: { open: '', close: '', closed: false },
+          monday: { open: "", close: "", closed: false },
+          tuesday: { open: "", close: "", closed: false },
+          wednesday: { open: "", close: "", closed: false },
+          thursday: { open: "", close: "", closed: false },
+          friday: { open: "", close: "", closed: false },
+          saturday: { open: "", close: "", closed: false },
+          sunday: { open: "", close: "", closed: false },
         },
-        photos: Array.isArray(business.photos) && business.photos.length > 0
-          ? business.photos.map((p: { url?: string; storageId?: string; alt?: string; isPrimary?: boolean }) => ({
-            url: p.url ?? '',
-            storageId: p.storageId,
-            alt: p.alt ?? '',
-            isPrimary: !!p.isPrimary,
-          }))
-          : [],
+        photos:
+          Array.isArray(business.photos) && business.photos.length > 0
+            ? business.photos.map(
+                (p: { url?: string; storageId?: string; alt?: string; isPrimary?: boolean }) => ({
+                  url: p.url ?? "",
+                  storageId: p.storageId,
+                  alt: p.alt ?? "",
+                  isPrimary: !!p.isPrimary,
+                }),
+              )
+            : [],
         isVerified: !!business.metadata?.isVerified,
-        status: business.metadata?.status ?? 'active',
+        status: business.metadata?.status ?? "active",
       });
     }
   }, [business]);
@@ -123,17 +153,19 @@ export default function EditBusinessPage() {
     );
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value, type } = e.target;
     if (!form) return;
     // Handle booleans (checkboxes only)
-    if (type === 'checkbox' && e.target instanceof HTMLInputElement) {
+    if (type === "checkbox" && e.target instanceof HTMLInputElement) {
       setForm({ ...form, [name]: e.target.checked });
       return;
     }
     // Handle categorySecondary (comma separated)
-    if (name === 'categorySecondary') {
-      setForm({ ...form, categorySecondary: value.split(',').map(s => s.trim()) });
+    if (name === "categorySecondary") {
+      setForm({ ...form, categorySecondary: value.split(",").map((s) => s.trim()) });
       return;
     }
     // Handle all other flat fields
@@ -144,7 +176,7 @@ export default function EditBusinessPage() {
     if (!form) return;
     setForm({
       ...form,
-      photos: [...form.photos, { url: '', alt: '', isPrimary: form.photos.length === 0 }]
+      photos: [...form.photos, { url: "", alt: "", isPrimary: form.photos.length === 0 }],
     });
   };
 
@@ -161,14 +193,14 @@ export default function EditBusinessPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form) return;
-    
+
     const photosToSubmit = form.photos
-      .filter(p => p.url || p.storageId)
-      .map(p => ({
+      .filter((p) => p.url || p.storageId)
+      .map((p) => ({
         url: p.url,
         storageId: p.storageId as Id<"_storage"> | undefined,
         alt: p.alt || "Business photo",
-        isPrimary: p.isPrimary
+        isPrimary: p.isPrimary,
       }));
 
     const updatedBusiness = {
@@ -202,7 +234,7 @@ export default function EditBusinessPage() {
       metadata: {
         dateAdded: business.metadata?.dateAdded ?? "",
         isVerified: form.isVerified,
-        status: (form.status as "active" | "inactive" | "pending"),
+        status: form.status as "active" | "inactive" | "pending",
       },
     };
     try {
@@ -215,509 +247,562 @@ export default function EditBusinessPage() {
 
   return (
     <div className="min-h-screen antialiased font-sans bg-background text-foreground flex flex-1 flex-col">
-        <main className="@container/main flex flex-1 flex-col gap-2 p-4 sm:p-6 lg:p-8">
-          <form onSubmit={handleSubmit} className="space-y-8 w-full h-full pb-20">
-            {/* Basic Information */}
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                    <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">1</span>
-                  </div>
-                  <span>Basic Information</span>
-                </CardTitle>
-                <CardDescription>
-                  Update the core details about your business
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="nameEnglish" className="text-sm font-medium">Business Name (English)</Label>
-                    <Input
-                      id="nameEnglish"
-                      name="nameEnglish"
-                      value={form.nameEnglish}
-                      onChange={handleChange}
-                      placeholder="Enter business name in English"
-                      className="h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="nameTagalog" className="text-sm font-medium">Business Name (Tagalog)</Label>
-                    <Input
-                      id="nameTagalog"
-                      name="nameTagalog"
-                      value={form.nameTagalog}
-                      onChange={handleChange}
-                      placeholder="Pangalan ng negosyo sa Tagalog"
-                      className="h-11"
-                    />
-                  </div>
+      <main className="@container/main flex flex-1 flex-col gap-2 p-4 sm:p-6 lg:p-8">
+        <form onSubmit={handleSubmit} className="space-y-8 w-full h-full pb-20">
+          {/* Basic Information */}
+          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center space-x-2 text-lg">
+                <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                  <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">1</span>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="categoryPrimary" className="text-sm font-medium">Primary Category</Label>
-                    <Input
-                      id="categoryPrimary"
-                      name="categoryPrimary"
-                      value={form.categoryPrimary}
-                      onChange={handleChange}
-                      placeholder="e.g., Restaurant, Retail, Services"
-                      className="h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="categorySecondary" className="text-sm font-medium">Secondary Categories</Label>
-                    <Input
-                      id="categorySecondary"
-                      name="categorySecondary"
-                      value={form.categorySecondary.join(", ")}
-                      onChange={handleChange}
-                      placeholder="Enter categories separated by commas"
-                      className="h-11"
-                    />
-                  </div>
+                <span>Basic Information</span>
+              </CardTitle>
+              <CardDescription>Update the core details about your business</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="nameEnglish" className="text-sm font-medium">
+                    Business Name (English)
+                  </Label>
+                  <Input
+                    id="nameEnglish"
+                    name="nameEnglish"
+                    value={form.nameEnglish}
+                    onChange={handleChange}
+                    placeholder="Enter business name in English"
+                    className="h-11"
+                  />
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Contact Information */}
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="h-8 w-8 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                    <Phone className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  </div>
-                  <span>Contact Information</span>
-                </CardTitle>
-                <CardDescription>
-                  How customers can reach your business
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-sm font-medium flex items-center space-x-1">
-                      <Phone className="h-3 w-3" />
-                      <span>Phone Number</span>
-                    </Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleChange}
-                      placeholder="(+63) 912 345 6789"
-                      className="h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium flex items-center space-x-1">
-                      <Mail className="h-3 w-3" />
-                      <span>Email Address</span>
-                    </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      placeholder="business@example.com"
-                      className="h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="website" className="text-sm font-medium flex items-center space-x-1">
-                      <Globe className="h-3 w-3" />
-                      <span>Website</span>
-                    </Label>
-                    <Input
-                      id="website"
-                      name="website"
-                      value={form.website}
-                      onChange={handleChange}
-                      placeholder="https://example.com"
-                      className="h-11"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nameTagalog" className="text-sm font-medium">
+                    Business Name (Tagalog)
+                  </Label>
+                  <Input
+                    id="nameTagalog"
+                    name="nameTagalog"
+                    value={form.nameTagalog}
+                    onChange={handleChange}
+                    placeholder="Pangalan ng negosyo sa Tagalog"
+                    className="h-11"
+                  />
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Address Information */}
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
-                    <MapPin className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <span>Address & Location</span>
-                </CardTitle>
-                <CardDescription>
-                  Physical location of your business
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="addressStreet" className="text-sm font-medium">Street Address</Label>
-                    <Input
-                      id="addressStreet"
-                      name="addressStreet"
-                      value={form.addressStreet}
-                      onChange={handleChange}
-                      placeholder="123 Main Street"
-                      className="h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="addressBarangay" className="text-sm font-medium">Barangay</Label>
-                    <Input
-                      id="addressBarangay"
-                      name="addressBarangay"
-                      value={form.addressBarangay}
-                      onChange={handleChange}
-                      placeholder="Barangay Name"
-                      className="h-11"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="addressLatitude" className="text-sm font-medium">Latitude</Label>
-                    <Input
-                      id="addressLatitude"
-                      name="addressLatitude"
-                      value={form.addressLatitude}
-                      onChange={handleChange}
-                      placeholder="14.5995"
-                      className="h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="addressLongitude" className="text-sm font-medium">Longitude</Label>
-                    <Input
-                      id="addressLongitude"
-                      name="addressLongitude"
-                      value={form.addressLongitude}
-                      onChange={handleChange}
-                      placeholder="120.9842"
-                      className="h-11"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Description */}
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="h-8 w-8 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center">
-                    <span className="text-orange-600 dark:text-orange-400 font-semibold text-sm">4</span>
-                  </div>
-                  <span>Business Description</span>
-                </CardTitle>
-                <CardDescription>
-                  Tell customers about your business
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="descriptionEnglish" className="text-sm font-medium">Description (English)</Label>
-                    <Textarea
-                      id="descriptionEnglish"
-                      name="descriptionEnglish"
-                      value={form.descriptionEnglish}
-                      onChange={handleChange}
-                      placeholder="Describe your business in English..."
-                      className="min-h-[100px] resize-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="descriptionTagalog" className="text-sm font-medium">Description (Tagalog)</Label>
-                    <Textarea
-                      id="descriptionTagalog"
-                      name="descriptionTagalog"
-                      value={form.descriptionTagalog}
-                      onChange={handleChange}
-                      placeholder="Ilarawan ang inyong negosyo sa Tagalog..."
-                      className="min-h-[100px] resize-none"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Operating Hours */}
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="h-8 w-8 rounded-lg bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-                    <Clock className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                  <span>Operating Hours</span>
-                </CardTitle>
-                <CardDescription>
-                  Set your business hours for each day of the week
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {Object.entries(form.operatingHours).map(([day, value]) => (
-                    <Card key={day} className="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
-                      <CardContent className="p-4">
-                        <div className="space-y-3">
-                          <h4 className="font-semibold capitalize text-sm text-slate-900 dark:text-slate-100">{day}</h4>
-                          <div className="space-y-2">
-                            <div className="flex gap-4">
-                              <div className="flex flex-col gap-1 flex-1">
-                                <Label htmlFor={`${day}-from`} className="px-1 text-xs">
-                                  From
-                                </Label>
-                                <Input
-                                  type="time"
-                                  id={`${day}-from`}
-                                  step="1"
-                                  value={value.open}
-                                onChange={e =>
-                                  setForm({
-                                    ...form,
-                                    operatingHours: {
-                                      ...form.operatingHours,
-                                      [day as keyof typeof form.operatingHours]: { ...form.operatingHours[day as keyof typeof form.operatingHours], open: e.target.value }
-                                    }
-                                  })
-                                }
-                                  disabled={value.closed}
-                                  className="bg-background appearance-none text-xs [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                                />
-                              </div>
-                              <div className="flex flex-col gap-1 flex-1">
-                                <Label htmlFor={`${day}-to`} className="px-1 text-xs">
-                                  To
-                                </Label>
-                                <Input
-                                  type="time"
-                                  id={`${day}-to`}
-                                  step="1"
-                                  value={value.close}
-                                  onChange={e =>
-                                    setForm({
-                                      ...form,
-                                      operatingHours: {
-                                        ...form.operatingHours,
-                                        [day as keyof typeof form.operatingHours]: { ...form.operatingHours[day as keyof typeof form.operatingHours], close: e.target.value }
-                                      }
-                                    })
-                                  }
-                                  disabled={value.closed}
-                                  className="bg-background appearance-none text-xs [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                                />
-                              </div>
-                            </div>
-                            <Label className="flex items-center space-x-2 cursor-pointer">
-                              <Checkbox
-                                checked={value.closed}
-                                onCheckedChange={checked =>
-                                  setForm({
-                                    ...form,
-                                    operatingHours: {
-                                      ...form.operatingHours,
-                                      [day as keyof typeof form.operatingHours]: { ...form.operatingHours[day as keyof typeof form.operatingHours], closed: !!checked }
-                                    }
-                                  })
-                                }
-                                aria-label={`Closed on ${day}`}
-                              />
-                              <span className="text-xs text-muted-foreground">Closed</span>
-                            </Label>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Photos */}
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-              <CardHeader className="pb-4 flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center space-x-2 text-lg">
-                    <div className="h-8 w-8 rounded-lg bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
-                      <Camera className="h-4 w-4 text-pink-600 dark:text-pink-400" />
-                    </div>
-                    <span>Business Photos</span>
-                  </CardTitle>
-                  <CardDescription>
-                    Add photos to showcase your business
-                  </CardDescription>
-                </div>
-                <Button type="button" onClick={addPhoto} size="sm" variant="outline" className="flex items-center gap-1">
-                  <Plus className="h-4 w-4" /> Add Photo
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {form.photos.map((photo, idx) => (
-                    <Card key={idx} className="relative border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="icon" 
-                        className="absolute top-2 right-2 z-10 text-destructive hover:bg-destructive/10"
-                        onClick={() => removePhoto(idx)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      <CardContent className="p-4 space-y-4">
-                        <ImageUpload 
-                          label={`Photo ${idx + 1}`}
-                          defaultUrl={photo.url}
-                          onUploadComplete={(url, storageId) => {
-                            const newPhotos = [...form.photos];
-                            newPhotos[idx] = { ...newPhotos[idx], url, storageId };
-                            setForm({ ...form, photos: newPhotos });
-                          }}
-                          onRemove={() => {
-                            const newPhotos = [...form.photos];
-                            newPhotos[idx] = { ...newPhotos[idx], url: '', storageId: undefined };
-                            setForm({ ...form, photos: newPhotos });
-                          }}
-                        />
-                        <div className="space-y-2">
-                          <Label className="text-xs">Alternative Text (Accessibility)</Label>
-                          <Input
-                            value={photo.alt}
-                            onChange={e => {
-                              const newPhotos = [...form.photos];
-                              newPhotos[idx].alt = e.target.value;
-                              setForm({ ...form, photos: newPhotos });
-                            }}
-                            placeholder="Briefly describe what's in the photo"
-                            className="text-sm h-9"
-                          />
-                        </div>
-                        <Label className="flex items-center space-x-2 cursor-pointer pt-1">
-                          <Checkbox
-                            checked={photo.isPrimary}
-                            onCheckedChange={checked => {
-                              const newPhotos = form.photos.map((p, i) => ({
-                                ...p,
-                                isPrimary: i === idx ? !!checked : false
-                              }));
-                              setForm({ ...form, photos: newPhotos });
-                            }}
-                          />
-                          <span className="text-xs font-medium">Set as primary photo</span>
-                        </Label>
-                      </CardContent>
-                    </Card>
-                  ))}
-                  {form.photos.length === 0 && (
-                    <div className="col-span-full py-12 text-center border-2 border-dashed rounded-lg bg-muted/20">
-                      <Camera className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-50" />
-                      <p className="text-sm text-muted-foreground">No photos added yet.</p>
-                      <Button type="button" variant="link" onClick={addPhoto} className="mt-1">
-                        Add your first photo
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Status & Verification */}
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center">
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">6</span>
-                  </div>
-                  <span>Status & Verification</span>
-                </CardTitle>
-                <CardDescription>
-                  Manage business status and verification settings
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="status" className="text-sm font-medium">Business Status</Label>
-                    <Select value={form.status} onValueChange={(value) => setForm({ ...form, status: value })}>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">
-                          <div className="flex items-center space-x-2">
-                            <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                            <span>Active</span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="inactive">
-                          <div className="flex items-center space-x-2">
-                            <div className="h-2 w-2 rounded-full bg-orange-500"></div>
-                            <span>Inactive</span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="pending">
-                          <div className="flex items-center space-x-2">
-                            <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
-                            <span>Pending</span>
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Verification Status</Label>
-                    <div className="flex items-center space-x-4 p-3 rounded-lg border bg-slate-50 dark:bg-slate-800">
-                      <Label className="flex items-center space-x-2 cursor-pointer">
-                        <Checkbox
-                          checked={form.isVerified}
-                          onCheckedChange={checked => setForm({ ...form, isVerified: !!checked })}
-                          aria-label="Mark as verified business"
-                        />
-                        <span className="text-sm">Mark as verified business</span>
-                      </Label>
-                      {form.isVerified ? (
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <AlertCircle className="h-4 w-4 text-orange-500" />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-t p-6 mt-8">
-              <div className="flex flex-col sm:flex-row gap-4 justify-end max-w-7xl mx-auto">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.back()}
-                  className="flex items-center space-x-2"
-                >
-                  <X className="h-4 w-4" />
-                  <span>Cancel</span>
-                </Button>
-                <Button
-                  type="submit"
-                  className="flex items-center space-x-2 bg-primary hover:bg-primary/90"
-                >
-                  <Save className="h-4 w-4" />
-                  <span>Save Changes</span>
-                </Button>
               </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="categoryPrimary" className="text-sm font-medium">
+                    Primary Category
+                  </Label>
+                  <Input
+                    id="categoryPrimary"
+                    name="categoryPrimary"
+                    value={form.categoryPrimary}
+                    onChange={handleChange}
+                    placeholder="e.g., Restaurant, Retail, Services"
+                    className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="categorySecondary" className="text-sm font-medium">
+                    Secondary Categories
+                  </Label>
+                  <Input
+                    id="categorySecondary"
+                    name="categorySecondary"
+                    value={form.categorySecondary.join(", ")}
+                    onChange={handleChange}
+                    placeholder="Enter categories separated by commas"
+                    className="h-11"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Contact Information */}
+          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center space-x-2 text-lg">
+                <div className="h-8 w-8 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                  <Phone className="h-4 w-4 text-green-600 dark:text-green-400" />
+                </div>
+                <span>Contact Information</span>
+              </CardTitle>
+              <CardDescription>How customers can reach your business</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="phone"
+                    className="text-sm font-medium flex items-center space-x-1"
+                  >
+                    <Phone className="h-3 w-3" />
+                    <span>Phone Number</span>
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    placeholder="(+63) 912 345 6789"
+                    className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="email"
+                    className="text-sm font-medium flex items-center space-x-1"
+                  >
+                    <Mail className="h-3 w-3" />
+                    <span>Email Address</span>
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="business@example.com"
+                    className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="website"
+                    className="text-sm font-medium flex items-center space-x-1"
+                  >
+                    <Globe className="h-3 w-3" />
+                    <span>Website</span>
+                  </Label>
+                  <Input
+                    id="website"
+                    name="website"
+                    value={form.website}
+                    onChange={handleChange}
+                    placeholder="https://example.com"
+                    className="h-11"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Address Information */}
+          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center space-x-2 text-lg">
+                <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                  <MapPin className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                </div>
+                <span>Address & Location</span>
+              </CardTitle>
+              <CardDescription>Physical location of your business</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="addressStreet" className="text-sm font-medium">
+                    Street Address
+                  </Label>
+                  <Input
+                    id="addressStreet"
+                    name="addressStreet"
+                    value={form.addressStreet}
+                    onChange={handleChange}
+                    placeholder="123 Main Street"
+                    className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="addressBarangay" className="text-sm font-medium">
+                    Barangay
+                  </Label>
+                  <Input
+                    id="addressBarangay"
+                    name="addressBarangay"
+                    value={form.addressBarangay}
+                    onChange={handleChange}
+                    placeholder="Barangay Name"
+                    className="h-11"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="addressLatitude" className="text-sm font-medium">
+                    Latitude
+                  </Label>
+                  <Input
+                    id="addressLatitude"
+                    name="addressLatitude"
+                    value={form.addressLatitude}
+                    onChange={handleChange}
+                    placeholder="14.5995"
+                    className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="addressLongitude" className="text-sm font-medium">
+                    Longitude
+                  </Label>
+                  <Input
+                    id="addressLongitude"
+                    name="addressLongitude"
+                    value={form.addressLongitude}
+                    onChange={handleChange}
+                    placeholder="120.9842"
+                    className="h-11"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Description */}
+          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center space-x-2 text-lg">
+                <div className="h-8 w-8 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center">
+                  <span className="text-orange-600 dark:text-orange-400 font-semibold text-sm">
+                    4
+                  </span>
+                </div>
+                <span>Business Description</span>
+              </CardTitle>
+              <CardDescription>Tell customers about your business</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="descriptionEnglish" className="text-sm font-medium">
+                    Description (English)
+                  </Label>
+                  <Textarea
+                    id="descriptionEnglish"
+                    name="descriptionEnglish"
+                    value={form.descriptionEnglish}
+                    onChange={handleChange}
+                    placeholder="Describe your business in English..."
+                    className="min-h-[100px] resize-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="descriptionTagalog" className="text-sm font-medium">
+                    Description (Tagalog)
+                  </Label>
+                  <Textarea
+                    id="descriptionTagalog"
+                    name="descriptionTagalog"
+                    value={form.descriptionTagalog}
+                    onChange={handleChange}
+                    placeholder="Ilarawan ang inyong negosyo sa Tagalog..."
+                    className="min-h-[100px] resize-none"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Operating Hours */}
+          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center space-x-2 text-lg">
+                <div className="h-8 w-8 rounded-lg bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                  <Clock className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <span>Operating Hours</span>
+              </CardTitle>
+              <CardDescription>Set your business hours for each day of the week</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Object.entries(form.operatingHours).map(([day, value]) => (
+                  <Card
+                    key={day}
+                    className="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
+                  >
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        <h4 className="font-semibold capitalize text-sm text-slate-900 dark:text-slate-100">
+                          {day}
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="flex gap-4">
+                            <div className="flex flex-col gap-1 flex-1">
+                              <Label htmlFor={`${day}-from`} className="px-1 text-xs">
+                                From
+                              </Label>
+                              <Input
+                                type="time"
+                                id={`${day}-from`}
+                                step="1"
+                                value={value.open}
+                                onChange={(e) =>
+                                  setForm({
+                                    ...form,
+                                    operatingHours: {
+                                      ...form.operatingHours,
+                                      [day as keyof typeof form.operatingHours]: {
+                                        ...form.operatingHours[
+                                          day as keyof typeof form.operatingHours
+                                        ],
+                                        open: e.target.value,
+                                      },
+                                    },
+                                  })
+                                }
+                                disabled={value.closed}
+                                className="bg-background appearance-none text-xs [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1 flex-1">
+                              <Label htmlFor={`${day}-to`} className="px-1 text-xs">
+                                To
+                              </Label>
+                              <Input
+                                type="time"
+                                id={`${day}-to`}
+                                step="1"
+                                value={value.close}
+                                onChange={(e) =>
+                                  setForm({
+                                    ...form,
+                                    operatingHours: {
+                                      ...form.operatingHours,
+                                      [day as keyof typeof form.operatingHours]: {
+                                        ...form.operatingHours[
+                                          day as keyof typeof form.operatingHours
+                                        ],
+                                        close: e.target.value,
+                                      },
+                                    },
+                                  })
+                                }
+                                disabled={value.closed}
+                                className="bg-background appearance-none text-xs [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                              />
+                            </div>
+                          </div>
+                          <Label className="flex items-center space-x-2 cursor-pointer">
+                            <Checkbox
+                              checked={value.closed}
+                              onCheckedChange={(checked) =>
+                                setForm({
+                                  ...form,
+                                  operatingHours: {
+                                    ...form.operatingHours,
+                                    [day as keyof typeof form.operatingHours]: {
+                                      ...form.operatingHours[
+                                        day as keyof typeof form.operatingHours
+                                      ],
+                                      closed: !!checked,
+                                    },
+                                  },
+                                })
+                              }
+                              aria-label={`Closed on ${day}`}
+                            />
+                            <span className="text-xs text-muted-foreground">Closed</span>
+                          </Label>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Photos */}
+          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <CardHeader className="pb-4 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-lg">
+                  <div className="h-8 w-8 rounded-lg bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
+                    <Camera className="h-4 w-4 text-pink-600 dark:text-pink-400" />
+                  </div>
+                  <span>Business Photos</span>
+                </CardTitle>
+                <CardDescription>Add photos to showcase your business</CardDescription>
+              </div>
+              <Button
+                type="button"
+                onClick={addPhoto}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-1"
+              >
+                <Plus className="h-4 w-4" /> Add Photo
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {form.photos.map((photo, idx) => (
+                  <Card
+                    key={photo.storageId ?? photo.url ?? `photo-${idx + 1}`}
+                    className="relative border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
+                  >
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 z-10 text-destructive hover:bg-destructive/10"
+                      onClick={() => removePhoto(idx)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                    <CardContent className="p-4 space-y-4">
+                      <ImageUpload
+                        label={`Photo ${idx + 1}`}
+                        defaultUrl={photo.url}
+                        onUploadComplete={(url, storageId) => {
+                          const newPhotos = [...form.photos];
+                          newPhotos[idx] = { ...newPhotos[idx], url, storageId };
+                          setForm({ ...form, photos: newPhotos });
+                        }}
+                        onRemove={() => {
+                          const newPhotos = [...form.photos];
+                          newPhotos[idx] = { ...newPhotos[idx], url: "", storageId: undefined };
+                          setForm({ ...form, photos: newPhotos });
+                        }}
+                      />
+                      <div className="space-y-2">
+                        <Label className="text-xs">Alternative Text (Accessibility)</Label>
+                        <Input
+                          value={photo.alt}
+                          onChange={(e) => {
+                            const newPhotos = [...form.photos];
+                            newPhotos[idx].alt = e.target.value;
+                            setForm({ ...form, photos: newPhotos });
+                          }}
+                          placeholder="Briefly describe what's in the photo"
+                          className="text-sm h-9"
+                        />
+                      </div>
+                      <Label className="flex items-center space-x-2 cursor-pointer pt-1">
+                        <Checkbox
+                          checked={photo.isPrimary}
+                          onCheckedChange={(checked) => {
+                            const newPhotos = form.photos.map((p, i) => ({
+                              ...p,
+                              isPrimary: i === idx ? !!checked : false,
+                            }));
+                            setForm({ ...form, photos: newPhotos });
+                          }}
+                        />
+                        <span className="text-xs font-medium">Set as primary photo</span>
+                      </Label>
+                    </CardContent>
+                  </Card>
+                ))}
+                {form.photos.length === 0 && (
+                  <div className="col-span-full py-12 text-center border-2 border-dashed rounded-lg bg-muted/20">
+                    <Camera className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-50" />
+                    <p className="text-sm text-muted-foreground">No photos added yet.</p>
+                    <Button type="button" variant="link" onClick={addPhoto} className="mt-1">
+                      Add your first photo
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Status & Verification */}
+          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center space-x-2 text-lg">
+                <div className="h-8 w-8 rounded-lg bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center">
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">
+                    6
+                  </span>
+                </div>
+                <span>Status & Verification</span>
+              </CardTitle>
+              <CardDescription>Manage business status and verification settings</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="status" className="text-sm font-medium">
+                    Business Status
+                  </Label>
+                  <Select
+                    value={form.status}
+                    onValueChange={(value) => setForm({ ...form, status: value })}
+                  >
+                    <SelectTrigger className="h-11">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">
+                        <div className="flex items-center space-x-2">
+                          <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                          <span>Active</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="inactive">
+                        <div className="flex items-center space-x-2">
+                          <div className="h-2 w-2 rounded-full bg-orange-500"></div>
+                          <span>Inactive</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="pending">
+                        <div className="flex items-center space-x-2">
+                          <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
+                          <span>Pending</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Verification Status</Label>
+                  <div className="flex items-center space-x-4 p-3 rounded-lg border bg-slate-50 dark:bg-slate-800">
+                    <Label className="flex items-center space-x-2 cursor-pointer">
+                      <Checkbox
+                        checked={form.isVerified}
+                        onCheckedChange={(checked) => setForm({ ...form, isVerified: !!checked })}
+                        aria-label="Mark as verified business"
+                      />
+                      <span className="text-sm">Mark as verified business</span>
+                    </Label>
+                    {form.isVerified ? (
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 text-orange-500" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Buttons */}
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-t p-6 mt-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-end max-w-7xl mx-auto">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+                className="flex items-center space-x-2"
+              >
+                <X className="h-4 w-4" />
+                <span>Cancel</span>
+              </Button>
+              <Button
+                type="submit"
+                className="flex items-center space-x-2 bg-primary hover:bg-primary/90"
+              >
+                <Save className="h-4 w-4" />
+                <span>Save Changes</span>
+              </Button>
             </div>
-          </form>
-        </main>
-      </div>
+          </div>
+        </form>
+      </main>
+    </div>
   );
 }

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
 import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { CheckCircle2, Loader2, Upload, X } from "lucide-react";
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Upload, X, CheckCircle2 } from "lucide-react";
-import Image from "next/image";
-import { toast } from "sonner";
+import { api } from "../../convex/_generated/api";
 
 interface ImageUploadProps {
   onUploadComplete: (url: string, storageId: string) => void;
@@ -25,7 +25,7 @@ export function ImageUpload({
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(defaultUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +45,7 @@ export function ImageUpload({
 
     try {
       setIsUploading(true);
-      
+
       // 1. Get a short-lived upload URL
       const postUrl = await generateUploadUrl();
 
@@ -67,17 +67,17 @@ export function ImageUpload({
       // But for the form, we'll just use a temporary preview and wait for the parent to handle it
       // Actually, Convex storageId can be converted to URL via ctx.storage.getUrl(storageId)
       // Since we are on client, we'll need to fetch the URL or just use a placeholder until saved
-      // Let's assume the parent will handle getting the actual URL if needed, 
+      // Let's assume the parent will handle getting the actual URL if needed,
       // but for now we'll use a local preview.
-      
+
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
-      
+
       // We pass back the storageId. The parent might need the URL too.
       // We can't easily get the public URL synchronously on client without another query.
       // Let's just pass the storageId and the temporary objectUrl for preview.
       onUploadComplete(objectUrl, storageId);
-      
+
       toast.success("Image uploaded successfully");
     } catch (error) {
       console.error("Upload error:", error);
@@ -100,12 +100,14 @@ export function ImageUpload({
   return (
     <div className="space-y-4 w-full">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium">{label}</label>
+        <label htmlFor="image-upload-input" className="text-sm font-medium">
+          {label}
+        </label>
         {previewUrl && (
-          <Button 
-            type="button" 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={handleRemove}
             className="text-destructive hover:text-destructive/90 h-8 px-2"
           >
@@ -115,19 +117,14 @@ export function ImageUpload({
         )}
       </div>
 
-      <div 
+      <div
         className={`relative aspect-video rounded-lg border-2 border-dashed transition-all flex items-center justify-center overflow-hidden
-          ${previewUrl ? 'border-primary/50 bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50'}
+          ${previewUrl ? "border-primary/50 bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50"}
         `}
       >
         {previewUrl ? (
           <>
-            <Image 
-              src={previewUrl} 
-              alt="Preview" 
-              fill 
-              className="object-cover"
-            />
+            <Image src={previewUrl} alt="Preview" fill className="object-cover" />
             <div className="absolute top-2 right-2">
               <div className="bg-primary text-primary-foreground p-1 rounded-full shadow-lg">
                 <CheckCircle2 className="h-4 w-4" />
@@ -135,7 +132,8 @@ export function ImageUpload({
             </div>
           </>
         ) : (
-          <div 
+          <button
+            type="button"
             className="flex flex-col items-center justify-center p-6 text-center cursor-pointer w-full h-full"
             onClick={() => fileInputRef.current?.click()}
           >
@@ -153,12 +151,13 @@ export function ImageUpload({
                 <p className="text-xs text-muted-foreground mt-1">PNG, JPG or WEBP (max. 5MB)</p>
               </>
             )}
-          </div>
+          </button>
         )}
-        
-        <Input 
-          type="file" 
-          className="hidden" 
+
+        <Input
+          id="image-upload-input"
+          type="file"
+          className="hidden"
           ref={fileInputRef}
           onChange={handleFileChange}
           accept="image/*"

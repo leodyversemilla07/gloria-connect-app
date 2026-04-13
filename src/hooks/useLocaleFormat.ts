@@ -3,23 +3,23 @@
  * Provides formatting functions based on current i18n language
  */
 
-'use client';
+"use client";
 
-import { useI18n } from '@/components/i18n-provider';
+import { useI18n } from "@/components/i18n-provider";
 import {
+  formatCurrency,
   formatDate,
   formatDateTime,
-  formatTimeDistance,
   formatNumber,
-  formatCurrency,
   formatPercent,
+  formatTimeDistance,
   getCurrencyInfo,
-  Language,
-} from '@/utils/locale-format';
+  type Language,
+} from "@/utils/locale-format";
 
 export function useLocaleFormat() {
   const { language } = useI18n();
-  const lang = (language as Language) || 'en';
+  const lang = (language as Language) || "en";
 
   return {
     formatDate: (date: Date | string) => formatDate(date, lang),

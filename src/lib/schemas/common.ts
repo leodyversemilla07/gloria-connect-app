@@ -9,18 +9,14 @@ import { z } from "zod";
 // ============================================================================
 
 /** Optional URL with proper format validation */
-export const urlSchema = z
-    .string()
-    .url("Please enter a valid URL")
-    .optional()
-    .or(z.literal(""));
+export const urlSchema = z.string().url("Please enter a valid URL").optional().or(z.literal(""));
 
 /** Optional email with proper format validation */
 export const optionalEmailSchema = z
-    .string()
-    .email("Please enter a valid email address")
-    .optional()
-    .or(z.literal(""));
+  .string()
+  .email("Please enter a valid email address")
+  .optional()
+  .or(z.literal(""));
 
 // ============================================================================
 // Error Formatting Utilities
@@ -30,29 +26,30 @@ export const optionalEmailSchema = z
  * Format Zod validation errors into user-friendly strings
  * Works with TanStack Form error format
  */
-export function formatZodErrors(
-    errors: unknown[] | undefined
-): string {
-    if (!errors || errors.length === 0) return "";
+export function formatZodErrors(errors: unknown[] | undefined): string {
+  if (!errors || errors.length === 0) return "";
 
-    return errors
-        .map((err) => {
-            if (typeof err === "string") return err;
-            if (err && typeof err === "object" && "message" in err) {
-                return (err as { message: string }).message;
-            }
-            return "Invalid input";
-        })
-        .join(", ");
+  return errors
+    .map((err) => {
+      if (typeof err === "string") return err;
+      if (err && typeof err === "object" && "message" in err) {
+        return (err as { message: string }).message;
+      }
+      return "Invalid input";
+    })
+    .join(", ");
 }
 
 /**
  * Extract first error message from Zod parse result
  */
-export function getFirstError(result: { success: boolean; error?: { issues: Array<{ message: string }> } }): string | null {
-    if (result.success) return null;
-    const firstIssue = result.error?.issues[0];
-    return firstIssue?.message || "Validation failed";
+export function getFirstError(result: {
+  success: boolean;
+  error?: { issues: Array<{ message: string }> };
+}): string | null {
+  if (result.success) return null;
+  const firstIssue = result.error?.issues[0];
+  return firstIssue?.message || "Validation failed";
 }
 
 // ============================================================================

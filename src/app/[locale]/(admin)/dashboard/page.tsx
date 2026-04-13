@@ -1,18 +1,18 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { api } from "../../../../../convex/_generated/api";
-import { useI18n } from "@/components/i18n-provider";
-import { Button } from "@/components/ui/button";
+import { Building2, CheckCircle, Clock, Eye, Plus, TrendingUp, Users, XCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Cell, Pie, PieChart } from "recharts";
 import { BusinessDataTable } from "@/components/business-data-table";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useI18n } from "@/components/i18n-provider";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PieChart, Pie, Cell } from "recharts";
-import { Building2, CheckCircle, Clock, XCircle, TrendingUp, Users, Plus, Eye } from "lucide-react";
+import { api } from "../../../../../convex/_generated/api";
 
 export default function AdminDashboard() {
   const businesses = useQuery(api.businesses.get);
@@ -29,15 +29,26 @@ export default function AdminDashboard() {
     inactive: stats?.statusCounts.find((item) => item.name === "inactive")?.value || 0,
   };
 
-  const percentOfTotal = (value: number) => (totalBusinesses > 0 ? ((value / totalBusinesses) * 100).toFixed(1) : "0.0");
+  const percentOfTotal = (value: number) =>
+    totalBusinesses > 0 ? ((value / totalBusinesses) * 100).toFixed(1) : "0.0";
   const activePercentage = percentOfTotal(statusCounts.active);
   const pendingPercentage = percentOfTotal(statusCounts.pending);
   const inactivePercentage = percentOfTotal(statusCounts.inactive);
 
   const statusChartData = [
     { name: "Active", value: statusCounts.active, percentage: activePercentage, color: "#22c55e" },
-    { name: "Pending", value: statusCounts.pending, percentage: pendingPercentage, color: "#f59e0b" },
-    { name: "Inactive", value: statusCounts.inactive, percentage: inactivePercentage, color: "#ef4444" },
+    {
+      name: "Pending",
+      value: statusCounts.pending,
+      percentage: pendingPercentage,
+      color: "#f59e0b",
+    },
+    {
+      name: "Inactive",
+      value: statusCounts.inactive,
+      percentage: inactivePercentage,
+      color: "#ef4444",
+    },
   ];
 
   const recentBusinesses = stats?.recentActivity || [];
@@ -64,8 +75,8 @@ export default function AdminDashboard() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i}>
+            {["stats-skeleton-1", "stats-skeleton-2", "stats-skeleton-3", "stats-skeleton-4"].map((cardKey) => (
+              <Card key={cardKey}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <Skeleton className="h-4 w-24" />
                   <Skeleton className="h-4 w-4" />
@@ -96,8 +107,8 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="flex items-center space-x-4">
+                  {["recent-skeleton-1", "recent-skeleton-2", "recent-skeleton-3", "recent-skeleton-4", "recent-skeleton-5"].map((rowKey) => (
+                    <div key={rowKey} className="flex items-center space-x-4">
                       <Skeleton className="h-4 w-4" />
                       <div className="space-y-2 flex-1">
                         <Skeleton className="h-4 w-48" />
@@ -216,7 +227,7 @@ export default function AdminDashboard() {
                   <ChartTooltip
                     cursor={false}
                     content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
+                      if (active && payload?.length) {
                         const data = payload[0].payload;
                         return (
                           <div className="rounded-lg border bg-background p-2 shadow-sm">
@@ -236,9 +247,15 @@ export default function AdminDashboard() {
                       return null;
                     }}
                   />
-                  <Pie data={statusChartData} dataKey="value" nameKey="name" innerRadius={60} strokeWidth={5}>
-                    {statusChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Pie
+                    data={statusChartData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={60}
+                    strokeWidth={5}
+                  >
+                    {statusChartData.map((entry) => (
+                      <Cell key={`cell-${entry.name}`} fill={entry.color} />
                     ))}
                   </Pie>
                 </PieChart>
@@ -256,7 +273,9 @@ export default function AdminDashboard() {
                 {recentBusinesses.map((business) => (
                   <div key={business.id} className="flex items-center">
                     <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">{business.name || "Unnamed Business"}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {business.name || "Unnamed Business"}
+                      </p>
                       <div className="flex items-center space-x-2">
                         <Badge
                           variant={

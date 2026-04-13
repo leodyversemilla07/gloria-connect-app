@@ -1,28 +1,20 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import React from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { IconArrowLeft, IconEye, IconEyeOff } from "@tabler/icons-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { IconEye, IconEyeOff, IconArrowLeft } from "@tabler/icons-react";
-import Image from "next/image";
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 type ResetStep = "forgot" | { email: string };
 
-export function PasswordResetForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function PasswordResetForm({ className, ...props }: React.ComponentProps<"div">) {
   const { signIn } = useAuthActions();
   const router = useRouter();
   const pathname = usePathname();
@@ -35,14 +27,19 @@ export function PasswordResetForm({
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
 
   function isErrorWithMessage(err: unknown): err is { message: string } {
-    return typeof err === "object" && err !== null && "message" in err && typeof (err as { message?: unknown }).message === "string";
+    return (
+      typeof err === "object" &&
+      err !== null &&
+      "message" in err &&
+      typeof (err as { message?: unknown }).message === "string"
+    );
   }
 
   const handleForgotSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
-    
+
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
 
@@ -72,11 +69,11 @@ export function PasswordResetForm({
     const newPassword = formData.get("newPassword") as string;
 
     try {
-      await signIn("password", { 
-        flow: "reset-verification", 
-        email, 
-        code, 
-        newPassword 
+      await signIn("password", {
+        flow: "reset-verification",
+        email,
+        code,
+        newPassword,
       });
       setSuccessMessage("Password reset successfully! Redirecting to login...");
       setTimeout(() => {
@@ -100,8 +97,19 @@ export function PasswordResetForm({
           <CardContent className="pt-6 text-center">
             <div className="mb-4 flex justify-center">
               <div className="rounded-full bg-green-100 p-3">
-                <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <svg
+                  className="h-6 w-6 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
             </div>
@@ -117,7 +125,7 @@ export function PasswordResetForm({
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <div className="p-6 md:p-8">
-            <Link 
+            <Link
               href={`/${locale}/login`}
               className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
             >
@@ -137,17 +145,10 @@ export function PasswordResetForm({
 
                   <Field>
                     <FieldLabel>Email</FieldLabel>
-                    <Input
-                      name="email"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                    />
+                    <Input name="email" type="email" placeholder="m@example.com" required />
                   </Field>
 
-                  {error && (
-                    <p className="text-destructive text-sm">{error}</p>
-                  )}
+                  {error && <p className="text-destructive text-sm">{error}</p>}
 
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? "Sending..." : "Send Reset Code"}
@@ -173,13 +174,7 @@ export function PasswordResetForm({
 
                   <Field>
                     <FieldLabel>Verification Code</FieldLabel>
-                    <Input
-                      name="code"
-                      type="text"
-                      placeholder="12345678"
-                      maxLength={8}
-                      required
-                    />
+                    <Input name="code" type="text" placeholder="12345678" maxLength={8} required />
                   </Field>
 
                   <Field>
@@ -198,7 +193,11 @@ export function PasswordResetForm({
                         className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
                         onClick={() => setShowPassword((v) => !v)}
                       >
-                        {showPassword ? <IconEyeOff className="size-5" /> : <IconEye className="size-5" />}
+                        {showPassword ? (
+                          <IconEyeOff className="size-5" />
+                        ) : (
+                          <IconEye className="size-5" />
+                        )}
                       </button>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -206,17 +205,15 @@ export function PasswordResetForm({
                     </p>
                   </Field>
 
-                  {error && (
-                    <p className="text-destructive text-sm">{error}</p>
-                  )}
+                  {error && <p className="text-destructive text-sm">{error}</p>}
 
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? "Resetting..." : "Reset Password"}
                   </Button>
 
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
+                  <Button
+                    type="button"
+                    variant="ghost"
                     className="w-full"
                     onClick={() => {
                       setStep("forgot");
@@ -240,5 +237,5 @@ export function PasswordResetForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

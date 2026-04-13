@@ -3,11 +3,11 @@
  * Handles saving/loading language preference from storage
  */
 
-'use client';
+"use client";
 
-import { useEffect, useCallback } from 'react';
-import { useI18n } from '@/components/i18n-provider';
-import { saveLanguagePreference, getLanguagePreference } from '@/utils/i18n-storage';
+import { useCallback, useEffect } from "react";
+import { useI18n } from "@/components/i18n-provider";
+import { getLanguagePreference, saveLanguagePreference } from "@/utils/i18n-storage";
 
 export function useLanguagePersistence() {
   const { language, setLanguage } = useI18n();
@@ -26,7 +26,7 @@ export function useLanguagePersistence() {
       setLanguage(newLanguage);
       saveLanguagePreference(newLanguage);
     },
-    [setLanguage]
+    [setLanguage],
   );
 
   return {

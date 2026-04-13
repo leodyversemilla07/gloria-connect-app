@@ -1,13 +1,13 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback } from "react";
+import { Button } from "@/components/ui/button";
 
 const LANGUAGES = [
   { code: "en", label: "English", flag: "🇺🇸" },
-  { code: "fil", label: "Filipino", flag: "🇵🇭" }
+  { code: "fil", label: "Filipino", flag: "🇵🇭" },
 ];
 
 interface LanguageToggleProps {
@@ -26,7 +26,7 @@ export default function LanguageToggle({ language, setLanguage }: LanguageToggle
       // Remove current language prefix from pathname
       let newPathname = pathname;
       const currentLocaleMatch = pathname.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)(\/|$)/);
-      
+
       if (currentLocaleMatch) {
         newPathname = pathname.slice(currentLocaleMatch[0].length - 1) || "/";
       }
@@ -36,15 +36,15 @@ export default function LanguageToggle({ language, setLanguage }: LanguageToggle
       setLanguage(newLanguage);
       router.push(targetPath);
     },
-    [pathname, language, setLanguage, router]
+    [pathname, language, setLanguage, router],
   );
 
   const getOtherLanguage = () => {
     return language === "en" ? "fil" : "en";
   };
 
-  const currentLangObj = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
-  const otherLangObj = LANGUAGES.find(l => l.code === getOtherLanguage()) || LANGUAGES[1];
+  const currentLangObj = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
+  const otherLangObj = LANGUAGES.find((l) => l.code === getOtherLanguage()) || LANGUAGES[1];
 
   return (
     <div className="flex items-center gap-1">

@@ -1,10 +1,10 @@
-import { useState } from "react";
-import Logo from "@/components/logo";
-import LanguageToggle from "@/components/language-toggle";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import LanguageToggle from "@/components/language-toggle";
+import Logo from "@/components/logo";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface HeaderProps {
   language: string;
@@ -14,13 +14,31 @@ interface HeaderProps {
   currentPath?: string;
 }
 
-export default function Header({ language, messages, setLanguage, user, currentPath }: HeaderProps) {
+export default function Header({
+  language,
+  messages,
+  setLanguage,
+  user,
+  currentPath,
+}: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: `/${language}`, active: "/", label: messages["home"] || (language === "en" ? "Home" : "Tahanan") },
-    { href: `/${language}/business`, active: "/business", label: messages["allBusinesses"] || (language === "en" ? "All Businesses" : "Lahat ng Negosyo") },
-    { href: `/${language}/about`, active: "/about", label: messages["about"] || (language === "en" ? "About" : "Tungkol") },
+    {
+      href: `/${language}`,
+      active: "/",
+      label: messages.home || (language === "en" ? "Home" : "Tahanan"),
+    },
+    {
+      href: `/${language}/business`,
+      active: "/business",
+      label: messages.allBusinesses || (language === "en" ? "All Businesses" : "Lahat ng Negosyo"),
+    },
+    {
+      href: `/${language}/about`,
+      active: "/about",
+      label: messages.about || (language === "en" ? "About" : "Tungkol"),
+    },
   ];
 
   return (
@@ -51,9 +69,7 @@ export default function Header({ language, messages, setLanguage, user, currentP
               <ThemeToggle />
               {user ? (
                 <Button asChild size="sm">
-                  <Link href={`/${language}/dashboard`}>
-                    {messages["dashboard"] || "Dashboard"}
-                  </Link>
+                  <Link href={`/${language}/dashboard`}>{messages.dashboard || "Dashboard"}</Link>
                 </Button>
               ) : (
                 <>
@@ -63,11 +79,11 @@ export default function Header({ language, messages, setLanguage, user, currentP
                       currentPath === "/login" ? "text-primary" : ""
                     }`}
                   >
-                    {messages["login"] || (language === "en" ? "Login" : "Mag-login")}
+                    {messages.login || (language === "en" ? "Login" : "Mag-login")}
                   </Link>
                   <Button asChild size="sm">
                     <Link href={`/${language}/register`}>
-                      {messages["register"] || (language === "en" ? "Register" : "Magrehistro")}
+                      {messages.register || (language === "en" ? "Register" : "Magrehistro")}
                     </Link>
                   </Button>
                 </>
@@ -76,6 +92,7 @@ export default function Header({ language, messages, setLanguage, user, currentP
           </div>
 
           <button
+            type="button"
             className="md:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
@@ -107,19 +124,19 @@ export default function Header({ language, messages, setLanguage, user, currentP
                 {user ? (
                   <Button asChild className="flex-1">
                     <Link href={`/${language}/dashboard`} onClick={() => setMobileMenuOpen(false)}>
-                      {messages["dashboard"] || "Dashboard"}
+                      {messages.dashboard || "Dashboard"}
                     </Link>
                   </Button>
                 ) : (
                   <>
                     <Button asChild variant="outline" className="flex-1">
                       <Link href={`/${language}/login`} onClick={() => setMobileMenuOpen(false)}>
-                        {messages["login"] || "Login"}
+                        {messages.login || "Login"}
                       </Link>
                     </Button>
                     <Button asChild className="flex-1">
                       <Link href={`/${language}/register`} onClick={() => setMobileMenuOpen(false)}>
-                        {messages["register"] || "Register"}
+                        {messages.register || "Register"}
                       </Link>
                     </Button>
                   </>

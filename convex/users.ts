@@ -1,8 +1,8 @@
-import { query, mutation } from "./_generated/server";
-import type { MutationCtx } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
-import { requireAdmin, requireAuth } from "./auth_helpers";
 import { internal } from "./_generated/api";
+import type { MutationCtx } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
+import { requireAdmin, requireAuth } from "./auth_helpers";
 
 const VERIFICATION_CODE_TTL_MS = 15 * 60 * 1000;
 const SEND_LIMIT_WINDOW_MS = 15 * 60 * 1000;
@@ -14,7 +14,7 @@ async function enforceRateLimit(
   ctx: MutationCtx,
   identifier: string,
   windowMs: number,
-  maxAttempts: number
+  maxAttempts: number,
 ) {
   const now = Date.now();
   const existing = await ctx.db
@@ -79,7 +79,7 @@ export const sendVerificationCode = mutation({
       ctx,
       `send-email-verification:${email}`,
       SEND_LIMIT_WINDOW_MS,
-      SEND_LIMIT_MAX_ATTEMPTS
+      SEND_LIMIT_MAX_ATTEMPTS,
     );
 
     const user = await ctx.db
@@ -117,14 +117,10 @@ export const sendVerificationCode = mutation({
       type: "email_verification",
     });
 
-    await ctx.scheduler.runAfter(
-      0,
-      internal.emailVerification.deliverVerificationEmail,
-      {
-        email: args.email,
-        code,
-      }
-    );
+    await ctx.scheduler.runAfter(0, internal.emailVerification.deliverVerificationEmail, {
+      email: args.email,
+      code,
+    });
 
     return { success: true };
   },
@@ -143,7 +139,7 @@ export const verifyEmailCode = mutation({
       ctx,
       `verify-email-code:${email}`,
       VERIFY_LIMIT_WINDOW_MS,
-      VERIFY_LIMIT_MAX_ATTEMPTS
+      VERIFY_LIMIT_MAX_ATTEMPTS,
     );
 
     const user = await ctx.db
@@ -157,9 +153,7 @@ export const verifyEmailCode = mutation({
 
     const verificationCode = await ctx.db
       .query("authVerificationCodes")
-      .withIndex("by_email_and_code", (q) =>
-        q.eq("email", args.email).eq("code", args.code)
-      )
+      .withIndex("by_email_and_code", (q) => q.eq("email", args.email).eq("code", args.code))
       .unique();
 
     if (!verificationCode) {
@@ -186,15 +180,15 @@ export const getEmailVerificationStatus = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity?.email) return { isVerified: false };
-    
+
     const user = await ctx.db
       .query("users")
       .withIndex("email", (q) => q.eq("email", identity.email as string))
       .first();
-    
-    return { 
+
+    return {
       isVerified: !!user?.emailVerificationTime,
-      email: identity.email 
+      email: identity.email,
     };
   },
 });

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display, Lora } from "next/font/google";
+import { Geist, Geist_Mono, Lora, Playfair_Display } from "next/font/google";
 import "../globals.css";
-import { ConvexClientProvider } from "../convex-client-provider";
 import { I18nProvider } from "@/components/i18n-provider";
 import enMessages from "../../../messages/en.json";
 import filMessages from "../../../messages/fil.json";
+import { ConvexClientProvider } from "../convex-client-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,10 +43,7 @@ export async function generateStaticParams() {
   return [{ locale: "en" }, { locale: "fil" }];
 }
 
-export default async function LocaleLayout({
-  children,
-  params,
-}: LocaleLayoutProps) {
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
 
   // Validate locale, fallback to 'en'

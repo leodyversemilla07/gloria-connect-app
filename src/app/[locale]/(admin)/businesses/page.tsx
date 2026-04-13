@@ -1,8 +1,12 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { api } from "../../../../../convex/_generated/api";
+import { Search } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { BusinessDataTable } from "@/components/business-data-table";
+import { useI18n } from "@/components/i18n-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,13 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useI18n } from "@/components/i18n-provider";
-import { useState } from "react";
-import Link from "next/link";
-import { Search } from "lucide-react";
-import { usePathname } from "next/navigation";
-import type { Doc } from "../../../../../convex/_generated/dataModel";
 import { localeRoute } from "@/lib/locale-paths";
+import { api } from "../../../../../convex/_generated/api";
+import type { Doc } from "../../../../../convex/_generated/dataModel";
 
 export default function AdminBusinessesPage() {
   const businesses = useQuery(api.businesses.get);
@@ -35,28 +35,32 @@ export default function AdminBusinessesPage() {
     businesses.forEach((b) => {
       if (b.category?.primary) categories.add(b.category.primary);
     });
-    return Array.from(categories).sort().map(id => ({
-      id,
-      name: t(`category.${id.toLowerCase()}`) || id,
-    }));
+    return Array.from(categories)
+      .sort()
+      .map((id) => ({
+        id,
+        name: t(`category.${id.toLowerCase()}`) || id,
+      }));
   };
 
   const filteredBusinesses = (businesses ?? []).filter((business: Doc<"businesses">) => {
-    const name = typeof business.name === 'string' 
-      ? business.name 
-      : business.name?.english || business.name?.tagalog || "";
-    
-    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (business.description && (
-        typeof business.description === 'string'
+    const name =
+      typeof business.name === "string"
+        ? business.name
+        : business.name?.english || business.name?.tagalog || "";
+
+    const matchesSearch =
+      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (business.description &&
+        (typeof business.description === "string"
           ? business.description.toLowerCase().includes(searchTerm.toLowerCase())
-          : (business.description.english?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-             business.description.tagalog?.toLowerCase().includes(searchTerm.toLowerCase()))
-      ));
-    
+          : business.description.english?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            business.description.tagalog?.toLowerCase().includes(searchTerm.toLowerCase())));
+
     const matchesStatus = statusFilter === "all" || business.metadata?.status === statusFilter;
-    const matchesCategory = categoryFilter === "all" || business.category?.primary === categoryFilter;
-    
+    const matchesCategory =
+      categoryFilter === "all" || business.category?.primary === categoryFilter;
+
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
@@ -71,7 +75,7 @@ export default function AdminBusinessesPage() {
             <Link href={`${adminBasePath}/add`}>+ {t("adminAddBusiness")}</Link>
           </Button>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -101,12 +105,14 @@ export default function AdminBusinessesPage() {
             <SelectContent>
               <SelectItem value="all">{t("adminAllCategories")}</SelectItem>
               {categories.map((cat) => (
-                <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        
+
         <BusinessDataTable data={filteredBusinesses} />
       </main>
     </div>

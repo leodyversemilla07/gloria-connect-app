@@ -1,11 +1,13 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-playfair);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -41,101 +43,105 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --font-heading: var(--font-sans);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-  --radius: 0.75rem;
-  
+  --radius: 0.625rem;
+
   /* Tropical Warmth Light Theme */
-  --background: #FDFBF7;
-  --foreground: #3D342B;
-  --card: #FFFFFF;
-  --card-foreground: #3D342B;
-  --popover: #FFFFFF;
-  --popover-foreground: #3D342B;
-  
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+
   /* Primary: Coral Sunset - warm, inviting */
-  --primary: #D4725F;
-  --primary-foreground: #FFFFFF;
-  
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+
   /* Secondary: Tropical Green - fresh, natural */
-  --secondary: #7BAE8A;
-  --secondary-foreground: #FFFFFF;
-  
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+
   /* Accent: Golden Sand - warm highlight */
-  --accent: #E8C87A;
-  --accent-foreground: #3D342B;
-  
-  --muted: #F5F0E8;
-  --muted-foreground: #7A7067;
-  --destructive: #C74B4B;
-  
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+
   /* Borders - warm undertone */
-  --border: #E8E2D9;
-  --input: #E8E2D9;
-  --ring: #D4725F;
-  
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
   /* Charts - tropical palette */
-  --chart-1: #D4725F;
-  --chart-2: #7BAE8A;
-  --chart-3: #E8C87A;
-  --chart-4: #6B8E9B;
-  --chart-5: #B085A0;
-  
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+
   /* Sidebar */
-  --sidebar: #FDFBF7;
-  --sidebar-foreground: #3D342B;
-  --sidebar-primary: #D4725F;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F5F0E8;
-  --sidebar-accent-foreground: #3D342B;
-  --sidebar-border: #E8E2D9;
-  --sidebar-ring: #D4725F;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
 }
 
 .dark {
   /* Tropical Warmth Dark Theme */
-  --background: #1A1814;
-  --foreground: #F5F0E8;
-  --card: #252117;
-  --card-foreground: #F5F0E8;
-  --popover: #252117;
-  --popover-foreground: #F5F0E8;
-  
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+
   /* Primary: Softer coral for dark */
-  --primary: #E88874;
-  --primary-foreground: #1A1814;
-  
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+
   /* Secondary: Brighter green for dark */
-  --secondary: #8FC4A0;
-  --secondary-foreground: #1A1814;
-  
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+
   /* Accent: Brighter gold */
-  --accent: #F0D896;
-  --accent-foreground: #1A1814;
-  
-  --muted: #2D2820;
-  --muted-foreground: #A89F94;
-  --destructive: #E05555;
-  
-  --border: #3D352C;
-  --input: #3D352C;
-  --ring: #E88874;
-  
-  --chart-1: #E88874;
-  --chart-2: #8FC4A0;
-  --chart-3: #F0D896;
-  --chart-4: #7AA3B3;
-  --chart-5: #C49DB8;
-  
-  --sidebar: #252117;
-  --sidebar-foreground: #F5F0E8;
-  --sidebar-primary: #E88874;
-  --sidebar-primary-foreground: #1A1814;
-  --sidebar-accent: #2D2820;
-  --sidebar-accent-foreground: #F5F0E8;
-  --sidebar-border: #3D352C;
-  --sidebar-ring: #E88874;
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
@@ -146,11 +152,14 @@
     @apply bg-background text-foreground;
     font-family: var(--font-geist-sans), sans-serif;
   }
+  html {
+    @apply font-sans;
+  }
 }
 
 /* Tropical-inspired subtle background pattern */
 .tropical-bg {
-  background-image: 
+  background-image:
     radial-gradient(circle at 20% 80%, rgba(212, 114, 95, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(123, 174, 138, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 40% 40%, rgba(232, 200, 122, 0.03) 0%, transparent 40%);
@@ -158,17 +167,17 @@
 
 /* Warm gradient backgrounds - Light */
 .hero-gradient {
-  background: linear-gradient(135deg, #D4725F 0%, #E88874 50%, #F0A882 100%);
+  background: linear-gradient(135deg, #d4725f 0%, #e88874 50%, #f0a882 100%);
 }
 
 /* Warm gradient backgrounds - Dark */
 .dark .hero-gradient {
-  background: linear-gradient(135deg, #2D2820 0%, #3D342B 50%, #4D4438 100%);
+  background: linear-gradient(135deg, #2d2820 0%, #3d342b 50%, #4d4438 100%);
 }
 
 /* Tropical background pattern - Light */
 .tropical-bg {
-  background-image: 
+  background-image:
     radial-gradient(circle at 20% 80%, rgba(212, 114, 95, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(123, 174, 138, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 40% 40%, rgba(232, 200, 122, 0.03) 0%, transparent 40%);
@@ -176,14 +185,14 @@
 
 /* Tropical background pattern - Dark */
 .dark .tropical-bg {
-  background-image: 
+  background-image:
     radial-gradient(circle at 20% 80%, rgba(232, 136, 116, 0.08) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(143, 196, 160, 0.08) 0%, transparent 50%),
     radial-gradient(circle at 40% 40%, rgba(240, 216, 150, 0.05) 0%, transparent 40%);
 }
 
 .hero-gradient-dark {
-  background: linear-gradient(135deg, #252117 0%, #3D342B 100%);
+  background: linear-gradient(135deg, #252117 0%, #3d342b 100%);
 }
 
 /* Subtle card hover effects */
@@ -224,7 +233,7 @@
 }
 
 .tropical-texture::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
@@ -245,7 +254,7 @@
 }
 
 .border-elegant::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -259,14 +268,14 @@
 /* Card with depth */
 .card-depth {
   @apply transition-all duration-300;
-  box-shadow: 
+  box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.05),
     0 2px 4px rgba(0, 0, 0, 0.05),
     0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .card-depth:hover {
-  box-shadow: 
+  box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.05),
     0 8px 16px rgba(0, 0, 0, 0.1),
     0 16px 32px rgba(0, 0, 0, 0.1),
@@ -287,7 +296,9 @@
 .animate-on-scroll {
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
 }
 
 .animate-on-scroll.visible {
@@ -297,7 +308,8 @@
 
 /* Float animation */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -311,7 +323,8 @@
 
 /* Pulse subtle */
 @keyframes pulseSubtle {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -331,7 +344,7 @@
 }
 
 .divider-waves::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 100%;
   height: 100%;
@@ -343,15 +356,33 @@
   -webkit-mask-size: cover;
 }
 
-.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
-.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
-.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
-.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
-.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
-.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
-.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
-.stagger-children > *:nth-child(9) { animation-delay: 400ms; }
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 150ms;
+}
+.stagger-children > *:nth-child(5) {
+  animation-delay: 200ms;
+}
+.stagger-children > *:nth-child(6) {
+  animation-delay: 250ms;
+}
+.stagger-children > *:nth-child(7) {
+  animation-delay: 300ms;
+}
+.stagger-children > *:nth-child(8) {
+  animation-delay: 350ms;
+}
+.stagger-children > *:nth-child(9) {
+  animation-delay: 400ms;
+}
 
 /* Warm button hover effects */
 .btn-warm {

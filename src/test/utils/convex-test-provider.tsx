@@ -1,7 +1,6 @@
-import { ReactNode } from 'react';
-import { ConvexProvider } from 'convex/react';
-import { ConvexReactClient } from 'convex/react';
-import { vi } from 'vitest';
+import { ConvexProvider, type ConvexReactClient } from "convex/react";
+import type { ReactNode } from "react";
+import { vi } from "vitest";
 
 /**
  * Mock Convex client for testing
@@ -23,7 +22,7 @@ export function createMockConvexClient() {
 
 /**
  * Mock ConvexProvider for testing components that use Convex hooks
- * 
+ *
  * @example
  * ```tsx
  * render(
@@ -35,18 +34,14 @@ export function createMockConvexClient() {
  */
 export function MockConvexProvider({ children }: { children: ReactNode }) {
   const mockClient = createMockConvexClient();
-  
-  return (
-    <ConvexProvider client={mockClient}>
-      {children}
-    </ConvexProvider>
-  );
+
+  return <ConvexProvider client={mockClient}>{children}</ConvexProvider>;
 }
 
 /**
  * Mock useQuery hook for testing
  * Returns undefined by default (loading state)
- * 
+ *
  * @example
  * ```ts
  * vi.mock('convex/react', () => ({
@@ -62,7 +57,7 @@ export function mockUseQuery<T>(returnValue?: T) {
 /**
  * Mock useMutation hook for testing
  * Returns a spy function that can be called and asserted
- * 
+ *
  * @example
  * ```ts
  * const mockMutate = vi.fn().mockResolvedValue({ id: '123' });
@@ -85,17 +80,15 @@ export function mockUseConvex() {
 
 /**
  * Helper to mock Convex Auth hooks
- * 
+ *
  * @example
  * ```ts
  * mockConvexAuth({ isLoading: false, isAuthenticated: true });
  * ```
  */
-export function mockConvexAuth(overrides: {
-  isLoading?: boolean;
-  isAuthenticated?: boolean;
-  userId?: string;
-} = {}) {
+export function mockConvexAuth(
+  overrides: { isLoading?: boolean; isAuthenticated?: boolean; userId?: string } = {},
+) {
   const defaults = {
     isLoading: false,
     isAuthenticated: false,

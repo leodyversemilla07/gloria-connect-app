@@ -1,10 +1,13 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react";
 import { useQuery } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import BusinessCard, { type PublicBusinessDigest } from "@/components/business-card";
+import Footer from "@/components/footer";
+import Header from "@/components/header";
 import { useI18n } from "@/components/i18n-provider";
-import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,15 +16,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import BusinessCard, { type PublicBusinessDigest } from "@/components/business-card";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { api } from "../../../../convex/_generated/api";
 
 const ITEMS_PER_PAGE = 9;
 
-function getCategoriesFromBusinesses(businesses: PublicBusinessDigest[], t: (key: string) => string) {
+function getCategoriesFromBusinesses(
+  businesses: PublicBusinessDigest[],
+  t: (key: string) => string,
+) {
   const set = new Set<string>();
   businesses.forEach((b) => {
     set.add(b.categoryPrimary);
@@ -50,8 +52,10 @@ export default function HomePage() {
   const { language, messages, setLanguage, t } = useI18n();
 
   const categories = getCategoriesFromBusinesses(businesses ?? [], t);
-  const getName = (b: PublicBusinessDigest) => typeof b.name === 'string' ? b.name : b.name.english;
-  const getDescription = (b: PublicBusinessDigest) => typeof b.description === 'string' ? b.description : b.description.english;
+  const getName = (b: PublicBusinessDigest) =>
+    typeof b.name === "string" ? b.name : b.name.english;
+  const getDescription = (b: PublicBusinessDigest) =>
+    typeof b.description === "string" ? b.description : b.description.english;
   const getCategory = (b: PublicBusinessDigest) => {
     const cat = categories.find((c) => c.id === b.categoryPrimary);
     return language === "en" ? cat?.name : cat?.nameTagalog;
@@ -61,8 +65,7 @@ export default function HomePage() {
     const name = getName(business).toLowerCase();
     const description = getDescription(business).toLowerCase();
     const matchesSearch =
-      name.includes(searchTerm.toLowerCase()) ||
-      description.includes(searchTerm.toLowerCase());
+      name.includes(searchTerm.toLowerCase()) || description.includes(searchTerm.toLowerCase());
     const matchesCategory =
       selectedCategory === "all" || business.categoryPrimary === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -85,7 +88,15 @@ export default function HomePage() {
   }
 
   function getTodayHours(business: PublicBusinessDigest) {
-    const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
+    const days = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ] as const;
     const today = days[new Date().getDay()];
     const hours = business.operatingHours[today];
     if (!hours) return "";
@@ -95,12 +106,17 @@ export default function HomePage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <div className="min-h-screen bg-background tropical-bg leaf-pattern">
-      <Header language={language} messages={messages as Record<string, string>} setLanguage={setLanguage} currentPath="/" />
+      <Header
+        language={language}
+        messages={messages as Record<string, string>}
+        setLanguage={setLanguage}
+        currentPath="/"
+      />
       <main>
         <section className="hero-gradient text-white py-12 md:py-20 lg:py-24 relative overflow-hidden">
           {/* Decorative elements - responsive sizes */}
@@ -109,11 +125,14 @@ export default function HomePage() {
             <div className="absolute -bottom-20 -right-20 w-56 md:w-72 lg:w-96 h-56 md:h-72 lg:h-96 bg-white/20 rounded-full blur-2xl md:blur-3xl"></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 md:w-80 lg:w-96 h-64 md:h-80 lg:h-96 bg-primary/20 rounded-full blur-2xl md:blur-3xl hidden sm:block"></div>
           </div>
-          
+
           {/* Floating decorative shapes - hidden on small screens */}
           <div className="absolute top-16 md:top-20 right-8 md:right-20 w-3 h-3 md:w-4 md:h-4 bg-white/20 rounded-full animate-float hidden lg:block"></div>
-          <div className="absolute bottom-24 md:bottom-32 left-4 md:left-16 w-2 h-2 md:w-3 md:h-3 bg-white/30 rounded-full animate-float hidden lg:block" style={{ animationDelay: '1s' }}></div>
-          
+          <div
+            className="absolute bottom-24 md:bottom-32 left-4 md:left-16 w-2 h-2 md:w-3 md:h-3 bg-white/30 rounded-full animate-float hidden lg:block"
+            style={{ animationDelay: "1s" }}
+          ></div>
+
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-white/10 rounded-full mb-4 sm:mb-6 backdrop-blur-sm">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
@@ -135,12 +154,21 @@ export default function HomePage() {
                       type="text"
                       placeholder={t("searchPlaceholder")}
                       value={searchTerm}
-                      onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                        setCurrentPage(1);
+                      }}
                       className="pl-10 sm:pl-12 h-12 sm:h-14 text-foreground bg-white/95 backdrop-blur border-0 shadow-lg text-base"
                     />
                   </div>
                 </div>
-                <Select value={selectedCategory} onValueChange={(val) => { setSelectedCategory(val); setCurrentPage(1); }}>
+                <Select
+                  value={selectedCategory}
+                  onValueChange={(val) => {
+                    setSelectedCategory(val);
+                    setCurrentPage(1);
+                  }}
+                >
                   <SelectTrigger className="w-full sm:w-40 md:w-48 lg:w-52 h-12 sm:h-14 text-foreground bg-white/95 backdrop-blur border-0 shadow-lg text-base">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
@@ -217,33 +245,35 @@ export default function HomePage() {
                 />
               ))}
             </div>
-            
+
             {filteredBusinesses.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg">{t("noBusinessesFound")}</p>
               </div>
-            ) : totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-8">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="text-sm text-muted-foreground">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
+            ) : (
+              totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-8">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <span className="text-sm text-muted-foreground">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )
             )}
           </div>
         </section>

@@ -3,9 +3,9 @@
  * Handles language-specific titles, descriptions, and hreflang tags
  */
 
-import { Metadata } from 'next';
+import type { Metadata } from "next";
 
-export type Language = 'en' | 'fil';
+export type Language = "en" | "fil";
 
 interface PageMetadata {
   title: string;
@@ -16,26 +16,28 @@ interface PageMetadata {
 const pageMetadata: Record<string, Record<Language, PageMetadata>> = {
   home: {
     en: {
-      title: 'Gloria Connect - Connect With Purpose',
-      description: 'Join Gloria Connect, the platform for meaningful community connections and collaboration.',
-      keywords: ['community', 'connection', 'collaboration', 'platform'],
+      title: "Gloria Connect - Connect With Purpose",
+      description:
+        "Join Gloria Connect, the platform for meaningful community connections and collaboration.",
+      keywords: ["community", "connection", "collaboration", "platform"],
     },
     fil: {
-      title: 'Gloria Connect - Makipag-ugnayan Nang May Layunin',
-      description: 'Sumali sa Gloria Connect, ang platform para sa makabuluhang koneksyon at kolaborasyon sa komunidad.',
-      keywords: ['komunidad', 'koneksyon', 'kolaborasyon', 'platform'],
+      title: "Gloria Connect - Makipag-ugnayan Nang May Layunin",
+      description:
+        "Sumali sa Gloria Connect, ang platform para sa makabuluhang koneksyon at kolaborasyon sa komunidad.",
+      keywords: ["komunidad", "koneksyon", "kolaborasyon", "platform"],
     },
   },
   dashboard: {
     en: {
-      title: 'Dashboard - Gloria Connect',
-      description: 'Manage your Gloria Connect profile, activities, and connections.',
-      keywords: ['dashboard', 'profile', 'manage', 'activities'],
+      title: "Dashboard - Gloria Connect",
+      description: "Manage your Gloria Connect profile, activities, and connections.",
+      keywords: ["dashboard", "profile", "manage", "activities"],
     },
     fil: {
-      title: 'Dashboard - Gloria Connect',
-      description: 'Pamahalaan ang iyong Gloria Connect profile, aktibidades, at koneksyon.',
-      keywords: ['dashboard', 'profile', 'manage', 'aktibidad'],
+      title: "Dashboard - Gloria Connect",
+      description: "Pamahalaan ang iyong Gloria Connect profile, aktibidades, at koneksyon.",
+      keywords: ["dashboard", "profile", "manage", "aktibidad"],
     },
   },
 };
@@ -57,18 +59,18 @@ export function generateMetadataForPage(page: string, language: Language): PageM
 export function generateMetadata(
   page: string,
   language: Language,
-  baseUrl: string = 'https://gloria-connect.com'
+  baseUrl: string = "https://gloria-connect.com",
 ): Metadata {
   const pageData = generateMetadataForPage(page, language);
 
   return {
     title: pageData.title,
     description: pageData.description,
-    keywords: pageData.keywords?.join(', '),
+    keywords: pageData.keywords?.join(", "),
     openGraph: {
       title: pageData.title,
       description: pageData.description,
-      type: 'website',
+      type: "website",
       url: `${baseUrl}/${language}`,
       images: [
         {
@@ -82,7 +84,7 @@ export function generateMetadata(
     alternates: {
       languages: {
         en: `${baseUrl}/en`,
-        'fil-PH': `${baseUrl}/fil`,
+        "fil-PH": `${baseUrl}/fil`,
       },
     },
   };
@@ -94,12 +96,12 @@ export function generateMetadata(
  */
 export function generateHrefLangLinks(
   pathname: string,
-  languages: Language[] = ['en', 'fil'],
-  baseUrl: string = 'https://gloria-connect.com'
+  languages: Language[] = ["en", "fil"],
+  baseUrl: string = "https://gloria-connect.com",
 ): Array<{ rel: string; hrefLang: string; href: string }> {
   return languages.map((lang) => ({
-    rel: 'alternate',
-    hrefLang: lang === 'fil' ? 'fil-PH' : lang,
+    rel: "alternate",
+    hrefLang: lang === "fil" ? "fil-PH" : lang,
     href: `${baseUrl}/${lang}${pathname}`,
   }));
 }
@@ -108,7 +110,7 @@ export function generateHrefLangLinks(
  * Get the language code for hreflang attributes
  */
 export function getHrefLangCode(language: Language): string {
-  return language === 'fil' ? 'fil-PH' : language;
+  return language === "fil" ? "fil-PH" : language;
 }
 
 /**
@@ -117,7 +119,7 @@ export function getHrefLangCode(language: Language): string {
 export function getAlternateLanguageRoutes(
   pathname: string,
   currentLanguage: Language,
-  languages: Language[] = ['en', 'fil']
+  languages: Language[] = ["en", "fil"],
 ): Record<Language, string> {
   const routes: Record<Language, string> = {} as Record<Language, string>;
 
@@ -125,10 +127,10 @@ export function getAlternateLanguageRoutes(
     // Remove current language prefix if present
     let cleanPath = pathname;
     if (pathname.startsWith(`/${currentLanguage}`)) {
-      cleanPath = pathname.slice(currentLanguage.length + 1) || '/';
+      cleanPath = pathname.slice(currentLanguage.length + 1) || "/";
     }
 
-    routes[lang] = `/${lang}${cleanPath === '/' ? '' : cleanPath}`;
+    routes[lang] = `/${lang}${cleanPath === "/" ? "" : cleanPath}`;
   });
 
   return routes;
@@ -139,5 +141,5 @@ export function getAlternateLanguageRoutes(
  */
 export function extractLanguageFromPath(pathname: string): Language {
   const match = pathname.match(/^\/(en|fil)/);
-  return (match?.[1] as Language) || 'en';
+  return (match?.[1] as Language) || "en";
 }

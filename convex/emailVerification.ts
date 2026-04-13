@@ -1,7 +1,7 @@
 "use node";
 
-import nodemailer from "nodemailer";
 import { ConvexError, v } from "convex/values";
+import nodemailer from "nodemailer";
 import { internalAction } from "./_generated/server";
 
 function requireEnv(name: string): string {
@@ -23,8 +23,7 @@ export const deliverVerificationEmail = internalAction({
     const user = requireEnv("SMTP_USER");
     const pass = requireEnv("SMTP_PASS");
     const from = requireEnv("SMTP_FROM");
-    const secure =
-      process.env.SMTP_SECURE === "true" || port === 465;
+    const secure = process.env.SMTP_SECURE === "true" || port === 465;
 
     const transporter = nodemailer.createTransport({
       host,

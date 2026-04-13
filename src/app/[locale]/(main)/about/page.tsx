@@ -1,7 +1,7 @@
 "use client";
 
-import Header from "@/components/header";
 import Footer from "@/components/footer";
+import Header from "@/components/header";
 import { useI18n } from "@/components/i18n-provider";
 
 export default function AboutPage() {

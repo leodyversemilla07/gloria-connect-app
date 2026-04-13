@@ -1,8 +1,8 @@
 "use client";
 
+import L from "leaflet";
 import { useMemo } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 interface BusinessLocationMapProps {
@@ -28,7 +28,7 @@ export default function BusinessLocationMap({
         popupAnchor: [1, -34],
         shadowSize: [41, 41],
       }),
-    []
+    [],
   );
 
   return (
